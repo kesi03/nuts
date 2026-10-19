@@ -32,14 +32,14 @@ Write-Host ""
 
 if ($SendLedTest) {
     Write-Host "LED test: watch the Nocturn -- page button 1, Learn, encoder 1 ring, speed dial ring ..."
-    Send-MidiMessage -Connection $conn -Words 0x2090007F   # note-on 0  -> page button 1 on
-    Send-MidiMessage -Connection $conn -Words 0x2090087F   # note-on 8  -> Learn on
+    Send-MidiMessage -Connection $conn -Words 0x20B0667F   # CC 102 = 127 -> page button 1 on
+    Send-MidiMessage -Connection $conn -Words 0x20B06E7F   # CC 110 = 127 -> Learn on
     Send-MidiMessage -Connection $conn -Words 0x20B0200B   # CC 32 = 11 -> encoder 1 ring full
     Send-MidiMessage -Connection $conn -Words 0x20B02805   # CC 40 = 5  -> speed dial ring mid
     Start-Sleep -Seconds 2
     Write-Host "Releasing ..."
-    Send-MidiMessage -Connection $conn -Words 0x20900000   # note-off 0
-    Send-MidiMessage -Connection $conn -Words 0x20900800   # note-off 8
+    Send-MidiMessage -Connection $conn -Words 0x20B06600   # CC 102 = 0   -> page button 1 off
+    Send-MidiMessage -Connection $conn -Words 0x20B06E00   # CC 110 = 0   -> Learn off
     Send-MidiMessage -Connection $conn -Words 0x20B02000   # CC 32 = 0  -> ring empty
     Send-MidiMessage -Connection $conn -Words 0x20B02800   # CC 40 = 0  -> speed dial dark
     Start-Sleep -Milliseconds 500

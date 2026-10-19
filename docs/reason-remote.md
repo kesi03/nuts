@@ -70,8 +70,8 @@ that as MIDI on the out port (same pattern syntax as auto-inputs, with
 `x`/`y` value formulas; ring `modes={"Single Dot", …}` on output items —
 see the factory BCR2000-style codecs). Reason only ever sends
 **parameter values** — rendering those to our wire protocol
-(notes 0–15 on/off, CC 32–40 values 0–11, CC 48–55 modes) happens in
-the codec.
+(CC 102–117 switch LEDs on/off, CC 32–40 values 0–11, CC 48–55 modes) happens
+in the codec.
 
 ## What AutoMap did (the precedent we replace)
 
@@ -107,15 +107,15 @@ contract").
 | Wire (see `midi-mapping.md`) | Codec side |
 |---|---|
 | CC 16–23 relative rotation | `input="delta"` items + `remote_process_midi` converting the two's-complement byte (`x < 64 and x or x-128`) and handing Reason the signed delta in `remote.handle_input` — Reason accumulates and clamps, so no manual `get_item_value` loop is needed (this is the factory AlphaTrack idiom). `gEncoderDirection` flips the sign in one line if a unit runs backwards. |
-| notes 0–15 buttons | `remote_process_midi` (`<100x>? yy zz`) → button items (notes 0–7 = the page row, notes 10/11 = PermaBar Page −/+). Auto-inputs are *not* used: the same table drives item *and* LED, and the codec must also consume the reserved PermaBar notes. |
+| CC 102–117 switches, CC 118 speed dial click | `remote_process_midi` (`b? yy xx`) → switch items (CC 102–109 = the page row, CC 112/113 = PermaBar Page −/+, CC 118 = the click). Auto-inputs are *not* used: the same CCs drive item *and* LED. The page row is declared `input="value"` because its targets are Toggle remotables — a `button` item carries only the press edge and Reason ignores the release (see `midi-mapping.md` → "Button kinds"). |
 | CC 24 speed dial, CC 80–89 touches | Speed dial = `input="delta"` item; the touch CCs are consumed and ignored — still the reserved hook for soft takeover. |
 | CC 8 + CC 9 crossfader (14-bit) | one absolute value item fed from CC 8 (MSB = 128 positions, plenty for scrolling); CC 9 is consumed and ignored. |
-| **out** notes 0–7 button LEDs | auto-output `90 <note> xx` with `x="127*value"` — on/off only (hardware). |
+| **out** CC 102–109 switch LEDs | auto-output `b0 <cc> xx` with `x="value"` (the items are 0–127, so on/off arrives as 127/0) — on/off only (hardware). |
 | **out** CC 32–39 / CC 40 ring values | auto-output `b0 <cc> 0<00xx>` with `x="value*11/127"` (item 0–127 → 11 segments; the driver also clamps). |
-| **out** CC 48–55 ring modes | emitted from `remote_prepare_for_use` (per-dial constant modes; empty rings + dark LEDs), and `remote_release_from_use` darkens the surface when Reason closes. |
+| **out** CC 48–55 ring modes | emitted from `remote_prepare_for_use` (per-dial constant modes; rings blanked, switch LEDs left to Reason's own feedback), and `remote_release_from_use` darkens the surface when Reason closes. |
 
 Driver-side M3 work still open: the `SurfaceContext` state machine (User/Fx/Inst/Mixer,
-Learn/View), indication rendering (pages, armed), **note echo suppression**
+Learn/View), indication rendering (pages, armed), **self-echo suppression**
 (the loopback echoes to the sender — `midi-mapping.md`), and feeding codec
 feedback into `ILedManager`.
 
