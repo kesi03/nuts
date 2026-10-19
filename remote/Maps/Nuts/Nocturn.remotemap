@@ -1,0 +1,149 @@
+Propellerhead Remote Mapping File
+File Format Version	1.0.0
+Control Surface Manufacturer	Nuts
+Control Surface Model	Nocturn
+Map Version	1.0.0
+
+
+//======================================================================
+//  Novation Nocturn - combined Remote map
+//
+//  Reason loads every scope for a control surface from a single .remotemap.
+//  The Nocturn has no keybed and no pads, so there is no Master Keyboard
+//  scope and no drum/pad mapping.
+//
+//  The surface works as ONE mixer channel at a time ("page = channel"):
+//
+//    * the 8 dials are the selected channel's parameters,
+//    * the 8 buttons are the selected channel's switches,
+//    * the Speed Dial is the master level,
+//    * and the channel itself is Reason's "Remote Base Channel".
+//
+//  Every channel line below targets "Channel 1 <param>". Reason re-bases
+//  those lines onto the channel selected with Remote Base Channel, so:
+//
+//    PermaBar Page -      -> Previous Remote Base Channel   (one channel down)
+//    PermaBar Page +      -> Next Remote Base Channel       (one channel up)
+//    Crossfader           -> Remote Base Channel            (sweep the window)
+//
+//  The base channel is what makes this one flat table instead of 14
+//  duplicated pages. Nothing here needs a codec change to re-order controls;
+//  only the dial ring modes in Nocturn.lua follow the dial layout.
+//
+//  Physical control          -> Reason remotable
+//  -----------------------      -------------------------------------
+//  Dial 1  (CC16, relative)  -> Channel 1 Level
+//  Dial 2  (CC17, relative)  -> Channel 1 Pan
+//  Dial 3  (CC18, relative)  -> Channel 1 HF Gain
+//  Dial 4  (CC19, relative)  -> Channel 1 HMF Gain
+//  Dial 5  (CC20, relative)  -> Channel 1 LMF Gain
+//  Dial 6  (CC21, relative)  -> Channel 1 LF Gain
+//  Dial 7  (CC22, relative)  -> Channel 1 FX1 Send Level
+//  Dial 8  (CC23, relative)  -> Channel 1 FX2 Send Level
+//
+//  Button 1 (note 0)         -> Channel 1 Mute
+//  Button 2 (note 1)         -> Channel 1 Solo
+//  Button 3 (note 2)         -> Channel 1 EQ On
+//  Button 4 (note 3)         -> Channel 1 Comp On
+//  Button 5 (note 4)         -> Channel 1 Gate On
+//  Button 6 (note 5)         -> Channel 1 FX1 Send On
+//  Button 7 (note 6)         -> Channel 1 FX2 Send On
+//  Button 8 (note 7)         -> Channel 1 Bypass Insert FX
+//
+//  Speed Dial (CC24)         -> Master Level
+//
+//  Two mixer scopes are defined below, with the same physical layout:
+//
+//    * "Reason Master Section"      - the surface is locked to the mixer
+//                                     (targets are "Channel N <param>",
+//                                     paging via Remote Base Channel),
+//    * "Reason Main Mixer Channel"  - the surface is locked to a single
+//                                     channel (targets are unprefixed).
+//
+//  Further scopes (combinator, synths, effects) are added one at a time
+//  once the channel strip is verified.
+//======================================================================
+
+Scope	Propellerheads	Reason Master Section
+//	Control Surface Item	Key	Remotable Item	Scale	Mode
+
+Map	_Scope		"Channel Strip"
+
+// --- Dials: the selected channel's parameters ------------------------
+Map	Knob 1		Channel 1 Level
+Map	Knob 2		Channel 1 Pan
+Map	Knob 3		Channel 1 HF Gain
+Map	Knob 4		Channel 1 HMF Gain
+Map	Knob 5		Channel 1 LMF Gain
+Map	Knob 6		Channel 1 LF Gain
+Map	Knob 7		Channel 1 FX1 Send Level
+Map	Knob 8		Channel 1 FX2 Send Level
+
+// --- Buttons: the selected channel's switches ------------------------
+Map	Button 1		Channel 1 Mute
+Map	Button 2		Channel 1 Solo
+Map	Button 3		Channel 1 EQ On
+Map	Button 4		Channel 1 Comp On
+Map	Button 5		Channel 1 Gate On
+Map	Button 6		Channel 1 FX1 Send On
+Map	Button 7		Channel 1 FX2 Send On
+Map	Button 8		Channel 1 Bypass Insert FX
+
+// --- Channel window navigation + master level ------------------------
+Map	Page Left		Previous Remote Base Channel
+Map	Page Right		Next Remote Base Channel
+Map	Crossfader		Remote Base Channel
+Map	Speed Dial		Master Level
+
+//======================================================================
+//  Scope: a single mixer channel
+//
+//  Reason uses this scope when the surface is locked to ONE mixer channel
+//  rather than to the whole mixer. Every target is unprefixed ("Mute", not
+//  "Channel 1 Mute") because the scope already is the channel.
+//
+//  The layout deliberately mirrors the channel-strip scope above, so the
+//  dials and buttons mean the same thing wherever the surface is locked:
+//
+//  Dial 1 Level / 2 Pan / 3 HF Gain / 4 HMF Gain / 5 LMF Gain / 6 LF Gain
+//  Dial 7 FX1 Send Level / Dial 8 FX2 Send Level
+//  Button 1 Mute / 2 Solo / 3 EQ On / 4 Comp On / 5 Gate On
+//  Button 6 FX1 Send On / 7 FX2 Send On / 8 Bypass Insert FX
+//  Speed Dial -> Rotary 1 (the channel's first insert-FX rotary)
+//
+//  Deliberately unmapped:
+//    * HF On / HMF On / LMF On / LF On are output-only in Reason (input
+//      type "-"), so they cannot be driven from a button.
+//    * Page -/+ and the crossfader: "Remote Base Channel" navigation only
+//      exists in the master-section scope, and this scope is already one
+//      channel.
+//    * Level is 0-1000 and Pan -100..100 in this scope; Reason scales the
+//      0-127 item range automatically.
+//======================================================================
+
+Scope	Propellerheads	Reason Main Mixer Channel
+//	Control Surface Item	Key	Remotable Item	Scale	Mode
+
+Map	_Scope		"Channel"
+
+// --- Dials: the channel's parameters ---------------------------------
+Map	Knob 1		Level
+Map	Knob 2		Pan
+Map	Knob 3		HF Gain
+Map	Knob 4		HMF Gain
+Map	Knob 5		LMF Gain
+Map	Knob 6		LF Gain
+Map	Knob 7		FX1 Send Level
+Map	Knob 8		FX2 Send Level
+
+// --- Buttons: the channel's switches ---------------------------------
+Map	Button 1		Mute
+Map	Button 2		Solo
+Map	Button 3		EQ On
+Map	Button 4		Comp On
+Map	Button 5		Gate On
+Map	Button 6		FX1 Send On
+Map	Button 7		FX2 Send On
+Map	Button 8		Bypass Insert FX
+
+Map	Speed Dial		Rotary 1

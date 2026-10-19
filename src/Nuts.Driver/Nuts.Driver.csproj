@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Nuts.Driver</RootNamespace>
+    <AssemblyName>nuts-driver</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- USB access on top of WinUSB/libusb (the Nocturn is bound to WinUSB
+         via driver/nocturn-winusb.inf) -->
+    <PackageReference Include="LibUsbDotNet" Version="2.2.29" />
+    <!-- Generic host, DI, logging, configuration binding -->
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Windows MIDI Services app SDK, preview 11 (0.99.92-preview.11).
+         The official consumption path is the Windows.Devices.Midi2 NuGet
+         package + Microsoft.Windows.CsWinRT, but that build chain requires
+         the Windows SDK registry (cswinrt.exe). Instead we reference the
+         pre-generated projection assemblies installed with the WMS Tools
+         (same files the WindowsMidiServices PowerShell module loads, so the
+         activation path is proven). Once the API ships in-box in Windows
+         (November 2026 wave), replace these with the official PackageReference. -->
+    <Reference Include="Windows.Devices.Midi2.NetProjection">
+      <HintPath>..\..\lib\wms\Windows.Devices.Midi2.NetProjection.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Windows.SDK.NET">
+      <HintPath>..\..\lib\wms\Microsoft.Windows.SDK.NET.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="WinRT.Runtime">
+      <HintPath>..\..\lib\wms\WinRT.Runtime.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <!-- Native WinRT activation target + resources; must sit next to the
+         executable for CsWinRT's app-local activation probing. -->
+    <None Include="..\..\lib\wms\Windows.Devices.Midi2.dll" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\lib\wms\Windows.Devices.Midi2.pri" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The driver only runs on Windows 11 with Windows MIDI Services;
+         silences CA1416 on the vendored WinRT projection calls. -->
+    <AssemblyAttribute Include="System.Runtime.Versioning.SupportedOSPlatformAttribute">
+      <_Parameter1>windows10.0.26100.0</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

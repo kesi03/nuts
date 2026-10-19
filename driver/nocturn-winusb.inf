@@ -1,0 +1,42 @@
+; nuts - WinUSB driver package for the Novation Nocturn (raw USB)
+;
+; Same shape as the canonical WinUSB INF (what Zadig would generate):
+; binds the inbox, Microsoft-signed WinUsb.sys to USB\VID_1235&PID_000A.
+; Only this INF + its catalog carry our self-signed signature.
+;
+; Install:   driver\sign-and-install.ps1   (requires Secure Boot OFF)
+; Remove:    driver\uninstall-restore.ps1  (restores Novation's driver)
+
+[Version]
+Signature   = "$Windows NT$"
+Class       = USB
+ClassGuid   = {36FC9E60-C465-11CF-8056-444553540000}
+Provider    = %ProviderName%
+CatalogFile = nocturn-winusb.cat
+DriverVer   = 10/19/2026,1.0.0.0
+PnpLockdown = 1
+
+[Manufacturer]
+%ProviderName% = DeviceList, NTamd64
+
+[DeviceList.NTamd64]
+%DeviceDesc% = USB_Install, USB\VID_1235&PID_000A
+
+[USB_Install]
+Include = winusb.inf
+Needs   = WINUSB.NT
+
+[USB_Install.Services]
+Include = winusb.inf
+Needs   = WINUSB.NT.Services
+
+[USB_Install.HW]
+AddReg = USB_Install_AddReg
+
+[USB_Install_AddReg]
+; Fixed interface GUID for nuts; our C# driver can filter on this.
+HKR,,DeviceInterfaceGUIDs,0x10000,"{2C1F4560-9E1B-4D8D-A3F7-7C6B5A9E8D21}"
+
+[Strings]
+ProviderName = "nuts"
+DeviceDesc   = "Novation Nocturn (nuts raw USB)"

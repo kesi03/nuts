@@ -1,0 +1,55 @@
+{
+  "description": "Novation Nocturn control numbers. This is the source-of-truth table shared by the nuts driver (src/Nuts.Driver/appsettings.json, section Midi:Mapping) and the Reason Remote codec (remote/Codecs/Lua Codecs/Nuts/Nocturn.lua, lookup tables at the top). Change all three together.",
+
+  "midiChannel": 1,
+
+  "dials": {
+    "description": "Endless encoders. Relative, two's complement: 1-63 = clockwise, 65-127 = counter-clockwise.",
+    "rotation": { "1": 16, "2": 17, "3": 18, "4": 19, "5": 20, "6": 21, "7": 22, "8": 23 },
+    "touch": { "1": 80, "2": 81, "3": 82, "4": 83, "5": 84, "6": 85, "7": 86, "8": 87 },
+    "touchValues": "127 = touched, 0 = released. Reserved for soft takeover."
+  },
+
+  "switches": {
+    "description": "The 16 buttons, modelled as switches, on CCs (not notes) in both directions: a CC carries an absolute value and keeps the whole note range on the loopback free for a keyboard. The hardware addresses these buttons and their LEDs by note number 0-15 on its USB wire; the driver re-publishes them as the CCs below and translates the LED CCs back. Each group has a kind (see docs/midi-mapping.md): \"momentary\" = press sends 127, release sends 0, the DAW owns the state and the LED; \"toggle\" = the driver keeps a latch, a press flips it, lights the LED and sends the new state (127 = on, 0 = off), a release is silent, and DAW feedback overwrites the latch. Measured on Reason 10 (2026-10-19): a codec \"button\" item acts on the press edge only and ignores a value 0, so a latching switch on a button item would toggle only every second press. The page row's codec items are therefore input=\"value\" (absolute 0-127): Reason sets the Toggle remotables (Mute, Solo, EQ On, ...) from the value, which is what makes toggle work end to end. Page row = toggle + value items; PermaBar = momentary + button items.",
+    "pageRow": {
+      "description": "8 switches above the dials, green LEDs. Indices 0-7. Kind: toggle, and the codec declares them as value items (input=\"value\", min=0, max=127).",
+      "kind": "toggle",
+      "ccs": { "1": 102, "2": 103, "3": 104, "4": 105, "5": 106, "6": 107, "7": 108, "8": 109 }
+    },
+    "permaBar": {
+      "description": "8 switches along the bottom, red LEDs. Indices 8-15 in surface order. Kind: momentary (only Page -/+ are mapped for the channel window; both are triggers and stay button items).",
+      "kind": "momentary",
+      "ccs": { "learn": 110, "view": 111, "pageDown": 112, "pageUp": 113, "user": 114, "fx": 115, "inst": 116, "mixer": 117 }
+    }
+  },
+
+  "speedDial": {
+    "description": "Relative, same encoding as the dials. The click is the only press on the speed dial.",
+    "rotation": 24,
+    "click": 118,
+    "clickKind": "momentary - a click, not a switch",
+    "touch": 88
+  },
+
+  "crossfader": {
+    "description": "14-bit absolute pair [MSB, LSB]. The codec uses the MSB only (128 positions).",
+    "msb": 8,
+    "lsb": 9,
+    "touch": 89
+  },
+
+  "feedbackToSurface": {
+    "description": "DAW -> surface. Knob ring values are 0-11 segments (the driver clamps anything higher); ring modes are 0-5; switch LEDs are on/off on the same CCs as the switches (0 = off, > 0 = on), which the driver turns into the hardware's note LED addresses.",
+    "knobRingValue": { "1": 32, "2": 33, "3": 34, "4": 35, "5": 36, "6": 37, "7": 38, "8": 39 },
+    "speedDialRingValue": 40,
+    "knobRingMode": { "1": 48, "2": 49, "3": 50, "4": 51, "5": 52, "6": 53, "7": 54, "8": 55 },
+    "switchLeds": "same CCs as the switch table above (102-117)"
+  },
+
+  "ringModes": {
+    "description": "Firmware-defined ring display modes used by gRingModes in Nocturn.lua, matching the channel-strip layout in Nocturn.remotemap.",
+    "0": "fill from minimum - used by Level and the FX send levels",
+    "3": "centre, both directions - used by Pan and the EQ gains"
+  }
+}
