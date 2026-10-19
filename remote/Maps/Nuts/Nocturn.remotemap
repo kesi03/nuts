@@ -41,14 +41,14 @@ Map Version	1.0.0
 //  Dial 7  (CC22, relative)  -> Channel 1 FX1 Send Level
 //  Dial 8  (CC23, relative)  -> Channel 1 FX2 Send Level
 //
-//  Button 1 (note 0)         -> Channel 1 Mute
-//  Button 2 (note 1)         -> Channel 1 Solo
-//  Button 3 (note 2)         -> Channel 1 EQ On
-//  Button 4 (note 3)         -> Channel 1 Comp On
-//  Button 5 (note 4)         -> Channel 1 Gate On
-//  Button 6 (note 5)         -> Channel 1 FX1 Send On
-//  Button 7 (note 6)         -> Channel 1 FX2 Send On
-//  Button 8 (note 7)         -> Channel 1 Bypass Insert FX
+//  Button 1 (CC102)          -> Channel 1 Mute
+//  Button 2 (CC103)          -> Channel 1 Solo
+//  Button 3 (CC104)          -> Channel 1 EQ On
+//  Button 4 (CC105)          -> Channel 1 Comp On
+//  Button 5 (CC106)          -> Channel 1 Gate On
+//  Button 6 (CC107)          -> Channel 1 FX1 Send On
+//  Button 7 (CC108)          -> Channel 1 FX2 Send On
+//  Button 8 (CC109)          -> Channel 1 Bypass Insert FX
 //
 //  Speed Dial (CC24)         -> Master Level
 //
@@ -147,3 +147,25 @@ Map	Button 7		FX2 Send On
 Map	Button 8		Bypass Insert FX
 
 Map	Speed Dial		Rotary 1
+
+//======================================================================
+//  Diagnostic scope markers (TEMPORARY - remove once the master scope is
+//  verified)
+//
+//  Reason picks a scope from *what the surface is locked to*. If the
+//  surface is locked to the Main Mixer *device* (rather than to one
+//  channel or to the Master Section), Reason applies the mixer device
+//  scope "Mixer 14:2" - a scope this map did not define, so every control
+//  went dead and the codec could not even say why (no item value changes,
+//  so its CC 119 diagnostic stayed silent).
+//
+//  These blocks map nothing but _Scope, so the codec can report the truth.
+//  They change no behaviour: with no other lines, the items stay unmapped
+//  in these scopes exactly as they were before.
+//======================================================================
+
+Scope	Propellerheads	Mixer 14:2
+Map	_Scope		"Mixer 14:2"
+
+Scope	Propellerheads	Line Mixer 6:2
+Map	_Scope		"Line Mixer 6:2"

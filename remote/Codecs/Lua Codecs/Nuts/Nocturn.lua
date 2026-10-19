@@ -269,7 +269,7 @@ function remote_prepare_for_use()
 
 	events[#events + 1] = remote.make_midi(string.format("b0 %02x 00", gSpeedDialRingValueCC))
 
-	-- The page-row LEDs are deliberately NOT blanked here. An LED-off note
+	-- The page-row LEDs are deliberately NOT blanked here. An LED-off CC
 	-- is byte-identical to "this switch is now off", and the loopback hands
 	-- it straight back to this codec - as an absolute 0 on a value item it
 	-- would switch off every mapped toggle on the focused channel (the
@@ -313,6 +313,56 @@ function remote_set_state(changed_items)
 	else
 		gScope = ""
 	end
+end
+
+--------------------------------------------------------------------------
+-- remote_deliver_midi  (TEMPORARY diagnostic - remove once the master
+-- scope is verified)
+--
+-- Reason calls this regularly and sends whatever events we return. We use
+-- it to report the *active scope* to the driver trace on CC 119, which the
+-- mapping does not use. The scope is queried live here rather than read
+-- from gScope: remote_set_state() only refreshes gScope when an item
+-- *value* changes, and a switch to a scope this map does not define
+-- changes no item value, so it would be invisible (which is exactly the
+-- case we are chasing).
+--
+--   d2 = 1  "Channel Strip"   - Reason Master Section is active
+--   d2 = 2  "Channel"         - Reason Main Mixer Channel is active
+--   d2 = 4  "Mixer 14:2"      - the Main Mixer *device* scope is active
+--   d2 = 5  "Line Mixer 6:2"  - the Line Mixer device scope is active
+--   d2 = 3  some other text this map maps _Scope for
+--   d2 = 0  no scope of ours at all - Reason applied a scope this map does
+--           not define, so nothing on the surface can work
+--
+-- Only sent when the value changes, so this is one line per lock/focus
+-- change in the driver trace.
+--------------------------------------------------------------------------
+gLastReportedScope = nil
+
+function remote_deliver_midi()
+	local value = 0
+	if remote.is_item_enabled(gScopeItemIndex) then
+		local text = remote.get_item_text_value(gScopeItemIndex)
+		if text == "Channel Strip" then
+			value = 1
+		elseif text == "Channel" then
+			value = 2
+		elseif text == "Mixer 14:2" then
+			value = 4
+		elseif text == "Line Mixer 6:2" then
+			value = 5
+		elseif text ~= "" then
+			value = 3
+		end
+	end
+
+	if value == gLastReportedScope then
+		return {}
+	end
+	gLastReportedScope = value
+
+	return { remote.make_midi(string.format("b0 77 %02x", value)) }
 end
 
 --------------------------------------------------------------------------
@@ -363,7 +413,8 @@ function remote_process_midi(event)
 		end
 
 		-- Switches: page row CC102-109, PermaBar CC110-117, speed dial
-		-- click CC118. Same guard and kind logic as the dials' neighbours.
+		-- click CC118. Anything not a switch falls through to the reserved
+		-- block below.
 		local item = gButtonCcLookup[ret.y]
 		if item == nil and ret.y == gSpeedDialClickCC then
 			item = gSpeedDialButtonIndex

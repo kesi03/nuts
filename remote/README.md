@@ -17,7 +17,7 @@ Layout mirrors the `akaii-mdk-play-remote` project:
 | `Codecs/Lua Codecs/Nuts/Nocturn.lua` | Codec: items, LED feedback, MIDI decoding |
 | `Codecs/Lua Codecs/Nuts/Nocturn.png` | Surface picture |
 | `Maps/Nuts/Nocturn.remotemap` | Remote mapping (control → Reason remotable) |
-| `mapping/nocturn-controls.json` | Source-of-truth CC/note table (driver ⇄ codec) |
+| `mapping/nocturn-controls.json` | Source-of-truth CC table (driver ⇄ codec) |
 | `scripts/deploy.ps1` | Copies everything into `%ProgramData%\Propellerhead Software\Remote` |
 | `remote-info/` | Reason Remote Info reference notes (factory API reference) |
 

@@ -6,7 +6,7 @@ Services** (Milestone 1's hardware findings live in [`protocol.md`](protocol.md)
 ```
 Nocturn ──USB/WinUSB──▶ nuts-driver ──WMS basic-loopback "Nocturn"──▶ DAW
    ▲                         │                                        │
-   └── LED writes ◀── ILedManager ◀────────── note/CC feedback ◀──────┘
+   └── LED writes ◀── ILedManager ◀──────────── CC feedback ◀──────────┘
 ```
 
 Both sides connect to the **same** WMS basic-loopback endpoint (default name
