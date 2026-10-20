@@ -1,0 +1,37 @@
+manufacturer: "Propellerheads"
+model: "COMP-01 Compressor/Limiter"
+
+Pages:
+  Main:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Threshold", key: SpeedDialCC, min: 0, max: 127, input_type: value }
+      SDB:
+        { name: "speedDialButton", remotable: "Enabled", key: SpeedDialButtonCC, min: 0, max: 2, input_type: value }
+      FD:
+        { name: "fader", remotable: "Ratio", key: XFaderCC, min: 0, max: 127, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Enabled", key: ButtonCCs, min: 0, max: 2, input_type: value }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Threshold", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E2: { name: "encoder2", remotable: "Ratio", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E3: { name: "encoder3", remotable: "Attack", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E4: { name: "encoder4", remotable: "Release", key: EncoderCCs, min: 0, max: 127, input_type: value }
+
+  Performance:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Ratio", key: SpeedDialCC, min: 0, max: 127, input_type: value }
+      FD:
+        { name: "fader", remotable: "Threshold", key: XFaderCC, min: 0, max: 127, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Enabled", key: ButtonCCs, min: 0, max: 2, input_type: value }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Ratio", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E2: { name: "encoder2", remotable: "Threshold", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E3: { name: "encoder3", remotable: "Attack", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E4: { name: "encoder4", remotable: "Release", key: EncoderCCs, min: 0, max: 127, input_type: value }

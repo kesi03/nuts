@@ -1,0 +1,70 @@
+manufacturer: "Propellerheads"
+model: "Pulveriser"
+
+Pages:
+  Main:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Squash", key: SpeedDialCC, min: 0, max: 127, input_type: value }
+      SDB:
+        { name: "speedDialButton", remotable: "Routing", key: SpeedDialButtonCC, min: 0, max: 1, input_type: toggle }
+      FD:
+        { name: "fader", remotable: "Blend", key: XFaderCC, min: 0, max: 127, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Routing", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Sync", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B3: { name: "button3", remotable: "Tremor Spread", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B4: { name: "button4", remotable: "Enabled", key: ButtonCCs, min: 0, max: 2, input_type: value }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Squash", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E2: { name: "encoder2", remotable: "Release", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E3: { name: "encoder3", remotable: "Dirt", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E4: { name: "encoder4", remotable: "Tone", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E5: { name: "encoder5", remotable: "Blend", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E6: { name: "encoder6", remotable: "Volume", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E7: { name: "encoder7", remotable: "Filter Frequency", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E8: { name: "encoder8", remotable: "Peak", key: EncoderCCs, min: 0, max: 127, input_type: value }
+
+  Filter:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Filter Frequency", key: SpeedDialCC, min: 0, max: 127, input_type: value }
+      FD:
+        { name: "fader", remotable: "Peak", key: XFaderCC, min: 0, max: 127, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Routing", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Filter Frequency", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E2: { name: "encoder2", remotable: "Peak", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E3: { name: "encoder3", remotable: "Filter Mode", key: EncoderCCs, min: 0, max: 5, input_type: value }
+      E4: { name: "encoder4", remotable: "Tremor to Frequency", key: EncoderCCs, min: -64, max: 63, input_type: value }
+      E5: { name: "encoder5", remotable: "Follower to Frequency", key: EncoderCCs, min: -64, max: 63, input_type: value }
+      E6: { name: "encoder6", remotable: "Follower Threshold", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E7: { name: "encoder7", remotable: "Follower Attack", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E8: { name: "encoder8", remotable: "Follower Release", key: EncoderCCs, min: 0, max: 127, input_type: value }
+
+  Tremor:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Tremor Rate", key: SpeedDialCC, min: 0, max: 127, input_type: value }
+      SDB:
+        { name: "speedDialButton", remotable: "Sync", key: SpeedDialButtonCC, min: 0, max: 1, input_type: toggle }
+      FD:
+        { name: "fader", remotable: "Tremor to Volume", key: XFaderCC, min: -64, max: 63, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Sync", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Tremor Spread", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Tremor Rate", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E2: { name: "encoder2", remotable: "Tremor Waveform", key: EncoderCCs, min: 0, max: 8, input_type: value }
+      E3: { name: "encoder3", remotable: "Tremor Lag", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E4: { name: "encoder4", remotable: "Follower to Rate", key: EncoderCCs, min: -64, max: 63, input_type: value }
+      E5: { name: "encoder5", remotable: "Tremor to Volume", key: EncoderCCs, min: -64, max: 63, input_type: value }
+      E6: { name: "encoder6", remotable: "Blend", key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E7: { name: "encoder7", remotable: "Volume", key: EncoderCCs, min: 0, max: 127, input_type: value }

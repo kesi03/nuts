@@ -1,0 +1,60 @@
+manufacturer: "Groovy Melon"
+model: "com.groovymelon.MorfinXF"
+
+Pages:
+  Main:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Curve Type", key: SpeedDialCC, min: 0, max: 9, input_type: value }
+      SDB:
+        { name: "speedDialButton", remotable: "Phase Invert A", key: SpeedDialButtonCC, min: 0, max: 1, input_type: toggle }
+      FD:
+        { name: "fader", remotable: "Crossfader", key: XFaderCC, min: 0, max: 4194304, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Phase Invert A", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Phase Invert B", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Crossfader", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E2: { name: "encoder2", remotable: "Volume A", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E3: { name: "encoder3", remotable: "Volume B", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E4: { name: "encoder4", remotable: "Curve Type", key: EncoderCCs, min: 0, max: 9, input_type: value }
+      E5: { name: "encoder5", remotable: "Ch A Select Input", key: EncoderCCs, min: 0, max: 3, input_type: value }
+      E6: { name: "encoder6", remotable: "Ch B Select Input", key: EncoderCCs, min: 0, max: 3, input_type: value }
+      E7: { name: "encoder7", remotable: "Phase Invert A", key: EncoderCCs, min: 0, max: 1, input_type: toggle }
+      E8: { name: "encoder8", remotable: "Phase Invert B", key: EncoderCCs, min: 0, max: 1, input_type: toggle }
+
+  Inputs:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Ch A Select Input", key: SpeedDialCC, min: 0, max: 3, input_type: value }
+      FD:
+        { name: "fader", remotable: "Ch B Select Input", key: XFaderCC, min: 0, max: 3, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Phase Invert A", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Phase Invert B", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Ch A Select Input", key: EncoderCCs, min: 0, max: 3, input_type: value }
+      E2: { name: "encoder2", remotable: "Ch B Select Input", key: EncoderCCs, min: 0, max: 3, input_type: value }
+      E3: { name: "encoder3", remotable: "Curve Type", key: EncoderCCs, min: 0, max: 9, input_type: value }
+      E4: { name: "encoder4", remotable: "Crossfader", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+
+  Mix:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Volume A", key: SpeedDialCC, min: 0, max: 4194304, input_type: value }
+      FD:
+        { name: "fader", remotable: "Crossfader", key: XFaderCC, min: 0, max: 4194304, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Phase Invert A", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Phase Invert B", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Volume A", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E2: { name: "encoder2", remotable: "Volume B", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E3: { name: "encoder3", remotable: "Crossfader", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E4: { name: "encoder4", remotable: "Curve Type", key: EncoderCCs, min: 0, max: 9, input_type: value }

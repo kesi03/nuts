@@ -1,0 +1,64 @@
+manufacturer: "Propellerhead Software"
+model: "se.propellerheads.Synchronous"
+
+Pages:
+  Main:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "DryWet", key: SpeedDialCC, min: 0, max: 4194304, input_type: value }
+      SDB:
+        { name: "speedDialButton", remotable: "Enabled", key: SpeedDialButtonCC, min: 0, max: 2, input_type: value }
+      FD:
+        { name: "fader", remotable: "Master Level", key: XFaderCC, min: 0, max: 4194304, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Dist On", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Filter On", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B3: { name: "button3", remotable: "Delay On", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B4: { name: "button4", remotable: "Reverb On", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B5: { name: "button5", remotable: "Delay Keep Pitch", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B6: { name: "button6", remotable: "Delay Tempo Sync", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B7: { name: "button7", remotable: "Delay Ping Pong", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B8: { name: "button8", remotable: "Level InOut", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Dist Amount", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E2: { name: "encoder2", remotable: "Dist Character", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E3: { name: "encoder3", remotable: "Filter Freq", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E4: { name: "encoder4", remotable: "Filter Reso", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E5: { name: "encoder5", remotable: "Delay Amount", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E6: { name: "encoder6", remotable: "Delay Feedback", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E7: { name: "encoder7", remotable: "Reverb Amount", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E8: { name: "encoder8", remotable: "Reverb Decay", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+
+  Advanced:
+    buttons:
+      B1: { name: "button1", remotable: "Dist Post Filter", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Delay Roll", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B3: { name: "button3", remotable: "Delay SendReturn", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B4: { name: "button4", remotable: "Reverb SendReturn", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Dist Type", key: EncoderCCs, min: 0, max: 3, input_type: value }
+      E2: { name: "encoder2", remotable: "Filter Type", key: EncoderCCs, min: 0, max: 3, input_type: value }
+      E3: { name: "encoder3", remotable: "Filter Lag", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E4: { name: "encoder4", remotable: "Delay Time", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E5: { name: "encoder5", remotable: "Delay Synched Time", key: EncoderCCs, min: 0, max: 15, input_type: value }
+      E6: { name: "encoder6", remotable: "Delay Pan", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E7: { name: "encoder7", remotable: "Reverb Size", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E8: { name: "encoder8", remotable: "Reverb Damp", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+
+  Output:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Level", key: SpeedDialCC, min: 0, max: 4194304, input_type: value }
+      FD:
+        { name: "fader", remotable: "Master Level", key: XFaderCC, min: 0, max: 4194304, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Enabled", key: ButtonCCs, min: 0, max: 2, input_type: value }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Level", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E2: { name: "encoder2", remotable: "DryWet", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E3: { name: "encoder3", remotable: "Master Level", key: EncoderCCs, min: 0, max: 4194304, input_type: value }

@@ -1,0 +1,46 @@
+manufacturer: "Propellerhead Software"
+model: "se.propellerheads.ScalesAndChords"
+
+Pages:
+  Main:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Key", key: SpeedDialCC, min: 0, max: 11, input_type: value }
+      SDB:
+        { name: "speedDialButton", remotable: "On/Off", key: SpeedDialButtonCC, min: 0, max: 1, input_type: toggle }
+      FD:
+        { name: "fader", remotable: "Scale", key: XFaderCC, min: 0, max: 13, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "On/Off", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Filter Notes", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B3: { name: "button3", remotable: "Chords", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B4: { name: "button4", remotable: "Open Chords", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B5: { name: "button5", remotable: "Add Octave Up", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B6: { name: "button6", remotable: "Add Octave Down", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B7: { name: "button7", remotable: "Add Color", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B8: { name: "button8", remotable: "Alter", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Key", key: EncoderCCs, min: 0, max: 11, input_type: value }
+      E2: { name: "encoder2", remotable: "Scale", key: EncoderCCs, min: 0, max: 13, input_type: value }
+      E3: { name: "encoder3", remotable: "Notes", key: EncoderCCs, min: 0, max: 4, input_type: value }
+      E4: { name: "encoder4", remotable: "Inversion", key: EncoderCCs, min: 0, max: 4, input_type: value }
+      E5: { name: "encoder5", remotable: "Filter Notes", key: EncoderCCs, min: 0, max: 1, input_type: toggle }
+      E6: { name: "encoder6", remotable: "Chords", key: EncoderCCs, min: 0, max: 1, input_type: toggle }
+      E7: { name: "encoder7", remotable: "Add Color", key: EncoderCCs, min: 0, max: 1, input_type: toggle }
+      E8: { name: "encoder8", remotable: "Alter", key: EncoderCCs, min: 0, max: 1, input_type: toggle }
+
+  ChordTools:
+    buttons:
+      B1: { name: "button1", remotable: "Open Chords", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Add Octave Up", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B3: { name: "button3", remotable: "Add Octave Down", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B4: { name: "button4", remotable: "Add Color", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B5: { name: "button5", remotable: "Alter", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Notes", key: EncoderCCs, min: 0, max: 4, input_type: value }
+      E2: { name: "encoder2", remotable: "Inversion", key: EncoderCCs, min: 0, max: 4, input_type: value }
+      E3: { name: "encoder3", remotable: "Key", key: EncoderCCs, min: 0, max: 11, input_type: value }
+      E4: { name: "encoder4", remotable: "Scale", key: EncoderCCs, min: 0, max: 13, input_type: value }
