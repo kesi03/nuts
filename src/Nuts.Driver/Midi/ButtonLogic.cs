@@ -9,6 +9,11 @@ namespace Nuts.Driver.Midi;
 /// value of a switch message, so the two button kinds differ here and nowhere
 /// else.
 ///
+/// Latches for banked switches are kept per page: the same physical switch
+/// drives a different item on each page, so it has a different state on each
+/// page, and flipping pages must not carry a latch over. Shared switches
+/// (PermaBar) have one latch, keyed on page 0.
+///
 /// The latch is written by two callers on different threads: the input pump
 /// (a physical press) and the MIDI connection (feedback from the DAW). Both
 /// go through the same gate, and the DAW's word is always the last one, so a
@@ -21,12 +26,15 @@ public sealed class ButtonLogic
     private readonly MidiMapping _mapping;
     private readonly ILedManager _leds;
     private readonly ButtonKind[] _kinds = new ButtonKind[NocturnProtocol.ButtonCount];
-    private readonly bool[] _latched = new bool[NocturnProtocol.ButtonCount];
+
+    // [page, button]. Only page 0 is used for shared switches.
+    private readonly bool[,] _latched;
 
     public ButtonLogic(MidiMapping mapping, MidiMappingOptions options, ILedManager leds)
     {
         _mapping = mapping;
         _leds = leds;
+        _latched = new bool[mapping.Pages.PageCount, NocturnProtocol.ButtonCount];
 
         var pageRow = ButtonKinds.Parse(
             options.ButtonKinds.PageRow, "Midi:Mapping:ButtonKinds:PageRow");
@@ -62,6 +70,8 @@ public sealed class ButtonLogic
     /// </summary>
     public bool TryHandleInput(int index, bool pressed, out uint word)
     {
+        var page = _mapping.Pages.IsBankedButton(index) ? _mapping.Pages.Current : 0;
+
         lock (_gate)
         {
             if (_kinds[index] == ButtonKind.Toggle)
@@ -72,8 +82,8 @@ public sealed class ButtonLogic
                     return false;
                 }
 
-                var on = !_latched[index];
-                _latched[index] = on;
+                var on = !_latched[page, index];
+                _latched[page, index] = on;
 
                 // Light it from the latch immediately; DAW feedback corrects
                 // it right after if the host disagrees.
@@ -86,7 +96,7 @@ public sealed class ButtonLogic
             // bookkeeping (so the state is honest if this button is ever
             // switched to "toggle" in configuration), and the LED is left to
             // the DAW - the host's target state is the truth.
-            _latched[index] = pressed;
+            _latched[page, index] = pressed;
             word = _mapping.ButtonCc(index, pressed ? (byte)127 : (byte)0);
             return true;
         }
@@ -94,16 +104,35 @@ public sealed class ButtonLogic
 
     /// <summary>
     /// Applies a button-LED CC received from the DAW: it overwrites the
-    /// latch and the LED.
+    /// latch and the LED. Banked switches land on the active page's latch,
+    /// which is the only page the DAW can be talking about.
     /// </summary>
     public void HandleFeedback(int index, bool on)
     {
+        var page = _mapping.Pages.IsBankedButton(index) ? _mapping.Pages.Current : 0;
+
         lock (_gate)
         {
-            _latched[index] = on;
+            _latched[page, index] = on;
         }
 
         _leds.SetButtonLed(index, on ? LedState.On : LedState.Off);
+    }
+
+    /// <summary>
+    /// Repaints every banked switch's LED from the latch cache of one page.
+    /// Called when the page changes: the DAW has no idea the surface moved,
+    /// so the driver has to restore each switch's own state rather than show
+    /// the previous page's. Shared switches are left alone - they mean the
+    /// same thing on every page.
+    /// </summary>
+    public void RepaintPage(int page)
+    {
+        lock (_gate)
+        {
+            for (var index = 0; index < _mapping.Pages.BankedButtons; index++)
+                _leds.SetButtonLed(index, _latched[page, index] ? LedState.On : LedState.Off);
+        }
     }
 
     /// <summary>One-line summary of the active kinds, for the startup log.</summary>

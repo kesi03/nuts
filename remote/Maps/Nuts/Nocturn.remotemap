@@ -2,170 +2,179 @@ Propellerhead Remote Mapping File
 File Format Version	1.0.0
 Control Surface Manufacturer	Nuts
 Control Surface Model	Nocturn
-Map Version	1.0.0
+Map Version	2.0.0
 
 
 //======================================================================
-//  Novation Nocturn - combined Remote map
+//  Novation Nocturn - Reason Remote map
 //
 //  Reason loads every scope for a control surface from a single .remotemap.
 //  The Nocturn has no keybed and no pads, so there is no Master Keyboard
 //  scope and no drum/pad mapping.
 //
-//  The surface works as ONE mixer channel at a time ("page = channel"):
+//  WHY ONLY "Reason Main Mixer Channel"
+//  ------------------------------------
+//  The surface is a channel strip, and there is exactly one scope that can
+//  carry a four-page channel strip: "Reason Main Mixer Channel". It exposes
+//  every channel target we need in ONE flat namespace ("Width", "C
+//  Threshold", "FX1 Send Level", ...), so a page can pull from anywhere.
 //
-//    * the 8 dials are the selected channel's parameters,
-//    * the 8 buttons are the selected channel's switches,
-//    * the Speed Dial is the master level,
-//    * and the channel itself is Reason's "Remote Base Channel".
+//  "Reason Master Section" was considered and rejected. Its channel-strip
+//  targets are partitioned by a "Define Group Target TheGroup" whose values
+//  are section names (Pan, EQ1, EQ2, Dyn1, Dyn2, Sends1, Sends2, Ins1,
+//  Ins2), and a Map line carries only ONE group value. Our pages draw from
+//  several sections at once - the Mixer page needs Pan + EQ1 + EQ2 - so no
+//  single group value can serve a page. TheGroup also gates "Shift=Channel",
+//  which Reason owns. The factory AlphaTrack map shows the consequence: it
+//  drives each section from a separate physical button, one section at a
+//  time. That is precisely the "Reason selects the variation" limitation we
+//  are avoiding. The Master Section scope is for the master bus and FX
+//  returns in any case, not for a channel strip.
 //
-//  Every channel line below targets "Channel 1 <param>". Reason re-bases
-//  those lines onto the channel selected with Remote Base Channel, so:
+//  THE SURFACE PAGES
+//  -----------------
+//  The 8 dials and the 8 green page-row buttons BANK. A page is a set of
+//  parameters on those same physical controls, and the four pages are the
+//  four sections of the selected mixer channel:
 //
-//    PermaBar Page -      -> Previous Remote Base Channel   (one channel down)
-//    PermaBar Page +      -> Next Remote Base Channel       (one channel up)
-//    Crossfader           -> Remote Base Channel            (sweep the window)
+//    page 1  MIXER     the channel's input and filter strip
+//    page 2  DYNAMICS  the channel's compressor and gate
+//    page 3  EQ        the channel's 4-band EQ
+//    page 4  FX        the channel's 4 insert rotaries + 4 sends
 //
-//  The base channel is what makes this one flat table instead of 14
-//  duplicated pages. Nothing here needs a codec change to re-order controls;
-//  only the dial ring modes in Nocturn.lua follow the dial layout.
+//  Paging is owned by the DRIVER, not by Reason. The driver sends a
+//  different CC for a dial or button depending on the active page, steps
+//  the page from the PermaBar, and never forwards the page buttons. Reason
+//  therefore sees four separate control-surface item sets and never learns
+//  that a page changed.
 //
-//  Physical control          -> Reason remotable
-//  -----------------------      -------------------------------------
-//  Dial 1  (CC16, relative)  -> Channel 1 Level
-//  Dial 2  (CC17, relative)  -> Channel 1 Pan
-//  Dial 3  (CC18, relative)  -> Channel 1 HF Gain
-//  Dial 4  (CC19, relative)  -> Channel 1 HMF Gain
-//  Dial 5  (CC20, relative)  -> Channel 1 LMF Gain
-//  Dial 6  (CC21, relative)  -> Channel 1 LF Gain
-//  Dial 7  (CC22, relative)  -> Channel 1 FX1 Send Level
-//  Dial 8  (CC23, relative)  -> Channel 1 FX2 Send Level
+//  That is why each page's controls are separate ITEMS here - "Knob 1
+//  Mixer" and "Knob 1 EQ" - rather than one item with a variation. A
+//  .remotemap maps one item to exactly one remotable per scope, and Reason
+//  evaluates the map statically: there is no way to re-point one item from
+//  outside Reason. Duplicating the item set per page is the same technique
+//  the Akai MPK Mini Play codec uses for its banks ("Knob 1 A" / "Knob 1 B").
 //
-//  Button 1 (CC102)          -> Channel 1 Mute
-//  Button 2 (CC103)          -> Channel 1 Solo
-//  Button 3 (CC104)          -> Channel 1 EQ On
-//  Button 4 (CC105)          -> Channel 1 Comp On
-//  Button 5 (CC106)          -> Channel 1 Gate On
-//  Button 6 (CC107)          -> Channel 1 FX1 Send On
-//  Button 7 (CC108)          -> Channel 1 FX2 Send On
-//  Button 8 (CC109)          -> Channel 1 Bypass Insert FX
+//  "Define Group" variations would also give four mappings, but Reason owns
+//  which variation is active, so Page -/+ stepping could not exist. The
+//  driver-side CC tables (Midi:Paging in appsettings.json) are what let the
+//  PermaBar step pages, so item-per-page is the approach that keeps the
+//  whole design.
 //
-//  Speed Dial (CC24)         -> Master Level
+//  SHARED ACROSS EVERY PAGE: the Speed Dial and its click, and the
+//  Crossfader. They keep one item and one mapping. The PermaBar page
+//  buttons (Page -/+, and the MIXER / USER / INSTR / FX jumps) are not
+//  items at all - the driver consumes them.
 //
-//  Two mixer scopes are defined below, with the same physical layout:
+//  Page assignments (PermaBar silkscreen -> page):
+//    MIXER -> Mixer      USER -> Dynamics
+//    INSTR -> EQ         FX   -> FX
+//    Page - / Page +     step back / forward, wrapping
 //
-//    * "Reason Master Section"      - the surface is locked to the mixer
-//                                     (targets are "Channel N <param>",
-//                                     paging via Remote Base Channel),
-//    * "Reason Main Mixer Channel"  - the surface is locked to a single
-//                                     channel (targets are unprefixed).
+//  UNMAPPED ITEMS. Pages 1 and 3 place their parameters on the odd dials
+//  only (E1/E3/E5/E7), so Knob 2/4/6/8 of those pages are deliberately
+//  unmapped - the gap separates function groups on the surface. Pages 2
+//  and 4 use all 8 dials, because each has 8 continuous parameters and no
+//  spare dial to leave a gap with. Button 8 is spare on pages 1 and 2. An
+//  item with no Map line simply does nothing.
 //
-//  Further scopes (combinator, synths, effects) are added one at a time
-//  once the channel strip is verified.
-//======================================================================
-
-Scope	Propellerheads	Reason Master Section
-//	Control Surface Item	Key	Remotable Item	Scale	Mode
-
-Map	_Scope		"Channel Strip"
-
-// --- Dials: the selected channel's parameters ------------------------
-Map	Knob 1		Channel 1 Level
-Map	Knob 2		Channel 1 Pan
-Map	Knob 3		Channel 1 HF Gain
-Map	Knob 4		Channel 1 HMF Gain
-Map	Knob 5		Channel 1 LMF Gain
-Map	Knob 6		Channel 1 LF Gain
-Map	Knob 7		Channel 1 FX1 Send Level
-Map	Knob 8		Channel 1 FX2 Send Level
-
-// --- Buttons: the selected channel's switches ------------------------
-Map	Button 1		Channel 1 Mute
-Map	Button 2		Channel 1 Solo
-Map	Button 3		Channel 1 EQ On
-Map	Button 4		Channel 1 Comp On
-Map	Button 5		Channel 1 Gate On
-Map	Button 6		Channel 1 FX1 Send On
-Map	Button 7		Channel 1 FX2 Send On
-Map	Button 8		Channel 1 Bypass Insert FX
-
-// --- Channel window navigation + master level ------------------------
-Map	Page Left		Previous Remote Base Channel
-Map	Page Right		Next Remote Base Channel
-Map	Crossfader		Remote Base Channel
-Map	Speed Dial		Master Level
-
-//======================================================================
-//  Scope: a single mixer channel
+//  CONTINUOUS vs ON/OFF. Dials carry continuous parameters and the page-row
+//  switches carry on/off states, because a page-row item is a Toggle: an
+//  on/off value is the only thing it can set. The Dynamics page's gate
+//  "Expander" is a switch on B4 for that reason, and the compressor's
+//  Release / Fast Attack and the gate's Range / Release / Hold are dials,
+//  not switches.
 //
-//  Reason uses this scope when the surface is locked to ONE mixer channel
-//  rather than to the whole mixer. Every target is unprefixed ("Mute", not
-//  "Channel 1 Mute") because the scope already is the channel.
-//
-//  The layout deliberately mirrors the channel-strip scope above, so the
-//  dials and buttons mean the same thing wherever the surface is locked:
-//
-//  Dial 1 Level / 2 Pan / 3 HF Gain / 4 HMF Gain / 5 LMF Gain / 6 LF Gain
-//  Dial 7 FX1 Send Level / Dial 8 FX2 Send Level
-//  Button 1 Mute / 2 Solo / 3 EQ On / 4 Comp On / 5 Gate On
-//  Button 6 FX1 Send On / 7 FX2 Send On / 8 Bypass Insert FX
-//  Speed Dial -> Rotary 1 (the channel's first insert-FX rotary)
-//
-//  Deliberately unmapped:
-//    * HF On / HMF On / LMF On / LF On are output-only in Reason (input
-//      type "-"), so they cannot be driven from a button.
-//    * Page -/+ and the crossfader: "Remote Base Channel" navigation only
-//      exists in the master-section scope, and this scope is already one
-//      channel.
-//    * Level is 0-1000 and Pan -100..100 in this scope; Reason scales the
-//      0-127 item range automatically.
+//  NAMES ARE VERIFIED. Every Remotable Item below was checked against the
+//  targets in Reason's own factory .remotemap files for this scope. The
+//  scope's names are not always the display names: the compressor is
+//  "C Threshold" (not "Comp Threshold"), the gate's "Expander" has no
+//  "Gate" prefix, and the sends are "FX1 Pre Fader" (not "FX1 Send Pre
+//  Fader"). A misspelled target fails silently.
 //======================================================================
 
 Scope	Propellerheads	Reason Main Mixer Channel
 //	Control Surface Item	Key	Remotable Item	Scale	Mode
 
-Map	_Scope		"Channel"
+Map	_Scope		"Reason Main Mixer Channel"
 
-// --- Dials: the channel's parameters ---------------------------------
-Map	Knob 1		Level
-Map	Knob 2		Pan
-Map	Knob 3		HF Gain
-Map	Knob 4		HMF Gain
-Map	Knob 5		LMF Gain
-Map	Knob 6		LF Gain
-Map	Knob 7		FX1 Send Level
-Map	Knob 8		FX2 Send Level
+// --- Page 1: Mixer ----------------------------------------------------
+Map	Knob 1 Mixer		Width
+Map	Knob 3 Mixer		Input Gain
+Map	Knob 5 Mixer		LPF Frequency
+Map	Knob 7 Mixer		HPF Frequency
 
-// --- Buttons: the channel's switches ---------------------------------
-Map	Button 1		Mute
-Map	Button 2		Solo
-Map	Button 3		EQ On
-Map	Button 4		Comp On
-Map	Button 5		Gate On
-Map	Button 6		FX1 Send On
-Map	Button 7		FX2 Send On
-Map	Button 8		Bypass Insert FX
+Map	Button 1 Mixer		Mute
+Map	Button 2 Mixer		Invert Phase
+Map	Button 3 Mixer		Insert Pre
+Map	Button 4 Mixer		Dyn Post EQ
+Map	Button 5 Mixer		LPF On
+Map	Button 6 Mixer		HPF On
+Map	Button 7 Mixer		Filters Dyn S/C
 
-Map	Speed Dial		Rotary 1
-
-//======================================================================
-//  Diagnostic scope markers (TEMPORARY - remove once the master scope is
-//  verified)
+// --- Page 2: Dynamics -------------------------------------------------
+// All 8 dials are used here, because the page has 8 continuous parameters:
+// the compressor's Threshold/Ratio/Release/Fast Attack on E1-E4 (the top
+// row) and the gate's Threshold/Range/Release/Hold on E5-E8 (the bottom
+// row). The odd/even gap of pages 1 and 3 is NOT kept on this page: there
+// simply is no spare dial, and leaving G Release/G Hold off the page was
+// the bug this layout fixes.
 //
-//  Reason picks a scope from *what the surface is locked to*. If the
-//  surface is locked to the Main Mixer *device* (rather than to one
-//  channel or to the Master Section), Reason applies the mixer device
-//  scope "Mixer 14:2" - a scope this map did not define, so every control
-//  went dead and the codec could not even say why (no item value changes,
-//  so its CC 119 diagnostic stayed silent).
-//
-//  These blocks map nothing but _Scope, so the codec can report the truth.
-//  They change no behaviour: with no other lines, the items stay unmapped
-//  in these scopes exactly as they were before.
-//======================================================================
+// The switches carry only ON/OFF states. The compressor's Release and Fast
+// Attack and the gate's Range / Release / Hold are values, so they are dials
+// here rather than switches; that is what freed Button 6 for Key On and made
+// room for the previously-unmapped C Release / G Release / G Hold.
+Map	Knob 1 Dynamics		C Threshold
+Map	Knob 2 Dynamics		C Ratio
+Map	Knob 3 Dynamics		C Release
+Map	Knob 4 Dynamics		C Fast Atk
+Map	Knob 5 Dynamics		G Threshold
+Map	Knob 6 Dynamics		G Range
+Map	Knob 7 Dynamics		G Release
+Map	Knob 8 Dynamics		G Hold
 
-Scope	Propellerheads	Mixer 14:2
-Map	_Scope		"Mixer 14:2"
+Map	Button 1 Dynamics		Comp On
+Map	Button 2 Dynamics		C Peak
+Map	Button 3 Dynamics		Gate On
+Map	Button 4 Dynamics		Expander
+Map	Button 5 Dynamics		G Fast Atk
+Map	Button 6 Dynamics		Key On
 
-Scope	Propellerheads	Line Mixer 6:2
-Map	_Scope		"Line Mixer 6:2"
+// --- Page 3: EQ -------------------------------------------------------
+Map	Knob 1 EQ		HF Gain
+Map	Knob 3 EQ		HF Frequency
+Map	Knob 5 EQ		HMF Gain
+Map	Knob 7 EQ		HMF Frequency
+
+Map	Button 1 EQ		EQ On
+Map	Button 2 EQ		EQ E Mode
+Map	Button 3 EQ		HF Bell
+Map	Button 4 EQ		HF On
+Map	Button 5 EQ		HMF On
+Map	Button 6 EQ		LMF On
+Map	Button 7 EQ		LF Bell
+Map	Button 8 EQ		LF On
+
+// --- Page 4: FX -------------------------------------------------------
+Map	Knob 1 FX		Rotary 1
+Map	Knob 2 FX		Rotary 2
+Map	Knob 3 FX		Rotary 3
+Map	Knob 4 FX		Rotary 4
+Map	Knob 5 FX		FX1 Send Level
+Map	Knob 6 FX		FX2 Send Level
+Map	Knob 7 FX		FX3 Send Level
+Map	Knob 8 FX		FX4 Send Level
+
+Map	Button 1 FX		Button 1
+Map	Button 2 FX		Button 2
+Map	Button 3 FX		Button 3
+Map	Button 4 FX		Button 4
+Map	Button 5 FX		FX1 Pre Fader
+Map	Button 6 FX		FX2 Pre Fader
+Map	Button 7 FX		FX3 Pre Fader
+Map	Button 8 FX		FX4 Pre Fader
+
+// --- Shared: same on every page ---------------------------------------
+Map	Speed Dial		Level
+Map	Speed Dial Button		Solo
+Map	Crossfader		Pan

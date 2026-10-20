@@ -1,0 +1,15 @@
+version={0,0,2}
+
+function remote_supported_control_surfaces()
+    local surfaces = {
+        { manufacturer="Nuts", model="Nocturn",
+          source="Nocturn.lua", picture="Nocturn.png",
+          in_ports={{description="In Port"}},
+          out_ports={{description="Out Port", optional=true}},
+          has_keyboard=false,
+          setup_info_text="Select the Nocturn MIDI In/Out ports (the nuts driver's loopback endpoint) for both ports. The Nocturn has no keybed and no pads, so there is no keyboard mapping.",
+          setup_user_action_text="The Nocturn is not auto-detected; add it manually. Choose the Nocturn port for both MIDI Input and MIDI Output."
+        },
+    }
+    return surfaces
+end

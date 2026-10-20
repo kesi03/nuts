@@ -54,6 +54,9 @@ public static class NocturnProtocol
     /// <summary>Buttons 0-7: assignable "page" buttons under the encoders.</summary>
     public const int PageButtonFirst = 0;
 
+    /// <summary>How many of the 16 switches are page buttons (the rest are PermaBar).</summary>
+    public const int PageRowCount = PermaBarButtonFirst;
+
     /// <summary>Buttons 8-15: fixed system "PermaBar" buttons.</summary>
     public const int PermaBarButtonFirst = 8;
 

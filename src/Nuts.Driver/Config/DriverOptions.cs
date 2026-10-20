@@ -134,6 +134,13 @@ public sealed class MidiOptions
     public MidiMappingOptions Mapping { get; set; } = new();
 
     /// <summary>
+    /// Page/banking model: which controls bank, how many pages there are,
+    /// and which CC each banked control sends on each page. Surface
+    /// independent - see <see cref="PagingOptions"/>.
+    /// </summary>
+    public PagingOptions Paging { get; set; } = new();
+
+    /// <summary>
     /// Create the loopback endpoint at startup when it is missing. Transient
     /// loopbacks do not survive a MIDI service restart, so this makes the
     /// driver self-healing.

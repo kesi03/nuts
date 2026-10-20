@@ -35,7 +35,10 @@ public sealed class MidiBridgeService : BackgroundService
     private readonly ILogger<MidiBridgeService> _log;
 
     // Last state applied from DAW messages, so partial updates (value
-    // without mode, or mode without value) can be recombined.
+    // without mode, or mode without value) can be recombined. Guarded by
+    // _ringGate: the MIDI callback writes them, a page change overwrites
+    // them from the page table.
+    private readonly object _ringGate = new();
     private readonly RingMode[] _ringModes = new RingMode[NocturnProtocol.EncoderCount];
     private readonly byte[] _ringValues = new byte[NocturnProtocol.EncoderCount];
 
@@ -51,11 +54,15 @@ public sealed class MidiBridgeService : BackgroundService
         _listener = listener;
         _leds = leds;
         _options = options.Midi;
-        _mapping = new MidiMapping(options.Midi.Mapping);
+        _mapping = new MidiMapping(options.Midi.Mapping, options.Midi.Paging);
         _buttons = new ButtonLogic(_mapping, options.Midi.Mapping, leds);
         _log = log;
         _listener.InputReceived += OnInput;
         _log.LogInformation("Button kinds: {Kinds}.", _buttons.Describe());
+        _log.LogInformation("{Pages}", _mapping.Pages.Describe());
+
+        if (_options.Enabled && _mapping.Pages.PageCount > 1)
+            _log.LogInformation("Active {Pages}.", _mapping.Pages.DescribeCurrent());
     }
 
     protected override async Task ExecuteAsync(CancellationToken ct)
@@ -134,9 +141,38 @@ public sealed class MidiBridgeService : BackgroundService
             "Connected to MIDI endpoint '{Name}' ({Id}).",
             endpoint.Name, endpoint.EndpointDeviceId);
 
+        // Paint the active page's rings and indicator, then tell the DAW
+        // which page is live. Sent on every (re)connect because a codec that
+        // loads after the driver, or a Reason restart, would otherwise keep
+        // whatever page it last knew about.
+        PaintPageIndicators(_mapping.Pages.Current);
+        SendPageEcho(_mapping.Pages.Current);
+
         // Stay alive until shutdown; AutoReconnect keeps the pipe up across
         // service restarts.
         ct.WaitHandle.WaitOne();
+    }
+
+    /// <summary>
+    /// Applies the page's ring modes and lights the jump button for the
+    /// page that is active. Ring values are left alone - they belong to the
+    /// DAW and arrive when it repaints.
+    /// </summary>
+    private void PaintPageIndicators(int page)
+    {
+        lock (_ringGate)
+        {
+            for (var encoder = 0; encoder < NocturnProtocol.EncoderCount; encoder++)
+            {
+                _ringModes[encoder] = _mapping.Pages.RingModeFor(page, encoder);
+                _ringValues[encoder] = 0;
+                _leds.SetRing(encoder, _ringModes[encoder], 0);
+            }
+        }
+
+        for (var i = 0; i < _mapping.Pages.JumpButtons.Count; i++)
+            _leds.SetButtonLed(
+                _mapping.Pages.JumpButtons[i], i == page ? LedState.On : LedState.Off);
     }
 
     private MidiEndpointDeviceInformation? FindEndpoint()
@@ -214,14 +250,77 @@ public sealed class MidiBridgeService : BackgroundService
     /// through the mapping: the button's kind decides whether the press
     /// becomes a CC at all (a toggle button's release does not) and with
     /// which value.
+    ///
+    /// Page switches are consumed here instead of being forwarded: the DAW
+    /// has no idea the surface has pages, so a page press changes the driver's
+    /// own page state and the driver repaints the surface itself.
     /// </summary>
     private int MapButtonInput(InputEvent ev, Span<uint> words)
     {
+        if (_mapping.Pages.IsInternalButton(ev.Index))
+        {
+            // Jump buttons go straight to their page; the step buttons move
+            // one on, wrapping. Only the press edge acts - holding a step
+            // button must not page through every page.
+            if (ev.Value == 0)
+                return 0;
+
+            var jump = _mapping.Pages.PageOfJumpButton(ev.Index);
+            var page = jump >= 0
+                ? jump
+                : ev.Index == _mapping.Pages.PrevButton ? _mapping.Pages.Current - 1
+                : _mapping.Pages.Current + 1;
+
+            SwitchPage(((page % _mapping.Pages.PageCount) + _mapping.Pages.PageCount)
+                % _mapping.Pages.PageCount);
+            return 0;
+        }
+
         if (!_buttons.TryHandleInput(ev.Index, ev.Value != 0, out var word))
             return 0;
 
         words[0] = word;
         return 1;
+    }
+
+    /// <summary>
+    /// Makes a page active and repaints everything that page owns: the
+    /// banked switches (each restores its own latched state, not the page
+    /// we came from), the encoder rings (modes from the page's table, values
+    /// blank until the DAW sends the new page's), and the page indicator on
+    /// the jump buttons. Then tells the DAW which page is live so its codec
+    /// can follow.
+    /// </summary>
+    private void SwitchPage(int page)
+    {
+        if (!_mapping.Pages.TrySetPage(page, out var previous))
+            return;
+
+        _buttons.RepaintPage(page);
+        PaintPageIndicators(page);
+        SendPageEcho(page);
+        _log.LogInformation(
+            "Page {From} -> {To} ({Pages}).", previous + 1, page + 1, _mapping.Pages.DescribeCurrent());
+    }
+
+    /// <summary>
+    /// Tells the DAW which page is active (1-based), so a page-aware codec
+    /// can select the right item table. Sent on every page change and once
+    /// on connect, so a codec that loaded after the driver still learns it.
+    /// </summary>
+    private void SendPageEcho(int page)
+    {
+        var connection = _connection;
+        if (connection is not { IsOpen: true })
+            return;
+
+        if (_mapping.Pages.PageCount <= 1)
+            return;
+
+        var word = MidiMapping.ChannelVoice(0xB0, _mapping.Pages.EchoCc, (byte)(page + 1));
+        var result = connection.SendSingleMessageWords(0, word);
+        if (MidiEndpointConnection.SendMessageFailed(result))
+            _log.LogWarning("MIDI send failed: {Result}", result);
     }
 
     private void OnMessage(IMidiMessageReceivedEventSource sender, MidiMessageReceivedEventArgs args)
@@ -244,8 +343,11 @@ public sealed class MidiBridgeService : BackgroundService
 
             // Ring value 0-11 for an encoder.
             case 0xB0 when _mapping.TryMapRingValueCc(d1, out var enc):
-                _ringValues[enc] = (byte)Math.Min((int)d2, NocturnProtocol.RingSegments);
-                _leds.SetRing(enc, _ringModes[enc], _ringValues[enc]);
+                lock (_ringGate)
+                {
+                    _ringValues[enc] = (byte)Math.Min((int)d2, NocturnProtocol.RingSegments);
+                    _leds.SetRing(enc, _ringModes[enc], _ringValues[enc]);
+                }
                 break;
 
             // Speed dial ring value 0-11.
@@ -253,12 +355,18 @@ public sealed class MidiBridgeService : BackgroundService
                 _leds.SetSpeedDialRing((byte)Math.Min((int)d2, NocturnProtocol.RingSegments));
                 break;
 
-            // Ring mode 0-5 for an encoder.
+            // Ring mode 0-5 for an encoder. The page table sets a mode per
+            // page; a DAW override still wins for as long as that page is
+            // current, which is what a codec that knows the item's shape
+            // needs in order to correct our default.
             case 0xB0 when _mapping.TryMapRingModeCc(d1, out var modeEnc):
                 if (d2 <= (byte)RingMode.SingleDotInverted)
                 {
-                    _ringModes[modeEnc] = (RingMode)d2;
-                    _leds.SetRing(modeEnc, _ringModes[modeEnc], _ringValues[modeEnc]);
+                    lock (_ringGate)
+                    {
+                        _ringModes[modeEnc] = (RingMode)d2;
+                        _leds.SetRing(modeEnc, _ringModes[modeEnc], _ringValues[modeEnc]);
+                    }
                 }
                 break;
         }

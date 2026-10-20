@@ -106,67 +106,169 @@ contract").
 
 | Wire (see `midi-mapping.md`) | Codec side |
 |---|---|
-| CC 16–23 relative rotation | `input="delta"` items + `remote_process_midi` converting the two's-complement byte (`x < 64 and x or x-128`) and handing Reason the signed delta in `remote.handle_input` — Reason accumulates and clamps, so no manual `get_item_value` loop is needed (this is the factory AlphaTrack idiom). `gEncoderDirection` flips the sign in one line if a unit runs backwards. |
-| CC 102–117 switches, CC 118 speed dial click | `remote_process_midi` (`b? yy xx`) → switch items (CC 102–109 = the page row, CC 112/113 = PermaBar Page −/+, CC 118 = the click). Auto-inputs are *not* used: the same CCs drive item *and* LED. The page row is declared `input="value"` because its targets are Toggle remotables — a `button` item carries only the press edge and Reason ignores the release (see `midi-mapping.md` → "Button kinds"). |
+| CC per page, relative rotation | `input="delta"` items + `remote_process_midi` converting the two's-complement byte (`x < 64 and x or x-128`) and handing Reason the signed delta in `remote.handle_input` — Reason accumulates and clamps, so no manual `get_item_value` loop is needed (the factory AlphaTrack idiom). `gKnobNumberForCC` resolves the CC against the active page's table; `gEncoderDirection` flips the sign in one line if a unit runs backwards. |
+| CC per page, page-row switches; CC 118 speed dial click | `remote_process_midi` (`b? yy xx`) → switch items. Auto-inputs are *not* used: the same CCs drive item *and* LED. The page row is declared `input="value"` because its targets are Toggle remotables — a `button` item carries only the press edge and Reason ignores the release (see `midi-mapping.md` → "Button kinds"). Page −/+ and the four page jumps never arrive: the driver consumes them. |
+| CC 119 page echo | consumed in `remote_process_midi`; sets `gCurrentPage` (1-based, validated against `gPageCount`) so the lookups pick the right page's table. Not forwarded to Reason. |
 | CC 24 speed dial, CC 80–89 touches | Speed dial = `input="delta"` item; the touch CCs are consumed and ignored — still the reserved hook for soft takeover. |
-| CC 8 + CC 9 crossfader (14-bit) | one absolute value item fed from CC 8 (MSB = 128 positions, plenty for scrolling); CC 9 is consumed and ignored. |
-| **out** CC 102–109 switch LEDs | auto-output `b0 <cc> xx` with `x="value"` (the items are 0–127, so on/off arrives as 127/0) — on/off only (hardware). |
-| **out** CC 32–39 / CC 40 ring values | auto-output `b0 <cc> 0<00xx>` with `x="value*11/127"` (item 0–127 → 11 segments; the driver also clamps). |
-| **out** CC 48–55 ring modes | emitted from `remote_prepare_for_use` (per-dial constant modes; rings blanked, switch LEDs left to Reason's own feedback), and `remote_release_from_use` darkens the surface when Reason closes. |
+| CC 8 + CC 9 crossfader (14-bit) | one absolute value item fed from CC 8 (MSB = 128 positions); CC 9 is consumed and ignored. |
+| **out** page-row switch LEDs | one auto-output per page item, `b0 <cc> 0<00xx>` with `x="value"` (items are 0–127, so on/off arrives as 127/0). Each item is fed back on its own page's CC; the driver resolves an incoming LED CC against the active page only, so inactive pages are ignored. |
+| **out** CC 32–39 / CC 40 ring values | auto-output `b0 <cc> 0<00xx>` with `x="value*11/127"` (item 0–127 → 11 segments; the driver also clamps). One output per page's knob, all on the shared ring CC — only the current page's item is ever moved. |
+| **out** CC 48–55 ring modes | emitted from `remote_prepare_for_use`; the driver repaints them on every page change from `Midi:Paging:RingModes`. `remote_release_from_use` darkens the surface when Reason closes. |
 
 Driver-side M3 work still open: the `SurfaceContext` state machine (User/Fx/Inst/Mixer,
 Learn/View), indication rendering (pages, armed), **self-echo suppression**
 (the loopback echoes to the sender — `midi-mapping.md`), and feeding codec
 feedback into `ILedManager`.
 
-## Channel navigation: base channel, not pages/groups (`Define Group`)
+## Pages: the driver banks the CCs
 
-The user rejected banks/pages for scope #1 ("we have no banks we have 1-8
-dials, 1-8 buttons"), and later settled the model as **"a page represents a
-channel"**: the surface is one mixer channel at a time — the 8 dials are that
-channel's parameters, the 8 buttons its switches — and moving channels is the
-only navigation. Verified options, from every factory map in
-`%ProgramData%\Propellerhead Software\Remote\Maps\`:
+The surface paged four ways — Mixer, Dynamics, EQ, FX — and **the driver owns
+the paging**, not Reason. The 8 dials and the 8 page-row buttons send a
+different CC per page; the driver steps the page from the PermaBar and echoes
+the live page to the codec on CC 119. The page buttons are consumed
+driver-side and never reach Reason, so paging is invisible to it.
 
-- `Define Group <Name> <var…>` + a trailing column on each `Map` line creates
-  switchable *variations* (pages). They can be switched with
-  Ctrl+Alt+<number> only when the group is called exactly
-  `Keyboard Shortcut Variations`, or from a physical control with
-  `Map <item> <Group>=<Variation>` (nanoKONTROL2, UR-80, AlphaTrack's
-  `Ch1`…`Ch14` channel groups). Powerful, but 14 channels would mean ~14
-  duplicated pages of 15 lines — and it is a *codec/map* answer to a
-  navigation problem.
-- **`Remote Base Channel` + `Previous/Next Remote Base Channel`** are valid
-  only in a master-section scope (`Reason Master Section`,
-  `Record Master Section`, `Reason Essentials Master Section`). They rebase
-  every `Channel N <param>` line by the base channel: Livid OhmRGB binds
-  `Crossfader → Remote Base Channel`, `Xfade Button Left/Right →
-  Previous/Next Remote Base Channel` and `Fader 1…7 → Channel 1…7
-  Level/Pan/EQ`; Edirol UR-80 adds the `Previous/Next 8 Remote Base Channel`
-  block variants.
+**Why not Reason-side navigation.** Reason offers two mechanisms, and both
+were verified against every factory map in
+`%ProgramData%\Propellerhead Software\Remote\Maps\` before being rejected:
 
-**Chosen:** the base channel *is* the page. Every line of the scope targets
-`Channel 1 <param>`, so all 8 dials/buttons follow the selected channel, and
-one flat table replaces 14 pages:
+- **`Define Group` variations** create switchable pages, selected either by
+  Ctrl+Alt+<n> (only when the group is named exactly `Keyboard Shortcut
+  Variations`) or from a physical control (`Map <item> <Group>=<Variation>`,
+  as the nanoKONTROL2 and AlphaTrack do). They work, but **Reason owns which
+  variation is active**, so `Page −/+` stepping cannot exist — the groups are
+  absolute.
+- **`Remote Base Channel` + `Previous/Next Remote Base Channel`** rebase every
+  `Channel N <param>` line. They are valid only in a master-section scope, and
+  they move the *channel*, not a parameter page.
 
-| Physical | Item | Remotable |
-|---|---|---|
-| Dial 1–8 | `Knob 1`–`Knob 8` | `Channel 1 Level`, `Pan`, `HF/HMF/LMF/LF Gain`, `FX1/FX2 Send Level` |
-| Button 1–8 | `Button 1`–`Button 8` | `Channel 1 Mute`, `Solo`, `EQ On`, `Comp On`, `Gate On`, `FX1/FX2 Send On`, `Bypass Insert FX` |
-| PermaBar Page −/+ | `Page Left/Right` | `Previous/Next Remote Base Channel` |
-| Crossfader | `Crossfader` | `Remote Base Channel` (sweep the window) |
-| Speed Dial | `Speed Dial` | `Master Level` |
+Neither can express "these four dials show Width on page 1 and HF Gain on
+page 3, stepped with a wrap-around button". Driver-side CC banking can, so
+that is what the design uses.
 
-Target names were checked against the full set of `Channel 1 …` remotables
-actually used by factory maps inside the `Reason Master Section` scope (88
-distinct targets, including the SS L 4000 channel strip: EQ, comp/gate, eight
-FX sends, insert bypass). Ring modes match the layout (dial 2 + dials 3–6 =
-centre mode 3, Level/sends = fill mode 0) and live in `gRingModes`.
+### What banks, and what does not
 
-Note: the 14:2's own parameters (`Channel N Aux 1 Send`, `Bass Amount`,
-`Treble Amount`) only exist in the `Mixer 14:2` scope, so they are *not*
-reachable from the master-section channel strip; the SS L 4000's FX sends and
-4-band EQ are. That is what the strip exposes.
+Only **8 dials + 8 page-row buttons** per page. Everything else is shared:
+Speed Dial, its click and touch, the Crossfader and its touch, the ring
+values, the ring modes, and the PermaBar itself.
+
+| | Shared CCs | Page 1 | Page 2 | Page 3 | Page 4 |
+|---|---|---|---|---|---|
+| Dials 1–8 | — | 16–23 | 56–63 | 72–79 | 0–7 |
+| Page-row buttons 1–8 | — | 102–109 | 64–71 | 90–97 | 25–31, 41 |
+| Page echo (driver → codec) | 119 | | | | |
+
+That is 40 shared + 64 banked = **104 of 0–119 used, 16 spare**
+(`10–15`, `42–47`, `98–101`) — room enough for a fifth page.
+
+### The four pages
+
+Pages 1 and 3 place their parameters on the **odd dials** (E1/E3/E5/E7 on the
+surface). The gap is deliberate: it separates the function groups. Pages 2 and
+4 use **all 8 dials** — each has 8 continuous parameters and no spare dial to
+leave a gap with. Pages 1 and 2 leave Button 8 spare.
+
+Dials carry **continuous** parameters and the page-row switches carry **on/off**
+states, because a page-row item is a Toggle and an on/off value is the only
+thing it can set.
+
+| | Page 1 Mixer | Page 2 Dynamics | Page 3 EQ | Page 4 FX |
+|---|---|---|---|---|
+| E1 | Width | C Threshold | HF Gain | Rotary 1 |
+| E2 | — | C Ratio | — | Rotary 2 |
+| E3 | Input Gain | C Release | HF Frequency | Rotary 3 |
+| E4 | — | C Fast Atk | — | Rotary 4 |
+| E5 | LPF Frequency | G Threshold | HMF Gain | FX1 Send Level |
+| E6 | — | G Range | — | FX2 Send Level |
+| E7 | HPF Frequency | G Release | HMF Frequency | FX3 Send Level |
+| E8 | — | G Hold | — | FX4 Send Level |
+| B1 | Mute | Comp On | EQ On | Button 1 |
+| B2 | Invert Phase | C Peak | EQ E Mode | Button 2 |
+| B3 | Insert Pre | Gate On | HF Bell | Button 3 |
+| B4 | Dyn Post EQ | Expander | HF On | Button 4 |
+| B5 | LPF On | G Fast Atk | HMF On | FX1 Pre Fader |
+| B6 | HPF On | Key On | LMF On | FX2 Pre Fader |
+| B7 | Filters Dyn S/C | Filters Dyn S/C | LF Bell | FX3 Pre Fader |
+| B8 | — | — | LF On | FX4 Pre Fader |
+
+Shared on every page: Speed Dial = `Level`, Speed Dial click = `Solo`,
+Crossfader = `Pan`.
+
+PermaBar mapping: **MIXER** → Mixer, **USER** → Dynamics, **INSTR** → EQ,
+**FX** → FX, and **Page −/+** step in that order, wrapping. Learn and View are
+spare. The unit has no display, so the only page indicator is the lit PermaBar
+jump-button LED.
+
+### The scope: `Reason Main Mixer Channel`
+
+The map carries **one** scope. A channel strip needs `Reason Main Mixer
+Channel`, which exposes every channel target in a single flat namespace
+(`Width`, `C Threshold`, `FX1 Send Level`, …), so a page can pull from
+anywhere.
+
+`Reason Master Section` was considered and **rejected**: its channel targets
+are partitioned by a `Define Group Target TheGroup` whose values are section
+names (`Pan`, `EQ1`, `EQ2`, `Dyn1`, `Dyn2`, `Sends1`, `Sends2`, `Ins1`,
+`Ins2`), and a Map line carries only *one* group value. Our pages draw from
+several sections at once — the Mixer page needs Pan + EQ1 + EQ2 — so no single
+group value can serve a page. `TheGroup` also gates `Shift=Channel`, which
+Reason owns. The factory AlphaTrack map shows the consequence: it drives each
+section from a separate physical button, one section at a time. The Master
+Section scope is for the master bus and FX returns anyway, not a channel strip.
+
+### Item sets: one per page
+
+A `.remotemap` maps **one control-surface item to exactly one remotable per
+scope**, evaluated statically — there is no way to re-point `Knob 1` from
+outside Reason. So each page's controls are separate items: `Knob 1 Mixer` …
+`Knob 8 FX`, `Button 1 Mixer` … `Button 8 FX`. The map gives each its own
+target, and the driver's per-page CCs select the item without Reason ever
+being told a page changed. This is the same technique the Akai MPK Mini Play
+codec uses for its banks (`Knob 1 A` / `Knob 1 B`).
+
+The codec therefore defines **69 items** — `_Scope`, `Page`, 4 × (8 knobs +
+8 buttons), then `Speed Dial`, `Speed Dial Button`, `Crossfader` — and the
+driver's per-page CCs are what route a physical dial to the right one.
+
+### Ring feedback
+
+Rings do **not** bank: there are only 8 ring CCs, shared by all four pages.
+Each page's knob emits an output on the same ring CC, and only the current
+page's item is ever moved, so the definitions cannot fight. The driver holds
+one ring cache, which is why a page change blanks the rings until the new page
+repaints. Ring *modes* are per page and owned by the driver
+(`Midi:Paging:RingModes`); `gRingModes` in the codec is only the placeholder
+used before the first echo arrives.
+
+### Target names are verified
+
+Every `Remotable Item` in the map was checked against the targets in Reason's
+own factory `.remotemap` files. The scope's names are **not** always the
+display names:
+
+| Display name | Actual remotable |
+|---|---|
+| Comp Threshold / Ratio / Peak / Fast Attack | `C Threshold`, `C Ratio`, `C Peak`, `C Fast Atk` |
+| Comp Release | `C Release` |
+| Gate Threshold / Range / Fast Attack / Release / Hold | `G Threshold`, `G Range`, `G Fast Atk`, `G Release`, `G Hold` |
+| Gate Expander, Gate Key On | `Expander`, `Key On` |
+| LPF Freq, HPF Freq, HF Freq, HMF Freq | `LPF Frequency`, `HPF Frequency`, `HF Frequency`, `HMF Frequency` |
+| FX1 Send Pre Fader | `FX1 Pre Fader` |
+
+A misspelled target fails silently. `remote/scripts/verify-map.ps1` re-checks
+the whole three-way contract (map ↔ codec ↔ `appsettings.json`) against the
+factory maps and is the quickest way to catch a typo.
+the whole three-way contract (map ↔ codec ↔ `appsettings.json`) against the
+factory maps and is the quickest way to catch a typo.
+
+### Verifying
+
+```
+pwsh -NoProfile -File remote/scripts/verify-map.ps1
+```
+
+It reports bad targets, items the codec doesn't define, and any CC mismatch
+between the codec's page tables and the driver's `Midi:Paging` config.
 
 ## autocrap: what translates
 

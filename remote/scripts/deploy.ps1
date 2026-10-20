@@ -36,17 +36,19 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
-$RepoRoot   = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$RemoteRoot = Join-Path $env:ProgramData 'Propellerhead Software\Remote'
-$BackupRoot = Join-Path $RepoRoot 'backups'
+# $PSScriptRoot is <repo>\remote\scripts, so '..' is the "remote" folder that
+# holds Codecs/ and Maps/ - not the repository root.
+$RemoteSource = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$RemoteRoot   = Join-Path $env:ProgramData 'Propellerhead Software\Remote'
+$BackupRoot   = Join-Path $RemoteSource 'backups'
 
 $Manufacturer = 'Nuts'
 $CodecDest    = Join-Path $RemoteRoot "Codecs\Lua Codecs\$Manufacturer"
 $MapsDest     = Join-Path $RemoteRoot "Maps\$Manufacturer"
 
-$codecSrcDir = Join-Path $RepoRoot "Codecs\Lua Codecs\$Manufacturer"
+$codecSrcDir = Join-Path $RemoteSource "Codecs\Lua Codecs\$Manufacturer"
 $codecFiles  = @(Get-ChildItem -Path (Join-Path $codecSrcDir 'Nocturn.*') -ErrorAction SilentlyContinue)
-$mapFiles    = Join-Path $RepoRoot "Maps\$Manufacturer\*.remotemap"
+$mapFiles    = Join-Path $RemoteSource "Maps\$Manufacturer\*.remotemap"
 
 if (-not (Test-Path -LiteralPath $RemoteRoot)) {
     throw "Reason Remote folder not found: $RemoteRoot. Is Reason installed?"
@@ -56,7 +58,7 @@ if ($codecFiles.Count -eq 0) {
 }
 $foundMaps = @(Get-ChildItem -Path $mapFiles -ErrorAction SilentlyContinue)
 if ($foundMaps.Count -eq 0) {
-    throw "No .remotemap files found in $RepoRoot\Maps\$Manufacturer\"
+    throw "No .remotemap files found in $RemoteSource\Maps\$Manufacturer\"
 }
 
 # --- optional backup of the files that will be overwritten ----------------

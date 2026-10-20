@@ -1,0 +1,181 @@
+Propellerhead Remote Mapping File
+File Format Version	1.0.0
+Control Surface Manufacturer	Nuts
+Control Surface Model	Nocturn
+Map Version	2.0.0
+
+
+//======================================================================
+//  Novation Nocturn - Reason Remote map
+//
+//  Reason loads every scope for a control surface from a single .remotemap.
+//  The Nocturn has no keybed and no pads, so there is no Master Keyboard
+//  scope and no drum/pad mapping.
+//
+//  WHY ONLY "Reason Main Mixer Channel"
+//  ------------------------------------
+//  The surface is a channel strip, and there is exactly one scope that can
+//  carry a four-page channel strip: "Reason Main Mixer Channel". It exposes
+//  every channel target we need in ONE flat namespace ("Width", "C
+//  Threshold", "FX1 Send Level", ...), so a page can pull from anywhere.
+//
+//  "Reason Master Section" was considered and rejected. Its channel-strip
+//  targets are partitioned by a "Define Group Target TheGroup" whose values
+//  are section names (Pan, EQ1, EQ2, Dyn1, Dyn2, Sends1, Sends2, Ins1,
+//  Ins2), and a Map line carries only ONE group value. Our pages draw from
+//  several sections at once - the Mixer page needs Pan + EQ1 + EQ2 - so no
+//  single group value can serve a page. TheGroup also gates "Shift=Channel",
+//  which Reason owns. The factory AlphaTrack map shows the consequence: it
+//  drives each section from a separate physical button, one section at a
+//  time. That is precisely the "Reason selects the variation" limitation we
+//  are avoiding. The Master Section scope is for the master bus and FX
+//  returns in any case, not for a channel strip.
+//
+//  THE SURFACE PAGES
+//  -----------------
+//  The 8 dials and the 8 green page-row buttons BANK. A page is a set of
+//  parameters on those same physical controls, and the four pages are the
+//  four sections of the selected mixer channel:
+//
+//    page 1  MIXER     the channel's input and filter strip
+//    page 2  DYNAMICS  the channel's compressor and gate
+//    page 3  EQ        the channel's 4-band EQ
+//    page 4  FX        the channel's 4 insert rotaries + 4 sends
+//
+//  Paging is owned by the DRIVER, not by Reason. The driver sends a
+//  different CC for a dial or button depending on the active page, steps
+//  the page from the PermaBar, and never forwards the page buttons. Reason
+//  therefore sees four separate control-surface item sets and never learns
+//  that a page changed.
+//
+//  That is why each page's controls are separate ITEMS here - "Knob 1
+//  Mixer" and "Knob 1 EQ" - rather than one item with a variation. A
+//  .remotemap maps one item to exactly one remotable per scope, and Reason
+//  evaluates the map statically: there is no way to re-point one item from
+//  outside Reason. Duplicating the item set per page is the same technique
+//  the Akai MPK Mini Play codec uses for its banks ("Knob 1 A" / "Knob 1 B").
+//
+//  "Define Group" variations would also give four mappings, but Reason owns
+//  which variation is active, so Page -/+ stepping could not exist. The
+//  driver-side CC tables (Midi:Paging in appsettings.json) are what let the
+//  PermaBar step pages, so item-per-page is the approach that keeps the
+//  whole design.
+//
+//  SHARED ACROSS EVERY PAGE: the Speed Dial and its click, and the
+//  Crossfader. They keep one item and one mapping. The PermaBar page
+//  buttons (Page -/+, and the MIXER / USER / INSTR / FX jumps) are not
+//  items at all - the driver consumes them.
+//
+//  Page assignments (PermaBar silkscreen -> page):
+//    MIXER -> Mixer      USER -> Dynamics
+//    INSTR -> EQ         FX   -> FX
+//    Page - / Page +     step back / forward, wrapping
+//
+//  UNMAPPED ITEMS. Pages 1 and 3 place their parameters on the odd dials
+//  only (E1/E3/E5/E7), so Knob 2/4/6/8 of those pages are deliberately
+//  unmapped - the gap separates function groups on the surface. Pages 2
+//  and 4 use all 8 dials, because each has 8 continuous parameters and no
+//  spare dial to leave a gap with. Button 8 is spare on pages 1 and 2. An
+//  item with no Map line simply does nothing.
+//
+//  CONTINUOUS vs ON/OFF. Dials carry continuous parameters and the page-row
+//  switches carry on/off states, because a page-row item is a Toggle: an
+//  on/off value is the only thing it can set. The Dynamics page's gate
+//  "Expander" is a switch on B4 for that reason, and the compressor's
+//  Release / Fast Attack and the gate's Range / Release / Hold are dials,
+//  not switches.
+//
+//  NAMES ARE VERIFIED. Every Remotable Item below was checked against the
+//  targets in Reason's own factory .remotemap files for this scope. The
+//  scope's names are not always the display names: the compressor is
+//  "C Threshold" (not "Comp Threshold"), the gate's "Expander" has no
+//  "Gate" prefix, and the sends are "FX1 Pre Fader" (not "FX1 Send Pre
+//  Fader"). A misspelled target fails silently.
+//======================================================================
+
+Scope	Propellerheads	Reason Main Mixer Channel
+//	Control Surface Item	Key	Remotable Item	Scale	Mode
+
+Map	_Scope		"Reason Main Mixer Channel"
+
+// --- Page 1: Mixer ----------------------------------------------------
+Map	Knob 1 Mixer		Width
+Map	Knob 3 Mixer		Input Gain
+Map	Knob 5 Mixer		LPF Frequency
+Map	Knob 7 Mixer		HPF Frequency
+
+Map	Button 1 Mixer		Mute
+Map	Button 2 Mixer		Invert Phase
+Map	Button 3 Mixer		Insert Pre
+Map	Button 4 Mixer		Dyn Post EQ
+Map	Button 5 Mixer		LPF On
+Map	Button 6 Mixer		HPF On
+Map	Button 7 Mixer		Filters Dyn S/C
+
+// --- Page 2: Dynamics -------------------------------------------------
+// All 8 dials are used here, because the page has 8 continuous parameters:
+// the compressor's Threshold/Ratio/Release/Fast Attack on E1-E4 (the top
+// row) and the gate's Threshold/Range/Release/Hold on E5-E8 (the bottom
+// row). The odd/even gap of pages 1 and 3 is NOT kept on this page: there
+// simply is no spare dial, and leaving G Release/G Hold off the page was
+// the bug this layout fixes.
+//
+// The switches carry only ON/OFF states. The compressor's Release and Fast
+// Attack and the gate's Range / Release / Hold are values, so they are dials
+// here rather than switches; that is what freed Button 6 for Key On and made
+// room for the previously-unmapped C Release / G Release / G Hold.
+Map	Knob 1 Dynamics		C Threshold
+Map	Knob 2 Dynamics		C Ratio
+Map	Knob 3 Dynamics		C Release
+Map	Knob 4 Dynamics		C Fast Atk
+Map	Knob 5 Dynamics		G Threshold
+Map	Knob 6 Dynamics		G Range
+Map	Knob 7 Dynamics		G Release
+Map	Knob 8 Dynamics		G Hold
+
+Map	Button 1 Dynamics		Comp On
+Map	Button 2 Dynamics		C Peak
+Map	Button 3 Dynamics		Gate On
+Map	Button 4 Dynamics		Expander
+Map	Button 5 Dynamics		G Fast Atk
+Map	Button 6 Dynamics		Key On
+Map	Button 7 Dynamics		Filters Dyn S/C
+
+// --- Page 3: EQ -------------------------------------------------------
+Map	Knob 1 EQ		HF Gain
+Map	Knob 3 EQ		HF Frequency
+Map	Knob 5 EQ		HMF Gain
+Map	Knob 7 EQ		HMF Frequency
+
+Map	Button 1 EQ		EQ On
+Map	Button 2 EQ		EQ E Mode
+Map	Button 3 EQ		HF Bell
+Map	Button 4 EQ		HF On
+Map	Button 5 EQ		HMF On
+Map	Button 6 EQ		LMF On
+Map	Button 7 EQ		LF Bell
+Map	Button 8 EQ		LF On
+
+// --- Page 4: FX -------------------------------------------------------
+Map	Knob 1 FX		Rotary 1
+Map	Knob 2 FX		Rotary 2
+Map	Knob 3 FX		Rotary 3
+Map	Knob 4 FX		Rotary 4
+Map	Knob 5 FX		FX1 Send Level
+Map	Knob 6 FX		FX2 Send Level
+Map	Knob 7 FX		FX3 Send Level
+Map	Knob 8 FX		FX4 Send Level
+
+Map	Button 1 FX		Button 1
+Map	Button 2 FX		Button 2
+Map	Button 3 FX		Button 3
+Map	Button 4 FX		Button 4
+Map	Button 5 FX		FX1 Pre Fader
+Map	Button 6 FX		FX2 Pre Fader
+Map	Button 7 FX		FX3 Pre Fader
+Map	Button 8 FX		FX4 Pre Fader
+
+// --- Shared: same on every page ---------------------------------------
+Map	Speed Dial		Level
+Map	Speed Dial Button		Solo
+Map	Crossfader		Pan

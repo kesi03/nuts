@@ -150,6 +150,80 @@ kind for that row is `toggle` - the two settings are **coupled**: with
 target off while the button is held. Change them together. The PermaBar Page
 −/+ items stay `input="button"`, because a trigger wants a press.
 
+### Paging — the driver banks the CCs
+
+A **page** is a set of CC assignments for the controls that bank. The same
+physical dial or switch sends a *different CC* depending on the active page,
+so Reason sees a different item on the same control. A page is a Reason mixer
+channel, and moving channels is paging.
+
+This is deliberately **driver-side CC banking**, not MIDI channels and not
+Reason's `Define Group` variations. Reason `Define Group` is the factory-native
+alternative (nanoKONTROL2, Livid block, Ohm64 and A-Designs A-PRO all use it,
+and it costs zero CCs because Reason owns the variation and repaints feedback),
+but it cannot express Page −/+ stepping. MIDI channels would work too, but the
+only difference between pages is *which* CCs the 8 dials and 8 buttons send -
+the speed dial, its click and touch and the crossfader stay the same - so a
+separate CC block per page is the smaller change.
+
+Only the **8 encoders and the 8 page-row switches** bank. The speed dial, its
+click, its touch, the crossfader, the encoder touches, the ring values, the
+ring modes and the PermaBar are **shared**: they mean the same thing on every
+page and keep their fixed CCs.
+
+Configuration is `Midi:Paging` (see `Midi/PagingOptions.cs`), and it is
+surface-independent: it describes *how many* controls bank and *which CC each
+sends per page*, so another surface - or another Reason device scope mapped
+onto this one - reuses it. Every page gets the same number of slots
+(`PageCount × BankedEncoders` encoder CCs, `PageCount × BankedButtons` button
+CCs, listed page-major), and the tables must be complete: fixed stride is what
+makes an incoming CC decodable by arithmetic rather than by search.
+
+Four pages ship, fixed 16 slots each:
+
+| # | PermaBar jump | Name | Encoder CCs | Button CCs | Ring modes |
+|---|---|---|---|---|---|
+| 1 | MIXER (button 15) | Mixer | 16–23 | 102–109 | all `Fill` |
+| 2 | USER (button 12) | Dynamics | 56–63 | 64–71 | all `Fill` |
+| 3 | INSTR (button 14) | EQ | 72–79 | 90–97 | `CentreBoth` on E1/E5, `Fill` elsewhere |
+| 4 | FX (button 13) | FX | 0–7 | 25–31, 41 | all `Fill` |
+
+Page 1 is the layout the surface already used, so it costs no new CCs. The
+whole allocation is 40 shared + 64 banked = 104 of the 120 available (0–119),
+leaving **16 spare**: `10–15`, `42–47`, `98–101` — exactly enough for one more
+page if it is ever needed.
+
+Page − and Page + are PermaBar buttons **10 and 11** (surface indices), shared
+because they must work from any page. A jump button lights while its page is
+active, which is the only page indicator the surface has — the unit cannot
+display text.
+
+**Page state lives in the driver.** Jump buttons and Page −/+ are consumed by
+the driver and never reach the DAW: Reason has no idea the surface has pages.
+On a page change the driver:
+
+* sends the new page number (1-based) on **CC 119** — the codec's cue to
+  select the right item table and repaint;
+* repaints every banked switch from that page's own latch, since each page
+  holds a different state for the same physical switch;
+* repaints the rings with the page's modes and blanks their values (the new
+  page's values are the DAW's to send).
+
+The page echo is also sent once on every connect, so a codec that loads after
+the driver - or a Reason restart - still learns the current page.
+
+`TryMapButtonCc` resolves DAW feedback against the **active page only**, so a
+stale LED CC from another page cannot light the wrong switch.
+
+The driver logs its whole CC table at startup, so any CC in a trace decodes
+from the log alone:
+
+```
+Paging: 4 page(s), banked encoders 0..7, banked buttons 0..7, page echo CC 119, step buttons 10/11.
+  page 1 Mixer: encoders 16 17 ... 23, buttons 102 ... 109, ring modes Fill ..., jump button 15
+  ...
+```
+
 Configuration is per group, with optional per-button overrides
 (`PerButton`, keyed by surface button number 1-16), so any button can be
 re-picked without rebuilding:
@@ -174,17 +248,24 @@ and the following real press sends 0, which clears the flag and is delivered.
 
 ### Surface → DAW (the driver sends)
 
+Numbers below are the **fixed/shared** ones. Encoders 1–8 and page buttons 1–8
+are **banked** and send the page's CCs instead — see
+[Paging](#paging--the-driver-banks-the-ccs); the values shown are page 1's.
+
 | Surface control | MIDI message | Notes |
 |---|---|---|
-| Encoders 1–8 (rotation) | **CC 16–23**, relative value | Two's-complement passthrough of the wire byte: `+n` = `n` (1–63), `−n` = `128−n` (65–127); center = 0 is never sent. 64±n deltas arrive as one message per step batch. |
-| Encoder 1–8 (touch) | **CC 80–87**, 127 down / 0 up | For soft-takeover logic in the DAW or a Remote codec. |
-| Page buttons 1-8 (under encoders) | **CC 102–109**, value 127 / 0 | Kind configurable (`Midi:Mapping:ButtonKinds:PageRow`, default `toggle`): a latching switch sends its new state on every press and nothing on release; `momentary` sends 127 on press and 0 on release. |
-| PermaBar Learn/View/Page−/Page+/User/FX/INST/MIXER | **CC 110–117**, value 127 / 0 | Switch index 8–15 in surface order. |
-| Speed dial rotation | **CC 24**, relative | Same two's-complement encoding as the encoders. |
+| Encoders 1–8 (rotation) | **CC 16–23** on page 1, per-page thereafter | Two's-complement passthrough of the wire byte: `+n` = `n` (1–63), `−n` = `128−n` (65–127); center = 0 is never sent. 64±n deltas arrive as one message per step batch. |
+| Encoder 1–8 (touch) | **CC 80–87**, 127 down / 0 up | For soft-takeover logic in the DAW or a Remote codec. Shared - not paged. |
+| Page buttons 1-8 (under encoders) | **CC 102–109** on page 1, per-page thereafter | Kind configurable (`Midi:Mapping:ButtonKinds:PageRow`, default `toggle`): a latching switch sends its new state on every press and nothing on release; `momentary` sends 127 on press and 0 on release. |
+| PermaBar MIXER/USER/INSTR/FX | **CC 115/112/114/113**, value 127 / 0 | Page jump buttons. Consumed by the driver, not forwarded; the one for the active page is lit. |
+| PermaBar Page−/Page+ | **CC 110/111**, value 127 / 0 | Consumed by the driver, not forwarded; steps the page, wrapping. |
+| PermaBar Learn/View | **CC 116/117**, value 127 / 0 | Unmapped. |
+| Speed dial rotation | **CC 24**, relative | Same two's-complement encoding as the encoders. Shared - not paged. |
 | Speed dial click | **CC 118**, value 127 / 0 | Wire control 81; fixed momentary. |
 | Speed dial (touch) | **CC 88**, 127 / 0 | |
 | Crossfader | **CC 8 (MSB) + CC 9 (LSB)**, 14-bit | Sent as a two-word pair on every crossfader update. The wire sends the position as a coarse + fine pair (72 = top 7 bits, 73 = fine bit); the input parser composes `WideValue = coarse << 7 \| fine` and the codec reads the top 7 bits (128 positions, plenty for scrolling). |
 | Crossfader (touch) | **CC 89**, 127 / 0 | Wire control 48/83 touch (see protocol.md open question). |
+| Page echo | **CC 119**, page number 1-based | Driver → DAW only; tells the codec which page is active. |
 
 Unknown wire controls (e.g. the unmapped `0x30`) produce no MIDI.
 
@@ -192,10 +273,15 @@ Unknown wire controls (e.g. the unmapped `0x30`) produce no MIDI.
 
 | MIDI message | Surface effect | Value ranges |
 |---|---|---|
-| **CC 102–117** | Page/PermaBar switch LED on/off | CC 0 = off, anything > 0 = on. Wire LEDs are on/off only, fixed color per row (page buttons green, PermaBar red); the same CCs the switches themselves send, so a press lights the button before the DAW answers. |
-| **CC 32–39** | Ring *value* of encoders 1–8 | 0–11 (clamped; 11 = full ring). Mode is kept from `CC 48–55` (default `Fill`). |
+| **CC 102–117** (and each page's banked CCs) | Page/PermaBar switch LED on/off | CC 0 = off, anything > 0 = on. Wire LEDs are on/off only, fixed color per row (page buttons green, PermaBar red); the same CCs the switches themselves send, so a press lights the button before the DAW answers. Banked buttons resolve against the active page only. |
+| **CC 32–39** | Ring *value* of encoders 1–8 | 0–11 (clamped; 11 = full ring). Mode is kept from `CC 48–55`, or from the page's ring-mode table until the DAW overrides it. |
 | **CC 40** | Speed dial ring value | 0–11 (clamped). |
-| **CC 48–55** | Ring *mode* of encoders 1–8 | 0–5 = firmware modes `Fill`, `FillFromMax`, `CentreSingle`, `CentreBoth`, `SingleDot`, `SingleDotInverted`. 6+ ignored. |
+| **CC 48–55** | Ring *mode* of encoders 1–8 | 0–5 = firmware modes `Fill`, `FillFromMax`, `CentreSingle`, `CentreBoth`, `SingleDot`, `SingleDotInverted`. 6+ ignored. Overrides the page's default for as long as that page is current; a page change restores the page table. |
+
+Ring values are **shared** across pages even though the encoders bank: a page
+change blanks them and repaints the modes, and the codec then sends the current
+page's values. That is why mapping every page's `Knob 1` onto the same CC 32
+does not fight itself - only the active page's values are live.
 
 Value and mode updates are independent (a DAW may send only values), so the
 bridge keeps the last mode per encoder and the last value per encoder and

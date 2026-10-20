@@ -1,31 +1,65 @@
 {
-  "description": "Novation Nocturn control numbers. This is the source-of-truth table shared by the nuts driver (src/Nuts.Driver/appsettings.json, section Midi:Mapping) and the Reason Remote codec (remote/Codecs/Lua Codecs/Nuts/Nocturn.lua, lookup tables at the top). Change all three together.",
+  "description": "Novation Nocturn control numbers. This is the source-of-truth table shared by the nuts driver (src/Nuts.Driver/appsettings.json, sections Midi:Mapping and Midi:Paging) and the Reason Remote codec (remote/Codecs/Lua Codecs/Nuts/Nocturn.lua, lookup tables at the top). Change all three together, then run remote/scripts/verify-map.ps1.",
 
   "midiChannel": 1,
 
+  "paging": {
+    "description": "The driver banks the CCs for the 8 dials and the 8 page-row buttons. A page is a set of parameters on those same physical controls (the four sections of the selected mixer channel: Mixer, Dynamics, EQ, FX). The driver steps the page from the PermaBar and echoes the live page to the codec on CC 119; the page buttons are consumed driver-side and never reach Reason. Only the dials and the page row bank - see 'shared' below.",
+    "pageCount": 4,
+    "pageNames": ["Mixer", "Dynamics", "EQ", "FX"],
+    "pageEchoCc": 119,
+    "prevButton": "surface index 10 (PermaBar Page -)",
+    "nextButton": "surface index 11 (PermaBar Page +)",
+    "jumpButtons": "surface index 15 = Mixer, 12 = Dynamics, 14 = EQ, 13 = FX (page order defines the -/+ wrap)",
+    "dialCcs": {
+      "1": [16, 17, 18, 19, 20, 21, 22, 23],
+      "2": [56, 57, 58, 59, 60, 61, 62, 63],
+      "3": [72, 73, 74, 75, 76, 77, 78, 79],
+      "4": [0, 1, 2, 3, 4, 5, 6, 7]
+    },
+    "pageRowCcs": {
+      "1": [102, 103, 104, 105, 106, 107, 108, 109],
+      "2": [64, 65, 66, 67, 68, 69, 70, 71],
+      "3": [90, 91, 92, 93, 94, 95, 96, 97],
+      "4": [25, 26, 27, 28, 29, 30, 31, 41]
+    },
+    "budget": "40 shared + 64 banked = 104 of CC 0-119 used. 16 spare: 10-15, 42-47, 98-101.",
+    "ringModesPerPage": {
+      "description": "Ring display mode per dial, per page. Owned by the driver (Midi:Paging:RingModes); it repaints the modes on every page change. 0 = fill from minimum, 3 = centre both directions.",
+      "1": [0, 0, 0, 0, 0, 0, 0, 0],
+      "2": [0, 0, 0, 0, 0, 0, 0, 0],
+      "3": [3, 0, 0, 0, 3, 0, 0, 0],
+      "4": [0, 0, 0, 0, 0, 0, 0, 0],
+      "note": "Page 3 uses centre mode on the two bipolar gain dials (E1 HF Gain, E5 HMF Gain)."
+    }
+  },
+
   "dials": {
-    "description": "Endless encoders. Relative, two's complement: 1-63 = clockwise, 65-127 = counter-clockwise.",
-    "rotation": { "1": 16, "2": 17, "3": 18, "4": 19, "5": 20, "6": 21, "7": 22, "8": 23 },
+    "description": "Endless encoders, banked by page. Relative, two's complement: 1-63 = clockwise, 65-127 = counter-clockwise.",
+    "rotation": "see paging.dialCcs - CCs differ per page",
+    "page1VerifiedCs": { "1": 16, "2": 17, "3": 18, "4": 19, "5": 20, "6": 21, "7": 22, "8": 23 },
     "touch": { "1": 80, "2": 81, "3": 82, "4": 83, "5": 84, "6": 85, "7": 86, "8": 87 },
     "touchValues": "127 = touched, 0 = released. Reserved for soft takeover."
   },
 
   "switches": {
-    "description": "The 16 buttons, modelled as switches, on CCs (not notes) in both directions: a CC carries an absolute value and keeps the whole note range on the loopback free for a keyboard. The hardware addresses these buttons and their LEDs by note number 0-15 on its USB wire; the driver re-publishes them as the CCs below and translates the LED CCs back. Each group has a kind (see docs/midi-mapping.md): \"momentary\" = press sends 127, release sends 0, the DAW owns the state and the LED; \"toggle\" = the driver keeps a latch, a press flips it, lights the LED and sends the new state (127 = on, 0 = off), a release is silent, and DAW feedback overwrites the latch. Measured on Reason 10 (2026-10-19): a codec \"button\" item acts on the press edge only and ignores a value 0, so a latching switch on a button item would toggle only every second press. The page row's codec items are therefore input=\"value\" (absolute 0-127): Reason sets the Toggle remotables (Mute, Solo, EQ On, ...) from the value, which is what makes toggle work end to end. Page row = toggle + value items; PermaBar = momentary + button items.",
+    "description": "The 16 buttons, modelled as switches, on CCs (not notes) in both directions: a CC carries an absolute value and keeps the whole note range on the loopback free for a keyboard. The hardware addresses these buttons and their LEDs by note number 0-15 on its USB wire; the driver re-publishes them as the CCs below and translates the LED CCs back. Each group has a kind (see docs/midi-mapping.md): \"momentary\" = press sends 127, release sends 0, the DAW owns the state and the LED; \"toggle\" = the driver keeps a latch, a press flips it, lights the LED and sends the new state (127 = on, 0 = off), a release is silent, and DAW feedback overwrites the latch. Measured on Reason 10 (2026-10-19): a codec \"button\" item acts on the press edge only and ignores a value 0, so a latching switch on a button item would toggle only every second press. The page row's codec items are therefore input=\"value\" (absolute 0-127): Reason sets the Toggle remotables (Mute, Comp On, EQ On, ...) from the value, which is what makes toggle work end to end. Page row = toggle + value items; PermaBar = momentary + button items.",
     "pageRow": {
-      "description": "8 switches above the dials, green LEDs. Indices 0-7. Kind: toggle, and the codec declares them as value items (input=\"value\", min=0, max=127).",
+      "description": "8 switches above the dials, green LEDs. Indices 0-7. Banked by page (see paging.pageRowCcs). Kind: toggle, and the codec declares one value item per page ('Button n <Page>').",
       "kind": "toggle",
-      "ccs": { "1": 102, "2": 103, "3": 104, "4": 105, "5": 106, "6": 107, "7": 108, "8": 109 }
+      "ccs": "see paging.pageRowCcs - CCs differ per page; page 1 is 102-109"
     },
     "permaBar": {
-      "description": "8 switches along the bottom, red LEDs. Indices 8-15 in surface order. Kind: momentary (only Page -/+ are mapped for the channel window; both are triggers and stay button items).",
+      "description": "8 switches along the bottom, red LEDs. Indices 8-15 in surface order. Kind: momentary. The driver consumes all eight for paging - Page -/+ step the page, and MIXER/USER/INSTR/FX jump to one - so none of them reach Reason.",
       "kind": "momentary",
-      "ccs": { "learn": 110, "view": 111, "pageDown": 112, "pageUp": 113, "user": 114, "fx": 115, "inst": 116, "mixer": 117 }
+      "ccs": { "learn": 110, "view": 111, "pageDown": 112, "pageUp": 113, "user": 114, "fx": 115, "inst": 116, "mixer": 117 },
+      "pageAssignment": { "mixer": "Mixer", "user": "Dynamics", "inst": "EQ", "fx": "FX" },
+      "spare": "learn, view"
     }
   },
 
   "speedDial": {
-    "description": "Relative, same encoding as the dials. The click is the only press on the speed dial.",
+    "description": "Shared across pages - not banked. Relative, same encoding as the dials. The click is the only press on the speed dial.",
     "rotation": 24,
     "click": 118,
     "clickKind": "momentary - a click, not a switch",
@@ -33,23 +67,52 @@
   },
 
   "crossfader": {
-    "description": "14-bit absolute pair [MSB, LSB]. The codec uses the MSB only (128 positions).",
+    "description": "Shared across pages - not banked. 14-bit absolute pair [MSB, LSB]. The codec uses the MSB only (128 positions). Mapped to Pan on every page.",
     "msb": 8,
     "lsb": 9,
     "touch": 89
   },
 
+  "shared": {
+    "description": "Controls with one CC across every page. Everything not listed in paging.dialCcs / paging.pageRowCcs is shared.",
+    "ccs": "24 speed dial, 118 speed dial click, 88 speed dial touch, 8/9 crossfader, 89 crossfader touch, 32-39 + 40 ring values, 48-55 ring modes, 110-117 PermaBar"
+  },
+
   "feedbackToSurface": {
-    "description": "DAW -> surface. Knob ring values are 0-11 segments (the driver clamps anything higher); ring modes are 0-5; switch LEDs are on/off on the same CCs as the switches (0 = off, > 0 = on), which the driver turns into the hardware's note LED addresses.",
+    "description": "DAW -> surface. Knob ring values are 0-11 segments (the driver clamps anything higher); ring modes are 0-5; switch LEDs are on/off on the same CCs as the switches (0 = off, > 0 = on), which the driver turns into the hardware's note LED addresses. Rings do NOT bank: all four pages' knobs share the 8 ring CCs, and only the current page's item is ever moved. The driver holds one ring cache, so a page change blanks the rings until the new page repaints.",
     "knobRingValue": { "1": 32, "2": 33, "3": 34, "4": 35, "5": 36, "6": 37, "7": 38, "8": 39 },
     "speedDialRingValue": 40,
     "knobRingMode": { "1": 48, "2": 49, "3": 50, "4": 51, "5": 52, "6": 53, "7": 54, "8": 55 },
-    "switchLeds": "same CCs as the switch table above (102-117)"
+    "switchLeds": "same CCs as the switch table above (page 1: 102-109, page 2: 64-71, page 3: 90-97, page 4: 25-31 + 41). The driver resolves an incoming LED CC against the active page only, so inactive pages are ignored."
   },
 
   "ringModes": {
-    "description": "Firmware-defined ring display modes used by gRingModes in Nocturn.lua, matching the channel-strip layout in Nocturn.remotemap.",
-    "0": "fill from minimum - used by Level and the FX send levels",
-    "3": "centre, both directions - used by Pan and the EQ gains"
+    "description": "Firmware-defined ring display modes. Per page; see paging.ringModesPerPage. gRingModes in Nocturn.lua is only the placeholder used before the driver's first page echo arrives.",
+    "0": "fill from minimum - used by the FX send levels and the non-bipolar dials",
+    "3": "centre, both directions - used by the EQ page's bipolar gains (E1 HF Gain, E5 HMF Gain)"
+  },
+
+  "pageParameters": {
+    "description": "What each page's 8 dials and 8 page-row buttons are mapped to. Documentation only - the authority is remote/Maps/Nuts/Nocturn.remotemap, and verify-map.ps1 keeps the three contracts in step. The rule the layout follows: CONTINUOUS parameters live on dials, ON/OFF states live on the page-row switches. A value parameter on a toggle switch can only ever slam between 0 and 127.",
+    "1 Mixer": {
+      "dials": { "E1": "Width", "E3": "Input Gain", "E5": "LPF Frequency", "E7": "HPF Frequency" },
+      "buttons": { "B1": "Mute", "B2": "Invert Phase", "B3": "Insert Pre", "B4": "Dyn Post EQ", "B5": "LPF On", "B6": "HPF On", "B7": "Filters Dyn S/C", "B8": "(spare)" },
+      "note": "Odd dials only - the gap separates the two filter groups from the input pair. B8 spare."
+    },
+    "2 Dynamics": {
+      "dials": { "E1": "C Threshold", "E2": "C Ratio", "E3": "C Release", "E4": "C Fast Atk", "E5": "G Threshold", "E6": "G Range", "E7": "G Release", "E8": "G Hold" },
+      "buttons": { "B1": "Comp On", "B2": "C Peak", "B3": "Gate On", "B4": "Expander", "B5": "G Fast Atk", "B6": "Key On", "B7": "Filters Dyn S/C", "B8": "(spare)" },
+      "note": "ALL 8 dials used - the page has 8 continuous parameters, so the odd/even gap is not kept. Top row E1-E4 is the compressor, bottom row E5-E8 the gate. Expander is a switch on B4."
+    },
+    "3 EQ": {
+      "dials": { "E1": "HF Gain", "E3": "HF Frequency", "E5": "HMF Gain", "E7": "HMF Frequency" },
+      "buttons": { "B1": "EQ On", "B2": "EQ E Mode", "B3": "HF Bell", "B4": "HF On", "B5": "HMF On", "B6": "LMF On", "B7": "LF Bell", "B8": "LF On" },
+      "note": "Odd dials only, as page 1. E1 and E5 are the bipolar gains and use the centre ring mode."
+    },
+    "4 FX": {
+      "dials": { "E1": "Rotary 1", "E2": "Rotary 2", "E3": "Rotary 3", "E4": "Rotary 4", "E5": "FX1 Send Level", "E6": "FX2 Send Level", "E7": "FX3 Send Level", "E8": "FX4 Send Level" },
+      "buttons": { "B1": "Button 1", "B2": "Button 2", "B3": "Button 3", "B4": "Button 4", "B5": "FX1 Pre Fader", "B6": "FX2 Pre Fader", "B7": "FX3 Pre Fader", "B8": "FX4 Pre Fader" },
+      "note": "ALL 8 dials used: E1-E4 the insert rotaries, E5-E8 the send levels."
+    }
   }
 }

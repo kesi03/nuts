@@ -9,10 +9,12 @@ namespace Nuts.Driver.Midi;
 ///
 /// Which CC numbers are used is configurable through
 /// <see cref="MidiMappingOptions"/> (appsettings "Midi:Mapping"), so the
-/// layout can be re-picked without rebuilding. Whatever is configured here
-/// must match the Reason codec's tables — remote/mapping/
-/// nocturn-controls.json and the lookups at the top of Nocturn.lua.
-/// The defaults are documented in docs/midi-mapping.md.
+/// layout can be re-picked without rebuilding. Controls that bank go through
+/// <see cref="PageModel"/> (appsettings "Midi:Paging") instead: the same
+/// physical dial or switch sends a different CC depending on the active
+/// page. Whatever is configured here must match the Reason codec's tables -
+/// remote/mapping/nocturn-controls.json and the lookups at the top of
+/// Nocturn.lua. The defaults are documented in docs/midi-mapping.md.
 /// </summary>
 public sealed class MidiMapping
 {
@@ -24,6 +26,9 @@ public sealed class MidiMapping
     private readonly byte[] _ringValueCcs;
     private readonly byte[] _ringModeCcs;
 
+    /// <summary>Page/banking model; owns every banked CC number.</summary>
+    public PageModel Pages { get; }
+
     public byte SpeedDialCc { get; }
     public byte SpeedDialTouchCc { get; }
     public byte SpeedDialButtonCc { get; }
@@ -32,7 +37,7 @@ public sealed class MidiMapping
     public byte XfaderTouchCc { get; }
     public byte SpeedDialRingCc { get; }
 
-    public MidiMapping(MidiMappingOptions options)
+    public MidiMapping(MidiMappingOptions options, PagingOptions paging)
     {
         _encoderCcs = ReadList(
             options.EncoderCcs ?? MidiMappingOptions.DefaultEncoderCcs, 8, "Midi:Mapping:EncoderCcs");
@@ -57,6 +62,34 @@ public sealed class MidiMapping
                 $"Midi:Mapping:XfaderCcs must contain exactly two CC numbers [MSB, LSB] (bound {xfaderCcs.Length}).");
         XfaderCcMsB = ReadNumber(xfaderCcs[0], "Midi:Mapping:XfaderCcs");
         XfaderCcLsB = ReadNumber(xfaderCcs[1], "Midi:Mapping:XfaderCcs");
+
+        Pages = PageModel.Create(paging, _encoderCcs, _buttonCcs);
+        Pages.ValidateAgainst(SharedCcs());
+    }
+
+    /// <summary>
+    /// Every CC number that stays meaningful whatever the page is. A banked
+    /// CC colliding with one of these would make an incoming message
+    /// ambiguous, so the overlap is a configuration error rather than a
+    /// silent misroute.
+    ///
+    /// The leading entries of the encoder and switch tables are excluded:
+    /// when those controls bank, the page tables replace them, and page 1 is
+    /// deliberately the same layout they used to describe.
+    /// </summary>
+    private byte[] SharedCcs()
+    {
+        var shared = new List<byte>
+        {
+            SpeedDialCc, SpeedDialButtonCc, SpeedDialTouchCc, SpeedDialRingCc,
+            XfaderCcMsB, XfaderCcLsB, XfaderTouchCc,
+        };
+        shared.AddRange(_encoderCcs.Skip(Pages.BankedEncoders));
+        shared.AddRange(_encoderTouchCcs);
+        shared.AddRange(_ringValueCcs);
+        shared.AddRange(_ringModeCcs);
+        shared.AddRange(_buttonCcs.Skip(Pages.BankedButtons));
+        return shared.Distinct().ToArray();
     }
 
     /// <summary>
@@ -68,6 +101,22 @@ public sealed class MidiMapping
         0x2000_0000u | ((uint)(status | Channel) << 16) | ((uint)data1 << 8) | data2;
 
     /// <summary>
+    /// CC number an encoder sends: banked (page-dependent) when the surface
+    /// banks it, otherwise the fixed shared table.
+    /// </summary>
+    public byte EncoderCcNumber(int index) =>
+        Pages.IsBankedEncoder(index) ? Pages.EncoderCc(Pages.Current, index) : _encoderCcs[index];
+
+    /// <summary>
+    /// CC number a switch sends: banked when the surface banks it, otherwise
+    /// the fixed shared table. The shared table's leading entries are only
+    /// consulted when paging is off - with paging on they are superseded by
+    /// the page tables.
+    /// </summary>
+    public byte ButtonCcNumber(int index) =>
+        Pages.IsBankedButton(index) ? Pages.ButtonCc(Pages.Current, index) : _buttonCcs[index];
+
+    /// <summary>
     /// Translates one surface input event into zero, one, or two UMP words to
     /// send to the DAW (the crossfader is the only two-word message: 14-bit
     /// CC pair MSB+LSB). Returns the number of words written.
@@ -77,7 +126,7 @@ public sealed class MidiMapping
         switch (ev.Kind)
         {
             case InputEventKind.Encoder when ev.Index < 8:
-                words[0] = ChannelVoice(0xB0, _encoderCcs[ev.Index], ev.Value);
+                words[0] = ChannelVoice(0xB0, EncoderCcNumber(ev.Index), ev.Value);
                 return 1;
 
             case InputEventKind.EncoderTouch when ev.Index < 8:
@@ -121,13 +170,31 @@ public sealed class MidiMapping
     /// keyboard, and because a CC is a value, which is what a state is.
     /// </summary>
     public uint ButtonCc(int index, byte value) =>
-        ChannelVoice(0xB0, _buttonCcs[index], value);
+        ChannelVoice(0xB0, ButtonCcNumber(index), value);
 
-    /// <summary>Maps a DAW-sent button-LED CC back to the surface button index.</summary>
+    /// <summary>
+    /// Maps a DAW-sent button-LED CC back to the surface button index.
+    /// Banked switches resolve against the active page only: the codec is
+    /// expected to speak about the page the surface is on, and a CC from
+    /// another page has no meaning here.
+    /// </summary>
     public bool TryMapButtonCc(byte cc, out int index)
     {
-        index = Array.IndexOf(_buttonCcs, cc);
-        return index >= 0;
+        if (Pages.TryMapButtonCc(Pages.Current, cc, out index))
+            return true;
+
+        // Shared switches (PermaBar): the tail of the shared table.
+        for (var i = Pages.BankedButtons; i < _buttonCcs.Length; i++)
+        {
+            if (_buttonCcs[i] == cc)
+            {
+                index = i;
+                return true;
+            }
+        }
+
+        index = -1;
+        return false;
     }
 
     /// <summary>Maps a DAW-sent ring-value CC back to the encoder index.</summary>
