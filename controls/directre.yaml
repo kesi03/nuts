@@ -5,19 +5,19 @@ Control:
     Mix:
       middle:
         SD: {name:"speedDial",remotable:"Input Gain", key: SpeadDialCC,min=0, max=4194304,input_type=value}
-	SDB: {name:"speedDialButton",remotable:"Enabled	0", key: SpeadDialButtonCC,min=0, max=1,input_type=toggle}
+		SDB: {name:"speedDialButton",remotable:"Enabled	0", key: SpeadDialButtonCC,min=0, max=1,input_type=toggle}
         FD: {name:"fader",remotable:"Pan", key: XFaderCC,min=0, max=4194304,input_type=value}
       buttons:
     	B1: {name:"button1",remotable:"Enable 1", key:ButtonCCs, min=0,max=1,input_type=toggle}
         B2: {name:"button2",remotable:"Enable 2", key:ButtonCCs, min=0,max=1,input_type=toggle}
         B3: {name:"button3",remotable:"Enable 3", key:ButtonCCs, min=0,max=1,input_type=toggle}
         B4: {name:"button4",remotable:"Enable 4", key:ButtonCCs, min=0,max=1,input_type=toggle}
-	B5: {name:"button5",remotable:"Enable 5", key:ButtonCCs, min=0,max=1,input_type=toggle}
-	B6: {name:"button6",remotable:"Enable 6", key:ButtonCCs, min=0,max=1,input_type=toggle}
-	B7: {name:"button7",remotable:"Enable 7", key:ButtonCCs, min=0,max=1,input_type=toggle}
-	B8: {name:"button8",remotable:"Enable 8", key:ButtonCCs, min=0,max=1,input_type=toggle}
-      encoders:
-	E1: {name:"encoder1",remotable:"Gain 1", key: EncoderCCs,min=0, max=4194304,input_type=value}
+		B5: {name:"button5",remotable:"Enable 5", key:ButtonCCs, min=0,max=1,input_type=toggle}
+		B6: {name:"button6",remotable:"Enable 6", key:ButtonCCs, min=0,max=1,input_type=toggle}
+		B7: {name:"button7",remotable:"Enable 7", key:ButtonCCs, min=0,max=1,input_type=toggle}
+		B8: {name:"button8",remotable:"Enable 8", key:ButtonCCs, min=0,max=1,input_type=toggle}
+	encoders:
+		E1: {name:"encoder1",remotable:"Gain 1", key: EncoderCCs,min=0, max=4194304,input_type=value}
         E2: {name:"encoder2",remotable:"Gain 2", key: EncoderCCs,min=0, max=4194304,input_type=value}
         E3: {name:"encoder3",remotable:"Gain 3", key: EncoderCCs,min=0, max=4194304,input_type=value}
         E4: {name:"encoder4",remotable:"Gain 4", key: EncoderCCs,min=0, max=4194304,input_type=value}
@@ -36,7 +36,7 @@ Control:
         B7: {name:"button7",remotable:"Crossfade Select 7", key:ButtonCCs, min=0,max=1,input_type=toggle}
         B8: {name:"button8",remotable:"Crossfade Select 8", key:ButtonCCs, min=0,max=1,input_type=toggle}
       encoders:
-	E1: {name:"encoder1",remotable:"Crossfade Length A", key: EncoderCCs,min=0, max=4194304,input_type=value}
+		E1: {name:"encoder1",remotable:"Crossfade Length A", key: EncoderCCs,min=0, max=4194304,input_type=value}
         E2: {name:"encoder2",remotable:"Crossfade Length B", key: EncoderCCs,min=0, max=4194304,input_type=value}
         E3: {name:"encoder3",remotable:"Quantize Mode", key: EncoderCCs,min=0, max=3,input_type=value}
 
