@@ -46,22 +46,21 @@ if (-not (Test-Path $FactoryMaps)) { throw "Reason factory maps not found: $Fact
 if (-not (Test-Path $PagesDir))    { throw "pages folder not found: $PagesDir" }
 
 # ---- 1. authoritative scope -> set of remotable targets -------------------
-# The Scope line is "Scope<tab>manufacturer<tab>model"; the model is the last
-# field. Map lines carry the target at field index 3. A Map line for _Scope
-# binds the scope's display name and is not a real target.
+# These come from reason-targets.json, produced by extract-targets.ps1, which
+# knows to skip LCD-driving surface maps (Mackie Control, M-Audio ProjectMix)
+# whose target column holds screen captions rather than remotable items.
+# Do not re-derive the list here: the filtering rules are subtle enough that
+# having one implementation is the whole point.
+$TargetsJson = Join-Path $PSScriptRoot '..\mapping\reason-targets.json'
+if (-not (Test-Path $TargetsJson)) {
+    throw "Missing $TargetsJson. Run remote/scripts/extract-targets.ps1 first."
+}
+$targetDoc = Get-Content -LiteralPath $TargetsJson -Raw | ConvertFrom-Json
 $scopeTargets = @{}
-Get-ChildItem $FactoryMaps -Recurse -Filter '*.remotemap' | ForEach-Object {
-    $scope = ''
-    foreach ($l in [System.IO.File]::ReadAllLines($_.FullName)) {
-        $sp = $l.Split($T)
-        if ($sp.Count -ge 3 -and $sp[0].Trim() -eq 'Scope') { $scope = $sp[$sp.Count - 1].Trim(); continue }
-        if ($sp.Count -ge 4 -and $sp[0].Trim() -eq 'Map' -and $sp[1].Trim() -ne '_Scope') {
-            $tgt = $sp[3].Trim()
-            if ($tgt -eq '') { continue }
-            if (-not $scopeTargets.ContainsKey($scope)) { $scopeTargets[$scope] = New-Object System.Collections.Generic.HashSet[string] }
-            [void]$scopeTargets[$scope].Add($tgt)
-        }
-    }
+foreach ($prop in $targetDoc.PSObject.Properties) {
+    $h = New-Object System.Collections.Generic.HashSet[string]
+    foreach ($t in $prop.Value) { [void]$h.Add([string]$t) }
+    $scopeTargets[$prop.Name] = $h
 }
 
 # ---- 2. the driver's PermaBar CC key names -------------------------------

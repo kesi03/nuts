@@ -33,11 +33,18 @@
 	the active page.
 
 	Because a .remotemap binds one item to exactly one remotable per scope,
-	each page's dials and buttons are SEPARATE ITEMS: "Knob 1 Mixer" ..
-	"Knob 8 FX", "Button 1 Mixer" .. "Button 8 FX". The map gives each its own
+	each page's dials and buttons are SEPARATE ITEMS: "Knob 1 P1" ..
+	"Knob 8 P4", "Button 1 P1" .. "Button 8 P4". The map gives each its own
 	parameters, and the driver's per-page CCs select the item - Reason is
 	never told that a page changed. This is the same technique the Akai MPK
 	Mini Play codec uses for its banks ("Knob 1 A" / "Knob 1 B").
+
+	The item names are deliberately GENERIC: P1..P4 are the driver's four
+	page slots, not the four sections of any one device. The scope decides
+	what a page means - the mixer scope fills P1..P4 with the channel's
+	Mixer/Dynamics/EQ/FX sections, another scope fills them with whatever
+	its own pages are - so one codec serves every scope and only the
+	.remotemap changes.
 
 	Everything else is shared across pages: the Speed Dial, its click and
 	touch, the crossfader, the ring values/modes and the PermaBar.
@@ -46,9 +53,9 @@
 
 		Control                      MIDI (channel 1)       Item
 		-------------------------    -------------------    ------------------
-		Dial 1..8                    CC per page, relative  Knob 1..8 <Page>
+		Dial 1..8                    CC per page, relative  Knob 1..8 P<n>
 		Dial 1..8 touch              CC80-87                (reserved)
-		Button 1..8 (green LEDs)     CC per page, state     Button 1..8 <Page>
+		Button 1..8 (green LEDs)     CC per page, state     Button 1..8 P<n>
 		PermaBar Page -/+            CC110/111              (driver: paging)
 		PermaBar MIX/USER/INSTR/FX   CC115/112/114/113      (driver: page jumps)
 		Speed Dial                   CC24, relative         Speed Dial
@@ -142,6 +149,12 @@ gCrossfaderIndex      = gNextAfterPages + 2
 -- The driver's page tables are the source of truth. These numbers must match
 -- Midi:Paging:EncoderCcs / Midi:Paging:ButtonCcs in the driver's
 -- appsettings.json, and the page names must match Midi:Paging:Names.
+--
+-- The NAMES are the driver's own slot labels - for the mixer channel they
+-- are the four sections (Mixer, Dynamics, EQ, FX), but they are only
+-- informational. The ITEMS are named "Knob n P<n>" / "Button n P<n>", so a
+-- scope's .remotemap can put any parameters it likes into any of the four
+-- slots; the slot a section occupies is the scope's business, not ours.
 gPageNames = { "Mixer", "Dynamics", "EQ", "FX" }
 gPageCount = 4
 
@@ -237,23 +250,27 @@ function remote_init(manufacturer, model)
 		{name="_Scope", output="text"},
 	}
 
-	-- One dial set and one button set PER PAGE, named "Knob n <Page>" /
-	-- "Button n <Page>" - the same idiom as the Akai MPK Mini Play codec's
+	-- One dial set and one button set PER PAGE, named "Knob n P<page>" /
+	-- "Button n P<page>" - the same idiom as the Akai MPK Mini Play codec's
 	-- "Knob 1 A" / "Knob 1 B". A .remotemap maps one item to exactly one
 	-- remotable per scope, so four different parameter sets on the same
 	-- physical dial require four items: there is no way to re-point one
 	-- item from outside Reason. The driver's per-page CCs select the item
 	-- without Reason ever being told a page changed.
-	local pageNames = gPageNames
+	--
+	-- P1..P4 are the driver's page SLOTS, not a device's page names: the
+	-- scope's .remotemap decides what each slot means, so the same codec
+	-- works for every scope.
+	local pageCount = gPageCount
 
 	items[#items + 1] = { name = "Page", output = "text" }
 
-	for _, page in ipairs(pageNames) do
+	for page = 1, pageCount do
 		-- Endless encoders: input="delta" lets Reason accumulate the
 		-- two's-complement delta we hand it in remote_process_midi().
 		for n = 1, gNumberOfKnobs do
 			items[#items + 1] =
-				{ name = string.format("Knob %d %s", n, page),
+				{ name = string.format("Knob %d P%d", n, page),
 				  input = "delta", output = "value", min = 0, max = 127 }
 		end
 
@@ -278,7 +295,7 @@ function remote_init(manufacturer, model)
 		-- here as an absolute 0 and switch the target off while held.
 		for n = 1, gNumberOfKnobs do
 			items[#items + 1] =
-				{ name = string.format("Button %d %s", n, page),
+				{ name = string.format("Button %d P%d", n, page),
 				  input = "value", output = "value", min = 0, max = 127 }
 		end
 	end
@@ -325,7 +342,7 @@ function remote_init(manufacturer, model)
 		for cc, n in pairs(gKnobCCByPage[page]) do
 			inputs[#inputs + 1] = {
 				pattern  = string.format("b0 %02x xx", cc),
-				name     = string.format("Knob %d %s", n, gPageNames[page]),
+				name     = string.format("Knob %d P%d", n, page),
 				value    = "x",
 			}
 		end
@@ -344,7 +361,7 @@ function remote_init(manufacturer, model)
 		for cc, n in pairs(gButtonCCByPage[page]) do
 			inputs[#inputs + 1] = {
 				pattern = string.format("b0 %02x xx", cc),
-				name    = string.format("Button %d %s", n, gPageNames[page]),
+				name    = string.format("Button %d P%d", n, page),
 				value   = "x",
 			}
 		end
@@ -381,7 +398,7 @@ function remote_init(manufacturer, model)
 	for page = 1, gPageCount do
 		for n = 1, gNumberOfKnobs do
 			outputs[#outputs + 1] = {
-				name = string.format("Knob %d %s", n, gPageNames[page]),
+				name = string.format("Knob %d P%d", n, page),
 				pattern = string.format("b0 %02x 0<00xx>", gRingValueBase + n - 1),
 				x = "value*11/127",
 			}
@@ -410,7 +427,7 @@ function remote_init(manufacturer, model)
 
 		for n = 1, gNumberOfKnobs do
 			outputs[#outputs + 1] = {
-				name = string.format("Button %d %s", n, gPageNames[page]),
+				name = string.format("Button %d P%d", n, page),
 				pattern = string.format("b0 %02x 0<00xx>", ccByNumber[n]),
 				x = "value",
 			}
@@ -488,12 +505,13 @@ function remote_set_state(changed_items)
 		gScope = ""
 	end
 
-	-- The Page item is a text display of the driver's page echo. Nothing on
-	-- the surface shows it (the unit has no display) - it exists so the page
-	-- is visible in Reason and in the driver trace, and to give the LED work
-	-- that comes later something to read. gCurrentPage itself comes from the
-	-- echo in remote_process_midi(); this is a readback, not the source.
-	gPageName = gPageNames[gCurrentPage] or ""
+	-- The Page item is a text output. Nothing on the surface shows it (the
+	-- unit has no display) and no scope binds it today, so it stays empty;
+	-- it exists so the page is visible in Reason and in the driver trace, and
+	-- to give the LED work that comes later something to read.
+	-- gCurrentPage itself comes from the echo in remote_process_midi(); this
+	-- is a readback, not the source.
+	gPageName = string.format("P%d", gCurrentPage)
 end
 
 --------------------------------------------------------------------------

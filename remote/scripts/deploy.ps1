@@ -61,6 +61,24 @@ if ($foundMaps.Count -eq 0) {
     throw "No .remotemap files found in $RemoteSource\Maps\$Manufacturer\"
 }
 
+# --- regenerate the map from pages/*.yaml -----------------------------------
+# The .remotemap is generated (remote/scripts/generate_map.py) from the page
+# templates in pages/. Regenerating here means a deploy can never ship a map
+# that no longer matches the templates, and a template with a bad target is
+# caught before it reaches Reason - one broken target makes Reason refuse the
+# WHOLE surface.
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$generator = Join-Path $PSScriptRoot 'generate_map.py'
+if (Test-Path -LiteralPath $generator) {
+    Write-Host "Generating the map from pages\*.yaml ..." -ForegroundColor Cyan
+    & python $generator
+    if ($LASTEXITCODE -ne 0) {
+        throw "generate_map.py reported errors - the map was NOT regenerated and nothing was deployed. Fix pages\*.yaml and run it again."
+    }
+} else {
+    Write-Host "generate_map.py not found - deploying the map as it is on disk." -ForegroundColor Yellow
+}
+
 # --- optional backup of the files that will be overwritten ----------------
 $backupRunDir = Join-Path $BackupRoot (Get-Date -Format 'yyyyMMdd-HHmmss')
 $backedUp = @()
@@ -90,7 +108,8 @@ foreach ($map in $foundMaps) {
     $dest = Join-Path $MapsDest $map.Name
     Backup-One $dest
     Copy-Item -LiteralPath $map.FullName -Destination $dest -Force
-    Write-Host "  Map    -> $dest" -ForegroundColor Green
+    $scopeCount = @(Select-String -LiteralPath $map.FullName -Pattern '^Scope\t').Count
+    Write-Host "  Map    -> $dest  ($scopeCount scopes)" -ForegroundColor Green
 }
 
 if ($Backup) {

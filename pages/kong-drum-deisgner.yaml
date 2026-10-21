@@ -1,106 +1,65 @@
 scope:
   manufacturer: Propellerheads
   model: Kong Drum Designer
+  display: KONG
+
+# The shared, NOT banked controls: one item each, mapped once
+# per scope. They must be the same on every page.
+controls:
+  SD: { name: speedDial, key: SpeedDialCc, target: Master Level, min: 0, max: 127, input_type: Value }
+  SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: Master FX On, min: 0, max: 1, input_type: Toggle }
+
+# The pages, in the order of the driver's page slots. A scope's
+# page 1 is the driver's slot 1, and so on.
 pages:
   Mixer:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Mixer", page: "Mixer", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Drum", page: "Drum", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "DrumEngine", page: "DrumEngine", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "FX", page: "FX", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Master Level, min: 0, max: 127, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Master FX On, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pan, min: 0, max: 127, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Drum 1 Level, min: 0, max: 127, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Drum 2 Level, min: 0, max: 127, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Drum 3 Level, min: 0, max: 127, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Drum 4 Level, min: 0, max: 127, input_type: Value}
-      E5: {name: encoder5, key: EncoderCcs, target: Drum 5 Level, min: 0, max: 127, input_type: Value}
-      E6: {name: encoder6, key: EncoderCcs, target: Drum 6 Level, min: 0, max: 127, input_type: Value}
-      E7: {name: encoder7, key: EncoderCcs, target: Drum 7 Level, min: 0, max: 127, input_type: Value}
-      E8: {name: encoder8, key: EncoderCcs, target: Drum 8 Level, min: 0, max: 127, input_type: Value}
+      E1: { name: encoder1, key: EncoderCcs, target: Drum 1 Level, min: 0, max: 127, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Drum 2 Level, min: 0, max: 127, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Drum 3 Level, min: 0, max: 127, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Drum 4 Level, min: 0, max: 127, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Drum 5 Level, min: 0, max: 127, input_type: Value }
+      E6: { name: encoder6, key: EncoderCcs, target: Drum 6 Level, min: 0, max: 127, input_type: Value }
+      E7: { name: encoder7, key: EncoderCcs, target: Drum 7 Level, min: 0, max: 127, input_type: Value }
+      E8: { name: encoder8, key: EncoderCcs, target: Drum 8 Level, min: 0, max: 127, input_type: Value }
     buttons:
-      B1: {name: button1, key: ButtonCcs, target: Pad 1 Mute, min: 0, max: 1, input_type: Toggle}
-      B2: {name: button2, key: ButtonCcs, target: Pad 2 Mute, min: 0, max: 1, input_type: Toggle}
-      B3: {name: button3, key: ButtonCcs, target: Pad 3 Mute, min: 0, max: 1, input_type: Toggle}
-      B4: {name: button4, key: ButtonCcs, target: Pad 4 Mute, min: 0, max: 1, input_type: Toggle}
-      B5: {name: button5, key: ButtonCcs, target: Pad 5 Mute, min: 0, max: 1, input_type: Toggle}
-      B6: {name: button6, key: ButtonCcs, target: Pad 6 Mute, min: 0, max: 1, input_type: Toggle}
-      B7: {name: button7, key: ButtonCcs, target: Pad 7 Mute, min: 0, max: 1, input_type: Toggle}
-      B8: {name: button8, key: ButtonCcs, target: Pad 8 Mute, min: 0, max: 1, input_type: Toggle}
+      B1: { name: button1, key: ButtonCcs, target: Pad 1 Mute, min: 0, max: 1, input_type: Toggle }
+      B2: { name: button2, key: ButtonCcs, target: Pad 2 Mute, min: 0, max: 1, input_type: Toggle }
+      B3: { name: button3, key: ButtonCcs, target: Pad 3 Mute, min: 0, max: 1, input_type: Toggle }
+      B4: { name: button4, key: ButtonCcs, target: Pad 4 Mute, min: 0, max: 1, input_type: Toggle }
+      B5: { name: button5, key: ButtonCcs, target: Pad 5 Mute, min: 0, max: 1, input_type: Toggle }
+      B6: { name: button6, key: ButtonCcs, target: Pad 6 Mute, min: 0, max: 1, input_type: Toggle }
+      B7: { name: button7, key: ButtonCcs, target: Pad 7 Mute, min: 0, max: 1, input_type: Toggle }
+      B8: { name: button8, key: ButtonCcs, target: Pad 8 Mute, min: 0, max: 1, input_type: Toggle }
   Drum:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Mixer", page: "Mixer", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Drum", page: "Drum", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "DrumEngine", page: "DrumEngine", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "FX", page: "FX", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Master Level, min: 0, max: 127, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Master FX On, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pan, min: 0, max: 127, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Level, input_type: Value, dynamic: true}
-      E2: {name: encoder2, key: EncoderCcs, target: Pan, input_type: Value, dynamic: true}
-      E3: {name: encoder3, key: EncoderCcs, target: Tone, input_type: Value, dynamic: true}
-      E4: {name: encoder4, key: EncoderCcs, target: Pitch Offset, input_type: Value, dynamic: true}
-      E5: {name: encoder5, key: EncoderCcs, target: Decay Offset, input_type: Value, dynamic: true}
-      E6: {name: encoder6, key: EncoderCcs, target: Bus FX Send, input_type: Value, dynamic: true}
-      E7: {name: encoder7, key: EncoderCcs, target: Aux 1 Send, input_type: Value, dynamic: true}
-      E8: {name: encoder8, key: EncoderCcs, target: Aux 2 Send, input_type: Value, dynamic: true}
+      E2: { name: encoder2, key: EncoderCcs, target: Drum 1 Pan, input_type: Value, dynamic: true }
+      E3: { name: encoder3, key: EncoderCcs, target: Drum 1 Tone, input_type: Value, dynamic: true }
+      E4: { name: encoder4, key: EncoderCcs, target: Drum 1 Pitch Offset, input_type: Value, dynamic: true }
+      E5: { name: encoder5, key: EncoderCcs, target: Drum 1 Decay Offset, input_type: Value, dynamic: true }
+      E6: { name: encoder6, key: EncoderCcs, target: Drum 1 Bus FX Send, input_type: Value, dynamic: true }
+      E7: { name: encoder7, key: EncoderCcs, target: Drum 1 Aux 1 Send, input_type: Value, dynamic: true }
+      E8: { name: encoder8, key: EncoderCcs, target: Drum 1 Aux 2 Send, input_type: Value, dynamic: true }
     buttons:
-      B1: {name: button1, key: ButtonCcs, target: DM On, input_type: Toggle, dynamic: true}
-      B2: {name: button2, key: ButtonCcs, target: FX1 On, input_type: Toggle, dynamic: true}
-      B3: {name: button3, key: ButtonCcs, target: FX2 On, input_type: Toggle, dynamic: true}
+      B1: { name: button1, key: ButtonCcs, target: Drum 1 DM On, input_type: Toggle, dynamic: true }
+      B2: { name: button2, key: ButtonCcs, target: Drum 1 FX1 On, input_type: Toggle, dynamic: true }
+      B3: { name: button3, key: ButtonCcs, target: Drum 1 FX2 On, input_type: Toggle, dynamic: true }
   DrumEngine:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Mixer", page: "Mixer", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Drum", page: "Drum", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "DrumEngine", page: "DrumEngine", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "FX", page: "FX", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Master Level, min: 0, max: 127, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Master FX On, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pan, min: 0, max: 127, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: DM Level, input_type: Value, dynamic: true}
-      E2: {name: encoder2, key: EncoderCcs, target: DM Pitch, input_type: Value, dynamic: true}
-      E3: {name: encoder3, key: EncoderCcs, target: DM Decay, input_type: Value, dynamic: true}
-      E4: {name: encoder4, key: EncoderCcs, target: DM Variable, input_type: Value, dynamic: true}
-      E5: {name: encoder5, key: EncoderCcs, target: FX1 P1, input_type: Value, dynamic: true}
-      E6: {name: encoder6, key: EncoderCcs, target: FX1 P2, input_type: Value, dynamic: true}
-      E7: {name: encoder7, key: EncoderCcs, target: FX2 P1, input_type: Value, dynamic: true}
-      E8: {name: encoder8, key: EncoderCcs, target: FX2 P2, input_type: Value, dynamic: true}
-    buttons: {}
+      E1: { name: encoder1, key: EncoderCcs, target: Drum 1 DM Level, input_type: Value, dynamic: true }
+      E2: { name: encoder2, key: EncoderCcs, target: Drum 1 DM Pitch, input_type: Value, dynamic: true }
+      E3: { name: encoder3, key: EncoderCcs, target: Drum 1 DM Decay, input_type: Value, dynamic: true }
+      E4: { name: encoder4, key: EncoderCcs, target: Drum 1 DM Variable, input_type: Value, dynamic: true }
+      E5: { name: encoder5, key: EncoderCcs, target: Drum 1 FX1 P1, input_type: Value, dynamic: true }
+      E6: { name: encoder6, key: EncoderCcs, target: Drum 1 FX1 P2, input_type: Value, dynamic: true }
+      E7: { name: encoder7, key: EncoderCcs, target: Drum 1 FX2 P1, input_type: Value, dynamic: true }
+      E8: { name: encoder8, key: EncoderCcs, target: Drum 1 FX2 P2, input_type: Value, dynamic: true }
   FX:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Mixer", page: "Mixer", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Drum", page: "Drum", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "DrumEngine", page: "DrumEngine", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "FX", page: "FX", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Master Level, min: 0, max: 127, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Master FX On, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pan, min: 0, max: 127, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Master FX P1, min: 0, max: 127, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Master FX P2, min: 0, max: 127, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Bus FX P1, min: 0, max: 127, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Bus FX P2, min: 0, max: 127, input_type: Value}
-      E5: {name: encoder5, key: EncoderCcs, target: Level Bus FX to Master FX, min: 0, max: 127, input_type: Value}
+      E1: { name: encoder1, key: EncoderCcs, target: Master FX P1, min: 0, max: 127, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Master FX P2, min: 0, max: 127, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Bus FX P1, min: 0, max: 127, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Bus FX P2, min: 0, max: 127, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Level Bus FX to Master FX, min: 0, max: 127, input_type: Value }
     buttons:
-      B1: {name: button1, key: ButtonCcs, target: Master FX On, min: 0, max: 1, input_type: Toggle}
-      B2: {name: button2, key: ButtonCcs, target: Bus FX On, min: 0, max: 1, input_type: Toggle}
+      B2: { name: button2, key: ButtonCcs, target: Bus FX On, min: 0, max: 1, input_type: Toggle }

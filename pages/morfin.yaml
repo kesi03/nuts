@@ -1,68 +1,24 @@
 scope:
   manufacturer: Groovy Melon
   model: com.groovymelon.MorfinXF
+  display: Morfin XF
+
+# The shared, NOT banked controls: one item each, mapped once
+# per scope. They must be the same on every page.
+controls:
+  SD: { name: speedDial, key: SpeedDialCc, target: Curve Type, min: 0, max: 9, input_type: Value }
+  SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: Phase Invert A, min: 0, max: 1, input_type: Toggle }
+  F: { name: fader, key: XfaderCcs, target: Crossfader, min: 0, max: 4194304, input_type: Value }
+
+# The pages, in the order of the driver's page slots. A scope's
+# page 1 is the driver's slot 1, and so on.
 pages:
   Main:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Inputs", page: "Inputs", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Mix", page: "Mix", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Curve Type, min: 0, max: 9, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Phase Invert A, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Crossfader, min: 0, max: 4194304, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Crossfader, min: 0, max: 4194304, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Volume A, min: 0, max: 4194304, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Volume B, min: 0, max: 4194304, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Curve Type, min: 0, max: 9, input_type: Value}
-      E5: {name: encoder5, key: EncoderCcs, target: Ch A Select Input, min: 0, max: 3, input_type: Value}
-      E6: {name: encoder6, key: EncoderCcs, target: Ch B Select Input, min: 0, max: 3, input_type: Value}
-      E7: {name: encoder7, key: EncoderCcs, target: Phase Invert A, min: 0, max: 1, input_type: Toggle}
-      E8: {name: encoder8, key: EncoderCcs, target: Phase Invert B, min: 0, max: 1, input_type: Toggle}
-    buttons:
-      B1: {name: button1, key: ButtonCcs, target: Phase Invert A, min: 0, max: 1, input_type: Toggle}
-      B2: {name: button2, key: ButtonCcs, target: Phase Invert B, min: 0, max: 1, input_type: Toggle}
+      E2: { name: encoder2, key: EncoderCcs, target: Volume A, min: 0, max: 4194304, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Volume B, min: 0, max: 4194304, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Ch A Select Input, min: 0, max: 3, input_type: Value }
+      E6: { name: encoder6, key: EncoderCcs, target: Ch B Select Input, min: 0, max: 3, input_type: Value }
   Inputs:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Inputs", page: "Inputs", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Mix", page: "Mix", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Curve Type, min: 0, max: 9, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Phase Invert A, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Crossfader, min: 0, max: 4194304, input_type: Value}
-    encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Ch A Select Input, min: 0, max: 3, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Ch B Select Input, min: 0, max: 3, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Curve Type, min: 0, max: 9, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Crossfader, min: 0, max: 4194304, input_type: Value}
     buttons:
-      B1: {name: button1, key: ButtonCcs, target: Phase Invert A, min: 0, max: 1, input_type: Toggle}
-      B2: {name: button2, key: ButtonCcs, target: Phase Invert B, min: 0, max: 1, input_type: Toggle}
-  Mix:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Inputs", page: "Inputs", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Mix", page: "Mix", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Curve Type, min: 0, max: 9, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Phase Invert A, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Crossfader, min: 0, max: 4194304, input_type: Value}
-    encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Volume A, min: 0, max: 4194304, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Volume B, min: 0, max: 4194304, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Crossfader, min: 0, max: 4194304, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Curve Type, min: 0, max: 9, input_type: Value}
-    buttons:
-      B1: {name: button1, key: ButtonCcs, target: Phase Invert A, min: 0, max: 1, input_type: Toggle}
-      B2: {name: button2, key: ButtonCcs, target: Phase Invert B, min: 0, max: 1, input_type: Toggle}
+      B2: { name: button2, key: ButtonCcs, target: Phase Invert B, min: 0, max: 1, input_type: Toggle }

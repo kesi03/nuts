@@ -4,7 +4,7 @@
   "midiChannel": 1,
 
   "paging": {
-    "description": "The driver banks the CCs for the 8 dials and the 8 page-row buttons. A page is a set of parameters on those same physical controls (the four sections of the selected mixer channel: Mixer, Dynamics, EQ, FX). The driver steps the page from the PermaBar and echoes the live page to the codec on CC 119; the page buttons are consumed driver-side and never reach Reason. Only the dials and the page row bank - see 'shared' below.",
+    "description": "The driver banks the CCs for the 8 dials and the 8 page-row buttons. A page is a set of parameters on those same physical controls. The four page SLOTS are generic: what a slot means is decided by the focused device's scope in remote/Maps/Nuts/Nocturn.remotemap (for the mixer channel: Mixer, Dynamics, EQ, FX). The driver steps the page from the PermaBar and echoes the live page to the codec on CC 119; the page buttons are consumed driver-side and never reach Reason. Only the dials and the page row bank - see 'shared' below.",
     "pageCount": 4,
     "pageNames": ["Mixer", "Dynamics", "EQ", "FX"],
     "pageEchoCc": 119,
@@ -45,7 +45,7 @@
   "switches": {
     "description": "The 16 buttons, modelled as switches, on CCs (not notes) in both directions: a CC carries an absolute value and keeps the whole note range on the loopback free for a keyboard. The hardware addresses these buttons and their LEDs by note number 0-15 on its USB wire; the driver re-publishes them as the CCs below and translates the LED CCs back. Each group has a kind (see docs/midi-mapping.md): \"momentary\" = press sends 127, release sends 0, the DAW owns the state and the LED; \"toggle\" = the driver keeps a latch, a press flips it, lights the LED and sends the new state (127 = on, 0 = off), a release is silent, and DAW feedback overwrites the latch. Measured on Reason 10 (2026-10-19): a codec \"button\" item acts on the press edge only and ignores a value 0, so a latching switch on a button item would toggle only every second press. The page row's codec items are therefore input=\"value\" (absolute 0-127): Reason sets the Toggle remotables (Mute, Comp On, EQ On, ...) from the value, which is what makes toggle work end to end. Page row = toggle + value items; PermaBar = momentary + button items.",
     "pageRow": {
-      "description": "8 switches above the dials, green LEDs. Indices 0-7. Banked by page (see paging.pageRowCcs). Kind: toggle, and the codec declares one value item per page ('Button n <Page>').",
+      "description": "8 switches above the dials, green LEDs. Indices 0-7. Banked by page (see paging.pageRowCcs). Kind: toggle, and the codec declares one value item per page ('Button n P<n>').",
       "kind": "toggle",
       "ccs": "see paging.pageRowCcs - CCs differ per page; page 1 is 102-109"
     },
@@ -93,7 +93,7 @@
   },
 
   "pageParameters": {
-    "description": "What each page's 8 dials and 8 page-row buttons are mapped to. Documentation only - the authority is remote/Maps/Nuts/Nocturn.remotemap, and verify-map.ps1 keeps the three contracts in step. The rule the layout follows: CONTINUOUS parameters live on dials, ON/OFF states live on the page-row switches. A value parameter on a toggle switch can only ever slam between 0 and 127.",
+    "description": "What each page slot's 8 dials and 8 page-row buttons are mapped to, for the Reason Main Mixer Channel scope. Documentation only - the authority is remote/Maps/Nuts/Nocturn.remotemap, and verify-map.ps1 keeps the three contracts in step. The rule the layout follows: CONTINUOUS parameters live on dials, ON/OFF states live on the page-row switches. A value parameter on a toggle switch can only ever slam between 0 and 127. The map's item names are generic ('Knob n P<n>' / 'Button n P<n>'), where P1..P4 are the driver's page slots; this table names them by the mixer scope's page names instead. Every other scope in the map fills the same four slots with its own pages - see pages/*.yaml.",
     "1 Mixer": {
       "dials": { "E1": "Width", "E3": "Input Gain", "E5": "LPF Frequency", "E7": "HPF Frequency" },
       "buttons": { "B1": "Mute", "B2": "Invert Phase", "B3": "Insert Pre", "B4": "Dyn Post EQ", "B5": "LPF On", "B6": "HPF On", "B7": "Filters Dyn S/C", "B8": "(spare)" },
@@ -101,8 +101,8 @@
     },
     "2 Dynamics": {
       "dials": { "E1": "C Threshold", "E2": "C Ratio", "E3": "C Release", "E4": "C Fast Atk", "E5": "G Threshold", "E6": "G Range", "E7": "G Release", "E8": "G Hold" },
-      "buttons": { "B1": "Comp On", "B2": "C Peak", "B3": "Gate On", "B4": "Expander", "B5": "G Fast Atk", "B6": "Key On", "B7": "Filters Dyn S/C", "B8": "(spare)" },
-      "note": "ALL 8 dials used - the page has 8 continuous parameters, so the odd/even gap is not kept. Top row E1-E4 is the compressor, bottom row E5-E8 the gate. Expander is a switch on B4."
+      "buttons": { "B1": "Comp On", "B2": "C Peak", "B3": "Gate On", "B4": "Expander", "B5": "G Fast Atk", "B6": "Key On", "B7": "(spare)", "B8": "(spare)" },
+      "note": "ALL 8 dials used - the page has 8 continuous parameters, so the odd/even gap is not kept. Top row E1-E4 is the compressor, bottom row E5-E8 the gate. Expander is a switch on B4. B7/B8 spare: 'Filters Dyn S/C' is already used on page 1, and a target may only be mapped once per scope."
     },
     "3 EQ": {
       "dials": { "E1": "HF Gain", "E3": "HF Frequency", "E5": "HMF Gain", "E7": "HMF Frequency" },

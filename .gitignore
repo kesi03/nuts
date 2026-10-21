@@ -8,3 +8,9 @@ Unpacked
 autocrap-***
 automap-***
 *.log
+__pycache__/
+*.pyc
+
+# deploy.ps1 -Backup writes the pre-deploy copies of the Reason Remote
+# files here. They are a rollback aid, not source.
+remote/backups/

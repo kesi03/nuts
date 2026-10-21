@@ -1,74 +1,20 @@
 scope:
   manufacturer: Propellerheads
   model: ID8 Instrument Device
+  display: ID8
 
+# The shared, NOT banked controls: one item each, mapped once
+# per scope. They must be the same on every page.
+controls:
+  SD: { name: speedDial, key: SpeedDialCc, target: Volume, min: 0, max: 127, input_type: Value }
+  F: { name: fader, key: XfaderCcs, target: Preset, min: 0, max: 35, input_type: Value }
+
+# The pages, in the order of the driver's page slots. A scope's
+# page 1 is the driver's slot 1, and so on.
 pages:
   Main:
-
-    controls:
-      SD:
-        name: speedDial
-        key: SpeedDialCc
-        target: Volume
-        min: 0
-        max: 127
-        input_type: Value
-
-      F:
-        name: fader
-        key: XfaderCcs
-        target: Preset
-        min: 0
-        max: 35
-        input_type: Value
-
     encoders:
-      E1:
-        name: encoder1
-        key: EncoderCcs
-        target: Category
-        min: 0
-        max: 8
-        input_type: Value
-
-      E2:
-        name: encoder2
-        key: EncoderCcs
-        target: Sound
-        min: 0
-        max: 3
-        input_type: Value
-
-      E3:
-        name: encoder3
-        key: EncoderCcs
-        target: Preset
-        min: 0
-        max: 35
-        input_type: Value
-
-      E4:
-        name: encoder4
-        key: EncoderCcs
-        target: Parameter 1
-        min: 0
-        max: 127
-        input_type: Value
-
-      E5:
-        name: encoder5
-        key: EncoderCcs
-        target: Parameter 2
-        min: 0
-        max: 127
-        input_type: Value
-
-      E6:
-        name: encoder6
-        key: EncoderCcs
-        target: Volume
-        min: 0
-        max: 127
-        input_type: Value
-
-    buttons: {}
+      E1: { name: encoder1, key: EncoderCcs, target: Category, min: 0, max: 8, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Sound, min: 0, max: 3, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Parameter 1, min: 0, max: 127, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Parameter 2, min: 0, max: 127, input_type: Value }

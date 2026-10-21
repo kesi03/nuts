@@ -1,97 +1,38 @@
 scope:
   manufacturer: Propellerheads
   model: Neptune Pitch Adjuster
+  display: Neptune
+
+# The shared, NOT banked controls: one item each, mapped once
+# per scope. They must be the same on every page.
+controls:
+  SD: { name: speedDial, key: SpeedDialCc, target: Correction Speed, min: 0, max: 127, input_type: Value }
+  SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: Enabled, min: 0, max: 1, input_type: Toggle }
+  F: { name: fader, key: XfaderCcs, target: Pitch Bend Range, min: 0, max: 24, input_type: Value }
+
+# The pages, in the order of the driver's page slots. A scope's
+# page 1 is the driver's slot 1, and so on.
 pages:
   Main:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Vibrato", page: "Vibrato", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Transpose", page: "Transpose", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Output", page: "Output", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Correction Speed, min: 0, max: 127, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Enabled, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pitch Bend Range, min: 0, max: 24, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Correction Speed, min: 0, max: 127, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Preserve Expression, min: 0, max: 127, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Pitch Bend Range, min: 0, max: 24, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Formant Shift, min: -64, max: 63, input_type: Value}
-      E5: {name: encoder5, key: EncoderCcs, target: Semitones, min: -12, max: 12, input_type: Value}
-      E6: {name: encoder6, key: EncoderCcs, target: Cent, min: -50, max: 50, input_type: Value}
-      E7: {name: encoder7, key: EncoderCcs, target: Pitched Signal Level, min: 0, max: 127, input_type: Value}
-      E8: {name: encoder8, key: EncoderCcs, target: Voice Synth Level, min: 0, max: 127, input_type: Value}
+      E2: { name: encoder2, key: EncoderCcs, target: Preserve Expression, min: 0, max: 127, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Formant Shift, min: -64, max: 63, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Semitones, min: -12, max: 12, input_type: Value }
+      E6: { name: encoder6, key: EncoderCcs, target: Cent, min: -50, max: 50, input_type: Value }
+      E7: { name: encoder7, key: EncoderCcs, target: Pitched Signal Level, min: 0, max: 127, input_type: Value }
+      E8: { name: encoder8, key: EncoderCcs, target: Voice Synth Level, min: 0, max: 127, input_type: Value }
     buttons:
-      B1: {name: button1, key: ButtonCcs, target: Pitch Adjust On/Off, min: 0, max: 1, input_type: Toggle}
-      B2: {name: button2, key: ButtonCcs, target: Transpose On/Off, min: 0, max: 1, input_type: Toggle}
-      B3: {name: button3, key: ButtonCcs, target: Formant On/Off, min: 0, max: 1, input_type: Toggle}
-      B4: {name: button4, key: ButtonCcs, target: Live Mode, min: 0, max: 1, input_type: Toggle}
-      B5: {name: button5, key: ButtonCcs, target: Low Freq Input, min: 0, max: 1, input_type: Toggle}
-      B6: {name: button6, key: ButtonCcs, target: Wide Vibrato, min: 0, max: 1, input_type: Toggle}
-      B7: {name: button7, key: ButtonCcs, target: MIDI Destination, min: 0, max: 1, input_type: Toggle}
-      B8: {name: button8, key: ButtonCcs, target: Enabled, min: 0, max: 2, input_type: Value}
+      B1: { name: button1, key: ButtonCcs, target: Pitch Adjust On/Off, min: 0, max: 1, input_type: Toggle }
+      B2: { name: button2, key: ButtonCcs, target: Transpose On/Off, min: 0, max: 1, input_type: Toggle }
+      B3: { name: button3, key: ButtonCcs, target: Formant On/Off, min: 0, max: 1, input_type: Toggle }
+      B4: { name: button4, key: ButtonCcs, target: Live Mode, min: 0, max: 1, input_type: Toggle }
+      B5: { name: button5, key: ButtonCcs, target: Low Freq Input, min: 0, max: 1, input_type: Toggle }
+      B6: { name: button6, key: ButtonCcs, target: Wide Vibrato, min: 0, max: 1, input_type: Toggle }
+      B7: { name: button7, key: ButtonCcs, target: MIDI Destination, min: 0, max: 1, input_type: Toggle }
   Vibrato:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Vibrato", page: "Vibrato", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Transpose", page: "Transpose", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Output", page: "Output", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Vibrato Rate, min: 0, max: 127, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Wide Vibrato, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pitched Signal Level, min: 0, max: 127, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Vibrato Rate, min: 0, max: 127, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Mod Wheel, min: 0, max: 127, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Pitch Bend Range, min: 0, max: 24, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Preserve Expression, min: 0, max: 127, input_type: Value}
-    buttons:
-      B1: {name: button1, key: ButtonCcs, target: Wide Vibrato, min: 0, max: 1, input_type: Toggle}
-      B2: {name: button2, key: ButtonCcs, target: Live Mode, min: 0, max: 1, input_type: Toggle}
+      E1: { name: encoder1, key: EncoderCcs, target: Vibrato Rate, min: 0, max: 127, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Mod Wheel, min: 0, max: 127, input_type: Value }
   Transpose:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Vibrato", page: "Vibrato", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Transpose", page: "Transpose", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Output", page: "Output", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Vibrato Rate, min: 0, max: 127, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Wide Vibrato, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pitched Signal Level, min: 0, max: 127, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Semitones, min: -12, max: 12, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Cent, min: -50, max: 50, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Formant Shift, min: -64, max: 63, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Scale Memory, min: 0, max: 3, input_type: Value}
-    buttons:
-      B1: {name: button1, key: ButtonCcs, target: Transpose On/Off, min: 0, max: 1, input_type: Toggle}
-      B2: {name: button2, key: ButtonCcs, target: Formant On/Off, min: 0, max: 1, input_type: Toggle}
-  Output:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Vibrato", page: "Vibrato", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Transpose", page: "Transpose", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Output", page: "Output", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Vibrato Rate, min: 0, max: 127, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Wide Vibrato, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pitched Signal Level, min: 0, max: 127, input_type: Value}
-    encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Pitched Signal Level, min: 0, max: 127, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Voice Synth Level, min: 0, max: 127, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Correction Speed, min: 0, max: 127, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Preserve Expression, min: 0, max: 127, input_type: Value}
-    buttons:
-      B1: {name: button1, key: ButtonCcs, target: Enabled, min: 0, max: 2, input_type: Value}
+      E4: { name: encoder4, key: EncoderCcs, target: Scale Memory, min: 0, max: 3, input_type: Value }

@@ -4,177 +4,1609 @@ Control Surface Manufacturer	Nuts
 Control Surface Model	Nocturn
 Map Version	2.0.0
 
-
 //======================================================================
 //  Novation Nocturn - Reason Remote map
 //
-//  Reason loads every scope for a control surface from a single .remotemap.
-//  The Nocturn has no keybed and no pads, so there is no Master Keyboard
-//  scope and no drum/pad mapping.
+//  GENERATED FILE - do not edit by hand.
+//  Source:    pages/*.yaml
+//  Generator: remote/scripts/generate_map.py
 //
-//  WHY ONLY "Reason Main Mixer Channel"
-//  ------------------------------------
-//  The surface is a channel strip, and there is exactly one scope that can
-//  carry a four-page channel strip: "Reason Main Mixer Channel". It exposes
-//  every channel target we need in ONE flat namespace ("Width", "C
-//  Threshold", "FX1 Send Level", ...), so a page can pull from anywhere.
+//  Reason loads every scope for a control surface from a single
+//  .remotemap. The Nocturn has no keybed and no pads, so there is no
+//  Master Keyboard scope and no drum/pad mapping.
 //
-//  "Reason Master Section" was considered and rejected. Its channel-strip
-//  targets are partitioned by a "Define Group Target TheGroup" whose values
-//  are section names (Pan, EQ1, EQ2, Dyn1, Dyn2, Sends1, Sends2, Ins1,
-//  Ins2), and a Map line carries only ONE group value. Our pages draw from
-//  several sections at once - the Mixer page needs Pan + EQ1 + EQ2 - so no
-//  single group value can serve a page. TheGroup also gates "Shift=Channel",
-//  which Reason owns. The factory AlphaTrack map shows the consequence: it
-//  drives each section from a separate physical button, one section at a
-//  time. That is precisely the "Reason selects the variation" limitation we
-//  are avoiding. The Master Section scope is for the master bus and FX
-//  returns in any case, not for a channel strip.
-//
-//  THE SURFACE PAGES
-//  -----------------
+//  THE PAGES
+//  ---------
 //  The 8 dials and the 8 green page-row buttons BANK. A page is a set of
-//  parameters on those same physical controls, and the four pages are the
-//  four sections of the selected mixer channel:
+//  parameters on those same physical controls. Paging is owned by the
+//  DRIVER (src/Nuts.Driver/Midi/PageModel.cs): the same physical dial
+//  sends a different CC per page, the driver steps the page from the
+//  PermaBar, and the page switches never reach Reason.
 //
-//    page 1  MIXER     the channel's input and filter strip
-//    page 2  DYNAMICS  the channel's compressor and gate
-//    page 3  EQ        the channel's 4-band EQ
-//    page 4  FX        the channel's 4 insert rotaries + 4 sends
+//  That is why every page has its own ITEMS here - "Knob 1 P1" and
+//  "Knob 1 P2" are different items. A .remotemap binds one item to
+//  exactly one remotable per scope and Reason evaluates the map
+//  statically: there is no way to re-point one item from outside Reason.
+//  Repeating the item set per page is the technique the Akai MPK Mini
+//  Play codec uses for its banks ("Knob 1 A" / "Knob 1 B").
 //
-//  Paging is owned by the DRIVER, not by Reason. The driver sends a
-//  different CC for a dial or button depending on the active page, steps
-//  the page from the PermaBar, and never forwards the page buttons. Reason
-//  therefore sees four separate control-surface item sets and never learns
-//  that a page changed.
+//  "Define Group" variations would also give four mappings, but Reason
+//  owns which variation is active, so Page -/+ stepping could not exist.
 //
-//  That is why each page's controls are separate ITEMS here - "Knob 1
-//  Mixer" and "Knob 1 EQ" - rather than one item with a variation. A
-//  .remotemap maps one item to exactly one remotable per scope, and Reason
-//  evaluates the map statically: there is no way to re-point one item from
-//  outside Reason. Duplicating the item set per page is the same technique
-//  the Akai MPK Mini Play codec uses for its banks ("Knob 1 A" / "Knob 1 B").
-//
-//  "Define Group" variations would also give four mappings, but Reason owns
-//  which variation is active, so Page -/+ stepping could not exist. The
-//  driver-side CC tables (Midi:Paging in appsettings.json) are what let the
-//  PermaBar step pages, so item-per-page is the approach that keeps the
-//  whole design.
+//  ITEM NAMES ARE GENERIC. "P1".."P4" are the driver's four page slots;
+//  what each slot means depends on the scope. The mixer channel's slots
+//  are Mixer / Dynamics / EQ / FX, but Alligator's are Pattern / Filters
+//  / Modulation / FXMix, so the slot names cannot live in the item names.
 //
 //  SHARED ACROSS EVERY PAGE: the Speed Dial and its click, and the
-//  Crossfader. They keep one item and one mapping. The PermaBar page
-//  buttons (Page -/+, and the MIXER / USER / INSTR / FX jumps) are not
-//  items at all - the driver consumes them.
+//  Crossfader. They keep one item and one mapping per scope. The
+//  PermaBar page buttons (Page -/+, and the MIXER / USER / INSTR / FX
+//  jumps) are not items at all - the driver consumes them.
 //
-//  Page assignments (PermaBar silkscreen -> page):
-//    MIXER -> Mixer      USER -> Dynamics
-//    INSTR -> EQ         FX   -> FX
-//    Page - / Page +     step back / forward, wrapping
+//  ONE TARGET PER SCOPE. Reason refuses to load a control surface when
+//  the same remotable is mapped twice inside one scope, so every target
+//  below is unique within its scope.
 //
-//  UNMAPPED ITEMS. Pages 1 and 3 place their parameters on the odd dials
-//  only (E1/E3/E5/E7), so Knob 2/4/6/8 of those pages are deliberately
-//  unmapped - the gap separates function groups on the surface. Pages 2
-//  and 4 use all 8 dials, because each has 8 continuous parameters and no
-//  spare dial to leave a gap with. Button 8 is spare on pages 1 and 2. An
-//  item with no Map line simply does nothing.
+//  CONTINUOUS vs ON/OFF. Dials carry continuous parameters and the
+//  page-row switches carry on/off states, because a page-row item can
+//  only ever carry 0 or 127.
 //
-//  CONTINUOUS vs ON/OFF. Dials carry continuous parameters and the page-row
-//  switches carry on/off states, because a page-row item is a Toggle: an
-//  on/off value is the only thing it can set. The Dynamics page's gate
-//  "Expander" is a switch on B4 for that reason, and the compressor's
-//  Release / Fast Attack and the gate's Range / Release / Hold are dials,
-//  not switches.
-//
-//  NAMES ARE VERIFIED. Every Remotable Item below was checked against the
-//  targets in Reason's own factory .remotemap files for this scope. The
-//  scope's names are not always the display names: the compressor is
-//  "C Threshold" (not "Comp Threshold"), the gate's "Expander" has no
-//  "Gate" prefix, and the sends are "FX1 Pre Fader" (not "FX1 Send Pre
-//  Fader"). A misspelled target fails silently.
+//  NAMES ARE VERIFIED. Every Remotable Item below was checked against
+//  Reason's own scope definition in remote/remote-info (and, for scopes
+//  without one, against the targets in Reason's factory .remotemap
+//  files). A scope's names are not always the display names: the
+//  compressor is "C Threshold" (not "Comp Threshold"), the gate's
+//  "Expander" has no "Gate" prefix, and the sends are "FX1 Pre Fader"
+//  (not "FX1 Send Pre Fader"). A misspelled target fails silently.
 //======================================================================
 
-Scope	Propellerheads	Reason Main Mixer Channel
-//	Control Surface Item	Key	Remotable Item	Scale	Mode
+Scope	Propellerheads	Alligator
+Map	_Scope		"Alligator"
 
+// --- Page 1: Pattern ---------------------------------------
+Map	Knob 1 P1		Pattern
+Map	Knob 2 P1		Shift
+Map	Knob 3 P1		Resolution
+Map	Knob 5 P1		Amp Env Attack
+Map	Knob 6 P1		Amp Env Decay
+Map	Knob 7 P1		Amp Env Release
+
+Map	Button 1 P1		Pattern Enable
+Map	Button 2 P1		Shuffle
+Map	Button 3 P1		LFOSync
+Map	Button 4 P1		DelaySync
+
+// --- Page 2: Filters ---------------------------------------
+Map	Knob 1 P2		High Pass Frequency
+Map	Knob 2 P2		High Pass Resonance
+Map	Knob 3 P2		Band Pass Frequency
+Map	Knob 4 P2		Band Pass Resonance
+Map	Knob 5 P2		Low Pass Frequency
+Map	Knob 6 P2		Low Pass Resonance
+Map	Knob 7 P2		Filter Env Attack
+Map	Knob 8 P2		Filter Env Decay
+
+Map	Button 1 P2		High Pass Filter On
+Map	Button 2 P2		Band Pass Filter On
+Map	Button 3 P2		Low Pass Filter On
+
+// --- Page 3: Modulation ------------------------------------
+Map	Knob 1 P3		High Pass Env Amount
+Map	Knob 2 P3		High Pass LFO Amount
+Map	Knob 3 P3		Band Pass Env Amount
+Map	Knob 4 P3		Band Pass LFO Amount
+Map	Knob 5 P3		Low Pass Env Amount
+Map	Knob 6 P3		Low Pass LFO Amount
+Map	Knob 7 P3		LFO Freq
+Map	Knob 8 P3		LFO Waveform
+
+// --- Page 4: FXMix -----------------------------------------
+Map	Knob 1 P4		High Pass Drive Amount
+Map	Knob 2 P4		High Pass Phaser Amount
+Map	Knob 3 P4		Band Pass Drive Amount
+Map	Knob 4 P4		Band Pass Phaser Amount
+Map	Knob 5 P4		High Pass Volume
+Map	Knob 6 P4		High Pass Pan
+Map	Knob 7 P4		Band Pass Volume
+Map	Knob 8 P4		Band Pass Pan
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Master Volume
+
+Scope	Propellerhead Software	se.propellerheads.Audiomatic
+Map	_Scope		"Audiomatic"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Preset
+Map	Knob 3 P1		Input Gain
+Map	Knob 4 P1		Volume
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Transform
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Dry Wet
+
+Scope	Propellerheads	BV512 Digital Vocoder
+Map	_Scope		"BV512"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Band Count
+Map	Knob 3 P1		Shift
+
+Map	Button 1 P1		Vocoder/Equalizer
+Map	Button 2 P1		Hold
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Dry/Wet
+Map	Speed Dial Button		Enabled
+Map	Crossfader		HF Emphasis
+
+Scope	Propellerheads	CF-101 Chorus/Flanger
+Map	_Scope		"CF-101"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 2 P1		Feedback
+Map	Knob 3 P1		Rate
+
+Map	Button 1 P1		Send/Insert Mode
+Map	Button 2 P1		LFO Sync Enable
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Delay
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Modulation Amount
+
+Scope	Propellerheads	COMP-01 Compressor/Limiter
+Map	_Scope		"COMP-01"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 3 P1		Attack
+Map	Knob 4 P1		Release
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Threshold
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Ratio
+
+Scope	Propellerheads	DDL-1 Digital Delay Line
+Map	_Scope		"DDL-1"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Enabled
+Map	Knob 2 P1		DelayTime (steps)
+Map	Knob 3 P1		Feedback
+Map	Knob 4 P1		Pan
+
+Map	Button 2 P1		Step Length
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		DelayTime (ms)
+Map	Speed Dial Button		Unit
+Map	Crossfader		Dry/Wet Balance
+
+Scope	Peff	com.peff.Directre
+Map	_Scope		"Directre"
+
+// --- Page 1: Mix -------------------------------------------
+Map	Knob 1 P1		Gain 1
+Map	Knob 2 P1		Gain 2
+Map	Knob 3 P1		Gain 3
+Map	Knob 4 P1		Gain 4
+Map	Knob 5 P1		Gain 5
+Map	Knob 6 P1		Gain 6
+Map	Knob 7 P1		Gain 7
+Map	Knob 8 P1		Gain 8
+
+Map	Button 1 P1		Enable 1
+Map	Button 2 P1		Enable 2
+Map	Button 3 P1		Enable 3
+Map	Button 4 P1		Enable 4
+Map	Button 5 P1		Enable 5
+Map	Button 6 P1		Enable 6
+Map	Button 7 P1		Enable 7
+Map	Button 8 P1		Enable 8
+
+// --- Page 2: Crossfade -------------------------------------
+Map	Knob 1 P2		Crossfade Length A
+Map	Knob 2 P2		Crossfade Length B
+Map	Knob 3 P2		Quantize Mode
+
+Map	Button 1 P2		Crossfade Select 1
+Map	Button 2 P2		Crossfade Select 2
+Map	Button 3 P2		Crossfade Select 3
+Map	Button 4 P2		Crossfade Select 4
+Map	Button 5 P2		Crossfade Select 5
+Map	Button 6 P2		Crossfade Select 6
+Map	Button 7 P2		Crossfade Select 7
+Map	Button 8 P2		Crossfade Select 8
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Input Gain
+
+Scope	Propellerhead Software	se.propellerheads.DMFC
+Map	_Scope		"DMFC"
+
+// --- Page 1: Master ----------------------------------------
+Map	Knob 1 P1		Master_Filter
+Map	Knob 2 P1		Master_Pitch
+Map	Knob 3 P1		Master_Delay
+Map	Knob 5 P1		Master_Decay
+Map	Knob 6 P1		Master_Distortion
+Map	Knob 8 P1		Pitch Bend
+
+// --- Page 2: Compressor ------------------------------------
+Map	Knob 1 P2		Compressor_Ratio
+Map	Knob 2 P2		Compressor_Threshold
+
+// --- Page 3: Reverb ----------------------------------------
+Map	Knob 1 P3		Reverb_Decay
+Map	Knob 2 P3		Reverb_HiCut
+Map	Knob 3 P3		Reverb_LoCut
+
+// --- Page 4: Delay -----------------------------------------
+Map	Knob 1 P4		Delay_Time
+Map	Knob 2 P4		Delay_Feedback
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master_Volume
+Map	Crossfader		Master_Reverb
+
+Scope	Propellerhead Software	se.propellerheads.DrumSeq
+Map	_Scope		"Drum Sequence"
+
+// --- Page 1: Transport -------------------------------------
+Map	Button 3 P1		Record
+
+// --- Page 2: Lanes1 ----------------------------------------
+Map	Knob 1 P2		Key1
+Map	Knob 2 P2		Key2
+Map	Knob 3 P2		Key3
+Map	Knob 4 P2		Key4
+Map	Knob 5 P2		Shuffle 1
+Map	Knob 6 P2		Shuffle 2
+Map	Knob 7 P2		Shuffle 3
+Map	Knob 8 P2		Shuffle 4
+
+Map	Button 1 P2		Mute1
+Map	Button 2 P2		Mute2
+Map	Button 3 P2		Mute3
+Map	Button 4 P2		Mute4
+Map	Button 5 P2		Solo1
+Map	Button 6 P2		Solo2
+Map	Button 7 P2		Solo3
+Map	Button 8 P2		Solo4
+
+// --- Page 3: Lanes2 ----------------------------------------
+Map	Knob 1 P3		Key5
+Map	Knob 2 P3		Key6
+Map	Knob 3 P3		Key7
+Map	Knob 4 P3		Key8
+Map	Knob 5 P3		Shuffle 5
+Map	Knob 6 P3		Shuffle 6
+Map	Knob 7 P3		Shuffle 7
+Map	Knob 8 P3		Shuffle 8
+
+Map	Button 1 P3		Mute5
+Map	Button 2 P3		Mute6
+Map	Button 3 P3		Mute7
+Map	Button 4 P3		Mute8
+Map	Button 5 P3		Solo5
+Map	Button 6 P3		Solo6
+Map	Button 7 P3		Solo7
+Map	Button 8 P3		Solo8
+
+// --- Page 4: Reset -----------------------------------------
+Map	Knob 1 P4		Reset 1
+Map	Knob 2 P4		Reset 2
+Map	Knob 3 P4		Reset 3
+Map	Knob 4 P4		Reset 4
+Map	Knob 5 P4		Reset 5
+Map	Knob 6 P4		Reset 6
+Map	Knob 7 P4		Reset 7
+Map	Knob 8 P4		Reset 8
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial Button		Play
+Map	Crossfader		Pattern Select
+
+Scope	Propellerhead Software	se.propellerheads.Arpeggio
+Map	_Scope		"Dual Arpeggio"
+
+// --- Page 1: Arp 1 -----------------------------------------
+Map	Knob 1 P1		Octaves 1
+Map	Knob 2 P1		Direction 1
+Map	Knob 3 P1		Transpose 1
+Map	Knob 4 P1		Low Key 1
+Map	Knob 5 P1		High Key 1
+Map	Knob 6 P1		Shift Step 1
+Map	Knob 7 P1		Arp Steps 1
+
+Map	Button 1 P1		Arpeggio On 1
+Map	Button 2 P1		Repeat 1
+Map	Button 3 P1		Pattern On 1
+Map	Button 4 P1		Arp Steps On 1
+Map	Button 5 P1		Velocity On 1
+Map	Button 6 P1		Hold
+
+// --- Page 2: Arp 2 -----------------------------------------
+Map	Knob 1 P2		Rate 2
+Map	Knob 2 P2		Octaves 2
+Map	Knob 3 P2		Direction 2
+Map	Knob 4 P2		Gate Length 2
+Map	Knob 5 P2		Transpose 2
+Map	Knob 6 P2		Low Key 2
+Map	Knob 7 P2		High Key 2
+Map	Knob 8 P2		Shift Step 2
+
+Map	Button 1 P2		Arpeggio On 2
+Map	Button 2 P2		Repeat 2
+Map	Button 3 P2		Pattern On 2
+Map	Button 4 P2		Arp Steps On 2
+Map	Button 5 P2		Velocity On 2
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Rate 1
+Map	Speed Dial Button		On
+Map	Crossfader		Gate Length 1
+
+Scope	Propellerheads	ECF-42 Envelope Controlled Filter
+Map	_Scope		"ECF-42"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Attack
+Map	Knob 2 P1		Decay
+Map	Knob 3 P1		Sustain
+Map	Knob 4 P1		Release
+Map	Knob 5 P1		Resonance
+Map	Knob 6 P1		Mode
+Map	Knob 7 P1		Velocity
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Frequency
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Env Amount
+
+Scope	Propellerheads	The Echo
+Map	_Scope		"The Echo"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 2 P1		Feedback
+Map	Knob 3 P1		Ping-Pong Pan
+Map	Knob 4 P1		Drive Amount
+Map	Knob 5 P1		Filter Frequency
+Map	Knob 6 P1		Filter Resonance
+Map	Knob 7 P1		LFO Rate
+Map	Knob 8 P1		LFO Amount
+
+Map	Button 1 P1		Sync
+Map	Button 2 P1		Keep Pitch
+Map	Button 3 P1		Ping-Pong Mode
+Map	Button 4 P1		Diffuse On
+Map	Button 5 P1		Filter On
+
+// --- Page 2: Advanced --------------------------------------
+Map	Knob 1 P2		Right Ch Time Offset
+Map	Knob 2 P2		Right Ch Feedback Offset
+Map	Knob 3 P2		Diffuse Spread
+Map	Knob 4 P2		Diffuse Amount
+Map	Knob 5 P2		Drive Type
+Map	Knob 6 P2		Envelope
+Map	Knob 7 P2		Wobble
+Map	Knob 8 P2		Input Mode
+
+// --- Page 3: Performance -----------------------------------
+Map	Knob 1 P3		Roll Enabled
+Map	Knob 2 P3		Ducking
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Delay Time
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Dry/Wet Balance
+
+Scope	Propellerhead Software	se.propellerheads.Europa
+Map	_Scope		"Europa"
+
+// --- Page 1: OSC -------------------------------------------
+Map	Knob 1 P1		Osc1 Wave
+Map	Knob 2 P1		Osc1 Shape
+Map	Knob 3 P1		Osc1 Harm Amt
+Map	Knob 4 P1		Osc1 Detune
+Map	Knob 5 P1		Osc1 Level
+Map	Knob 6 P1		Osc1 Pan
+Map	Knob 7 P1		Osc1 Tune
+Map	Knob 8 P1		Osc1 Semi
+
+Map	Button 1 P1		Osc1 On
+Map	Button 2 P1		Osc2 On
+Map	Button 3 P1		Osc3 On
+Map	Button 4 P1		Osc1 Unison On
+Map	Button 5 P1		Osc2 Unison On
+Map	Button 6 P1		Osc3 Unison On
+Map	Button 7 P1		Osc1 Harm On
+Map	Button 8 P1		Osc1 SyncPhase
+
+// --- Page 2: FILTER ----------------------------------------
+Map	Knob 1 P2		Filter Freq
+Map	Knob 2 P2		Filter Reso
+Map	Knob 3 P2		Filter Drive
+Map	Knob 4 P2		Filter Kbd
+Map	Knob 5 P2		Filter Mod
+Map	Knob 6 P2		Filter Vel
+Map	Knob 7 P2		Filter Type
+Map	Knob 8 P2		Filter Mod Source
+
+Map	Button 1 P2		Osc1 Filter On
+Map	Button 2 P2		Osc2 Filter On
+Map	Button 3 P2		Osc3 Filter On
+Map	Button 4 P2		Osc1 To Filter
+Map	Button 5 P2		Osc2 To Filter
+Map	Button 6 P2		Osc3 To Filter
+
+// --- Page 3: MODULATION ------------------------------------
+Map	Knob 1 P3		LFO 1 Rate
+Map	Knob 2 P3		LFO 2 Rate
+Map	Knob 3 P3		LFO 3 Rate
+Map	Knob 4 P3		Amp Attack
+Map	Knob 5 P3		Amp Decay
+Map	Knob 6 P3		Amp Sustain
+Map	Knob 7 P3		Amp Release
+Map	Knob 8 P3		Mod1 Source
+
+Map	Button 1 P3		LFO 1 KeySync
+Map	Button 2 P3		LFO 1 TempoSync
+Map	Button 3 P3		LFO 2 KeySync
+Map	Button 4 P3		LFO 2 TempoSync
+Map	Button 5 P3		LFO 3 KeySync
+Map	Button 6 P3		LFO 3 TempoSync
+Map	Button 7 P3		LFO 1 Global
+Map	Button 8 P3		LFO 2 Global
+
+// --- Page 4: FX --------------------------------------------
+Map	Knob 1 P4		Dist Drive
+Map	Knob 2 P4		Dist Amount
+Map	Knob 3 P4		Dist Tone
+Map	Knob 4 P4		Delay Time
+Map	Knob 5 P4		Delay Amount
+Map	Knob 6 P4		Reverb Size
+Map	Knob 7 P4		Reverb Amount
+Map	Knob 8 P4		EQ Freq
+
+Map	Button 1 P4		Dist On
+Map	Button 2 P4		Phaser On
+Map	Button 3 P4		Delay On
+Map	Button 4 P4		Reverb On
+Map	Button 5 P4		Eq On
+Map	Button 6 P4		Comp On
+Map	Button 7 P4		Delay Sync
+Map	Button 8 P4		Delay PingPong
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Volume
+Map	Speed Dial Button		Effect On
+Map	Crossfader		Pan
+
+Scope	Propellerhead Software	se.propellerheads.Grain
+Map	_Scope		"Grain"
+
+// --- Page 1: Grain -----------------------------------------
+Map	Knob 1 P1		Position
+Map	Knob 2 P1		End Pos
+Map	Knob 3 P1		Jitter
+Map	Knob 4 P1		Motion
+Map	Knob 5 P1		Grain Length
+Map	Knob 6 P1		Rate-Spacing
+
+Map	Button 1 P1		Global Position
+Map	Button 2 P1		Osc On
+Map	Button 3 P1		Sample To Filter
+Map	Button 4 P1		Osc To Filter
+
+// --- Page 2: Oscillator ------------------------------------
+Map	Knob 1 P2		Algorithm
+Map	Knob 2 P2		Oct
+Map	Knob 3 P2		Semi
+Map	Knob 4 P2		Tune
+Map	Knob 5 P2		Formant
+Map	Knob 6 P2		Formant Tune
+Map	Knob 7 P2		Osc Mod
+Map	Knob 8 P2		Osc Level
+
+// --- Page 3: FilterAmp -------------------------------------
+Map	Knob 1 P3		Filter Freq
+Map	Knob 2 P3		Filter Reso
+Map	Knob 3 P3		Filter Type
+Map	Knob 4 P3		Filter Env2
+Map	Knob 5 P3		Amp Attack
+Map	Knob 6 P3		Amp Decay
+Map	Knob 7 P3		Amp Sustain
+Map	Knob 8 P3		Amp Release
+
+// --- Page 4: Effects ---------------------------------------
+Map	Knob 1 P4		Dist Drive
+Map	Knob 2 P4		Dist Amount
+Map	Knob 3 P4		Delay Amount
+Map	Knob 4 P4		Delay FB
+Map	Knob 5 P4		Reverb Amount
+Map	Knob 6 P4		Reverb Size
+Map	Knob 7 P4		Comp Threshold
+Map	Knob 8 P4		Comp Ratio
+
+Map	Button 2 P4		Delay On
+Map	Button 3 P4		Reverb On
+Map	Button 4 P4		Dist On
+Map	Button 5 P4		Phaser On
+Map	Button 6 P4		Comp On
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Volume
+Map	Speed Dial Button		Effect On
+Map	Crossfader		Speed
+
+Scope	Propellerhead Software	se.propellerheads.Humana
+Map	_Scope		"Humana"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Instrument
+Map	Knob 2 P1		SampleStart
+Map	Knob 4 P1		Semitune
+Map	Knob 5 P1		Filter_Cutoff
+Map	Knob 6 P1		Filter_Reso
+Map	Knob 7 P1		Delay_Amount
+Map	Knob 8 P1		Reverb_Amount
+
+Map	Button 1 P1		Filter_On
+Map	Button 2 P1		Delay_On
+
+// --- Page 2: Filter ----------------------------------------
+Map	Knob 3 P2		Filter_Type
+Map	Knob 4 P2		Filter_Env
+Map	Knob 5 P2		Filter_KeyFollow
+Map	Knob 6 P2		Filter_Velocity
+Map	Knob 8 P2		Amp_Velocity
+
+// --- Page 3: Envelope --------------------------------------
+Map	Knob 1 P3		Amp_Attack
+Map	Knob 2 P3		Amp_Decay
+Map	Knob 3 P3		Amp_Sustain
+Map	Knob 4 P3		Amp_Release
+Map	Knob 5 P3		Filter_Attack
+Map	Knob 6 P3		Filter_Decay
+Map	Knob 7 P3		Filter_Sustain
+Map	Knob 8 P3		Filter_Release
+
+// --- Page 4: Effects ---------------------------------------
+Map	Knob 1 P4		Delay_Time
+Map	Knob 2 P4		Synced_Delay_Time
+Map	Knob 3 P4		Delay_Feedback
+Map	Knob 4 P4		Delay_Damp
+Map	Knob 5 P4		Reverb_Time
+Map	Knob 6 P4		Reverb_PreDelay
+Map	Knob 7 P4		Reverb_HighDamp
+
+Map	Button 2 P4		Delay_Sync
+Map	Button 3 P4		Delay_PingPong
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master_Volume
+Map	Speed Dial Button		Reverb_On
+Map	Crossfader		Octave
+
+Scope	Propellerheads	ID8 Instrument Device
+Map	_Scope		"ID8"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Category
+Map	Knob 2 P1		Sound
+Map	Knob 4 P1		Parameter 1
+Map	Knob 5 P1		Parameter 2
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Volume
+Map	Crossfader		Preset
+
+Scope	Propellerhead Software	se.propellerheads.Klang
+Map	_Scope		"Klang"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Instrument
+Map	Knob 2 P1		SampleStart
+Map	Knob 3 P1		Octave
+Map	Knob 4 P1		Semitune
+Map	Knob 5 P1		Filter_Cutoff
+Map	Knob 6 P1		Filter_Reso
+Map	Knob 7 P1		Delay Amount
+Map	Knob 8 P1		Reverb Amount
+
+Map	Button 2 P1		Delay_On
+Map	Button 3 P1		Reverb_On
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial Button		Filter_On
+Map	Crossfader		Master_Volume
+
+Scope	Propellerheads	Kong Drum Designer
+Map	_Scope		"KONG"
+
+// --- Page 1: Mixer -----------------------------------------
+Map	Knob 1 P1		Drum 1 Level
+Map	Knob 2 P1		Drum 2 Level
+Map	Knob 3 P1		Drum 3 Level
+Map	Knob 4 P1		Drum 4 Level
+Map	Knob 5 P1		Drum 5 Level
+Map	Knob 6 P1		Drum 6 Level
+Map	Knob 7 P1		Drum 7 Level
+Map	Knob 8 P1		Drum 8 Level
+
+Map	Button 1 P1		Pad 1 Mute
+Map	Button 2 P1		Pad 2 Mute
+Map	Button 3 P1		Pad 3 Mute
+Map	Button 4 P1		Pad 4 Mute
+Map	Button 5 P1		Pad 5 Mute
+Map	Button 6 P1		Pad 6 Mute
+Map	Button 7 P1		Pad 7 Mute
+Map	Button 8 P1		Pad 8 Mute
+
+// --- Page 2: Drum ------------------------------------------
+Map	Knob 2 P2		Drum 1 Pan
+Map	Knob 3 P2		Drum 1 Tone
+Map	Knob 4 P2		Drum 1 Pitch Offset
+Map	Knob 5 P2		Drum 1 Decay Offset
+Map	Knob 6 P2		Drum 1 Bus FX Send
+Map	Knob 7 P2		Drum 1 Aux 1 Send
+Map	Knob 8 P2		Drum 1 Aux 2 Send
+
+Map	Button 1 P2		Drum 1 DM On
+Map	Button 2 P2		Drum 1 FX1 On
+Map	Button 3 P2		Drum 1 FX2 On
+
+// --- Page 3: DrumEngine ------------------------------------
+Map	Knob 1 P3		Drum 1 DM Level
+Map	Knob 2 P3		Drum 1 DM Pitch
+Map	Knob 3 P3		Drum 1 DM Decay
+Map	Knob 4 P3		Drum 1 DM Variable
+Map	Knob 5 P3		Drum 1 FX1 P1
+Map	Knob 6 P3		Drum 1 FX1 P2
+Map	Knob 7 P3		Drum 1 FX2 P1
+Map	Knob 8 P3		Drum 1 FX2 P2
+
+// --- Page 4: FX --------------------------------------------
+Map	Knob 1 P4		Master FX P1
+Map	Knob 2 P4		Master FX P2
+Map	Knob 3 P4		Bus FX P1
+Map	Knob 4 P4		Bus FX P2
+Map	Knob 5 P4		Level Bus FX to Master FX
+
+Map	Button 2 P4		Bus FX On
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Level
+Map	Speed Dial Button		Master FX On
+
+Scope	Propellerheads	Malstrom Graintable Synthesizer
+Map	_Scope		"Malstrom"
+
+// --- Page 1: Oscillators -----------------------------------
+Map	Knob 1 P1		Oscillator A Index
+Map	Knob 2 P1		Oscillator A Motion
+Map	Knob 3 P1		Oscillator A Shift
+Map	Knob 4 P1		Oscillator A Gain
+Map	Knob 5 P1		Oscillator B Index
+Map	Knob 6 P1		Oscillator B Motion
+Map	Knob 7 P1		Oscillator B Shift
+Map	Knob 8 P1		Oscillator B Gain
+
+Map	Button 1 P1		Oscillator A On/Off
+Map	Button 2 P1		Oscillator B On/Off
+
+// --- Page 2: Filter ----------------------------------------
+Map	Knob 1 P2		Filter A Freq
+Map	Knob 2 P2		Filter A Resonance
+Map	Knob 3 P2		Filter B Freq
+Map	Knob 4 P2		Filter B Resonance
+Map	Knob 5 P2		Filter Env Amount
+Map	Knob 6 P2		Shaper Amount
+Map	Knob 7 P2		Shaper Mode
+Map	Knob 8 P2		Velocity To Filter Env
+
+Map	Button 1 P2		Filter A On/Off
+Map	Button 2 P2		Filter B On/Off
+Map	Button 3 P2		Filter Env Invert
+Map	Button 4 P2		Shaper On/Off
+
+// --- Page 3: Modulation ------------------------------------
+Map	Knob 1 P3		Modulator A Curve
+Map	Knob 2 P3		Modulator A Rate
+Map	Knob 3 P3		Modulator A To Pitch
+Map	Knob 4 P3		Modulator A To Index
+Map	Knob 5 P3		Modulator B Curve
+Map	Knob 6 P3		Modulator B Rate
+Map	Knob 7 P3		Modulator B To Filter
+Map	Knob 8 P3		Modulator B To Motion
+
+Map	Button 1 P3		Modulator A On/Off
+Map	Button 2 P3		Modulator B On/Off
+Map	Button 3 P3		Modulator A Sync
+Map	Button 4 P3		Modulator B Sync
+
+// --- Page 4: Performance -----------------------------------
+Map	Knob 1 P4		Portamento
+Map	Knob 3 P4		Velocity To Level A
+Map	Knob 4 P4		Velocity To Level B
+Map	Knob 5 P4		Velocity To Attack
+Map	Knob 6 P4		Velocity To Shift
+Map	Knob 7 P4		Velocity To Modulator
+Map	Knob 8 P4		Spread Amount
+
+Map	Button 2 P4		Route Oscillator B To Filter B
+Map	Button 3 P4		Route Oscillator A To Filter B
+Map	Button 4 P4		Route Filter B To Shaper
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Level
+Map	Speed Dial Button		Legato On/Off
+Map	Crossfader		Polyphony
+
+Scope	Propellerheads	MClass Compressor
+Map	_Scope		"MC Compressor"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 2 P1		Threshold
+Map	Knob 3 P1		Ratio
+Map	Knob 4 P1		Attack
+Map	Knob 5 P1		Release
+
+Map	Button 2 P1		Sidechain Solo
+Map	Button 3 P1		Adapt
+
+// --- Page 2: Dynamics --------------------------------------
+Map	Button 1 P2		Soft Knee
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Input Gain
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Output Gain
+
+Scope	Propellerheads	MClass Equalizer
+Map	_Scope		"MC Eq"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Low Shelf Frequency
+Map	Knob 3 P1		Parametric 1 Frequency
+Map	Knob 4 P1		Parametric 1 Gain
+Map	Knob 5 P1		Parametric 2 Frequency
+Map	Knob 6 P1		Parametric 2 Gain
+Map	Knob 7 P1		Hi Shelf Frequency
+
+Map	Button 1 P1		Low Cut Enable
+Map	Button 2 P1		Low Shelf Enable
+Map	Button 3 P1		Parametric 1 Enable
+Map	Button 4 P1		Parametric 2 Enable
+Map	Button 5 P1		Hi Shelf Enable
+
+// --- Page 2: LowBand ---------------------------------------
+Map	Knob 3 P2		Low Shelf Q
+Map	Knob 6 P2		Hi Shelf Q
+
+// --- Page 3: Parametric1 -----------------------------------
+Map	Knob 3 P3		Parametric 1 Q
+
+// --- Page 4: Parametric2 -----------------------------------
+Map	Knob 3 P4		Parametric 2 Q
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Low Shelf Gain
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Hi Shelf Gain
+
+Scope	Propellerheads	MClass Maximizer
+Map	_Scope		"MC Maximizer"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 2 P1		Attack Speed
+Map	Knob 3 P1		Release Speed
+Map	Knob 5 P1		Soft Clip Amount
+
+Map	Button 2 P1		Look Ahead Enable
+Map	Button 4 P1		Output Level Meter Mode
+
+// --- Page 2: Limiter ---------------------------------------
+Map	Button 1 P2		Limiter Enable
+
+// --- Page 3: SoftClip --------------------------------------
+Map	Button 1 P3		Soft Clip Enable
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Input Gain
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Output Gain
+
+Scope	Propellerheads	MClass Stereo Imager
+Map	_Scope		"MC Imager"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 3 P1		X-Over Frequency
+Map	Knob 4 P1		Solo Mode
+
+// --- Page 2: Routing ---------------------------------------
+Map	Button 1 P2		Separate Out Mode
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		High Width
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Low Width
+
+Scope	Propellerhead Software	se.propellerheads.Monotone
+Map	_Scope		"Monotone"
+
+// --- Page 1: Oscillators -----------------------------------
+Map	Knob 1 P1		Osc1 Oct
+Map	Knob 2 P1		Osc1 Wave
+Map	Knob 3 P1		Osc2 Oct
+Map	Knob 4 P1		Osc2 Pitch
+Map	Knob 5 P1		Osc2 Wave
+Map	Knob 6 P1		Osc Detune
+Map	Knob 8 P1		Noise
+
+// --- Page 2: Filter ----------------------------------------
+Map	Knob 1 P2		Filter Freq
+Map	Knob 2 P2		Filter Reso
+Map	Knob 3 P2		Filter Drive
+Map	Knob 4 P2		Filter Env Amount
+Map	Knob 5 P2		Filter Key Amt
+Map	Knob 6 P2		Filter LFO Amt
+Map	Knob 7 P2		Filter Vel
+Map	Knob 8 P2		FM Env Amt
+
+// --- Page 3: Envelopes -------------------------------------
+Map	Knob 1 P3		Amp Attack
+Map	Knob 2 P3		Amp Decay
+Map	Knob 3 P3		Amp Sustain
+Map	Knob 4 P3		Amp Release
+Map	Knob 5 P3		Filter Attack
+Map	Knob 6 P3		Filter Decay
+Map	Knob 7 P3		Filter Sustain
+Map	Knob 8 P3		Filter Release
+
+// --- Page 4: PerformanceFX ---------------------------------
+Map	Knob 1 P4		Portamento
+Map	Knob 2 P4		Portamento Mode
+Map	Knob 3 P4		LFO Rate
+Map	Knob 4 P4		LFO Wave
+Map	Knob 5 P4		Chorus Amount
+Map	Knob 6 P4		Chorus Rate
+Map	Knob 7 P4		Delay Amount
+Map	Knob 8 P4		Delay Feedback
+
+Map	Button 1 P4		Delay Pingpong
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Volume
+Map	Speed Dial Button		ReTrig
+Map	Crossfader		Osc Mix
+
+Scope	Groovy Melon	com.groovymelon.MorfinXF
+Map	_Scope		"Morfin XF"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 2 P1		Volume A
+Map	Knob 3 P1		Volume B
+Map	Knob 5 P1		Ch A Select Input
+Map	Knob 6 P1		Ch B Select Input
+
+// --- Page 2: Inputs ----------------------------------------
+Map	Button 2 P2		Phase Invert B
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Curve Type
+Map	Speed Dial Button		Phase Invert A
+Map	Crossfader		Crossfader
+
+Scope	Propellerheads	Neptune Pitch Adjuster
+Map	_Scope		"Neptune"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 2 P1		Preserve Expression
+Map	Knob 4 P1		Formant Shift
+Map	Knob 5 P1		Semitones
+Map	Knob 6 P1		Cent
+Map	Knob 7 P1		Pitched Signal Level
+Map	Knob 8 P1		Voice Synth Level
+
+Map	Button 1 P1		Pitch Adjust On/Off
+Map	Button 2 P1		Transpose On/Off
+Map	Button 3 P1		Formant On/Off
+Map	Button 4 P1		Live Mode
+Map	Button 5 P1		Low Freq Input
+Map	Button 6 P1		Wide Vibrato
+Map	Button 7 P1		MIDI Destination
+
+// --- Page 2: Vibrato ---------------------------------------
+Map	Knob 1 P2		Vibrato Rate
+Map	Knob 2 P2		Mod Wheel
+
+// --- Page 3: Transpose -------------------------------------
+Map	Knob 4 P3		Scale Memory
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Correction Speed
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Pitch Bend Range
+
+Scope	Propellerheads	NN19 Digital Sampler
+Map	_Scope		"NN-19"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Sample Start
+Map	Knob 2 P1		Filter Freq
+Map	Knob 3 P1		Filter Res
+Map	Knob 4 P1		Filter Env Amount
+Map	Knob 5 P1		LFO Rate
+Map	Knob 6 P1		LFO Amount
+
+Map	Button 1 P1		Filter On/Off
+Map	Button 2 P1		LFO Sync Enable
+Map	Button 3 P1		Key Mode
+
+// --- Page 2: Filter ----------------------------------------
+Map	Knob 3 P2		Filter Mode
+Map	Knob 4 P2		Filter Kbd Track
+Map	Knob 6 P2		Filter Env Vel Amount
+Map	Knob 7 P2		Filter Decay Vel Amount
+
+Map	Button 2 P2		Filter Env Invert
+
+// --- Page 3: Envelope --------------------------------------
+Map	Knob 1 P3		Amp Env Attack
+Map	Knob 2 P3		Amp Env Decay
+Map	Knob 3 P3		Amp Env Sustain
+Map	Knob 4 P3		Amp Env Release
+Map	Knob 5 P3		Filter Env Attack
+Map	Knob 6 P3		Filter Env Decay
+Map	Knob 7 P3		Filter Env Sustain
+Map	Knob 8 P3		Filter Env Release
+
+// --- Page 4: Performance -----------------------------------
+Map	Knob 1 P4		Osc Octave
+Map	Knob 2 P4		Osc Semitone
+Map	Knob 3 P4		Osc Fine Tune
+Map	Knob 4 P4		Osc Env Amount
+Map	Knob 7 P4		LFO Wave
+Map	Knob 8 P4		LFO Dest
+
+Map	Button 1 P4		Osc Kbd Track
+Map	Button 2 P4		Low Bandwidth On/Off
+Map	Button 3 P4		High Quality Interpolation
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Level
+Map	Speed Dial Button		Solo Sample
+Map	Crossfader		Stereo Spread
+
+Scope	Propellerheads	NN-XT Advanced Sampler
+Map	_Scope		"NN-XT"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Mod Env Decay
+Map	Knob 2 P1		External Controller
+Map	Knob 3 P1		External Controller Source
+Map	Knob 5 P1		Filter Res
+Map	Knob 6 P1		Amp Env Attack
+Map	Knob 7 P1		Amp Env Decay
+Map	Knob 8 P1		Amp Env Release
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Volume
+Map	Speed Dial Button		High Quality Interpolation
+Map	Crossfader		Filter Freq
+
+Scope	Propellerhead Software	se.propellerheads.NoteEcho
+Map	_Scope		"Note Echo"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Repeats
+Map	Knob 3 P1		Step Length Free
+Map	Knob 4 P1		Step Length Synced
+
+Map	Button 2 P1		Tempo Sync
+Map	Button 3 P1		Original Note Enable
+
+// --- Page 2: Steps1to8 -------------------------------------
+Map	Button 1 P2		Step 1 Enable
+Map	Button 2 P2		Step 2 Enable
+Map	Button 3 P2		Step 3 Enable
+Map	Button 4 P2		Step 4 Enable
+Map	Button 5 P2		Step 5 Enable
+Map	Button 6 P2		Step 6 Enable
+Map	Button 7 P2		Step 7 Enable
+Map	Button 8 P2		Step 8 Enable
+
+// --- Page 3: Steps9to16 ------------------------------------
+Map	Button 1 P3		Step 9 Enable
+Map	Button 2 P3		Step 10 Enable
+Map	Button 3 P3		Step 11 Enable
+Map	Button 4 P3		Step 12 Enable
+Map	Button 5 P3		Step 13 Enable
+Map	Button 6 P3		Step 14 Enable
+Map	Button 7 P3		Step 15 Enable
+Map	Button 8 P3		Step 16 Enable
+
+// --- Page 4: Step17 ----------------------------------------
+Map	Button 1 P4		Step 17 Enable
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Velocity
+Map	Speed Dial Button		On/Off
+Map	Crossfader		Pitch
+
+Scope	Propellerheads	PEQ-2 Two Band Parametric EQ
+Map	_Scope		"PEQ-2 Parametric EQ"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Filter A Freq
+Map	Knob 2 P1		Filter A Q
+Map	Knob 4 P1		Filter B Freq
+Map	Knob 5 P1		Filter B Q
+
+// --- Page 2: FilterB ---------------------------------------
+Map	Button 1 P2		Filter B On/Off
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Filter A Gain
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Filter B Gain
+
+Scope	Propellerheads	Pulveriser
+Map	_Scope		"Pulveriser"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Squash
+Map	Knob 2 P1		Release
+Map	Knob 3 P1		Dirt
+Map	Knob 4 P1		Tone
+Map	Knob 7 P1		Filter Frequency
+Map	Knob 8 P1		Peak
+
+Map	Button 1 P1		Routing
+Map	Button 2 P1		Sync
+Map	Button 3 P1		Tremor Spread
+
+// --- Page 2: Filter ----------------------------------------
+Map	Knob 3 P2		Filter Mode
+Map	Knob 4 P2		Tremor to Frequency
+Map	Knob 5 P2		Follower to Frequency
+Map	Knob 6 P2		Follower Threshold
+Map	Knob 7 P2		Follower Attack
+Map	Knob 8 P2		Follower Release
+
+// --- Page 3: Tremor ----------------------------------------
+Map	Knob 1 P3		Tremor Rate
+Map	Knob 2 P3		Tremor Waveform
+Map	Knob 3 P3		Tremor Lag
+Map	Knob 4 P3		Follower to Rate
+Map	Knob 5 P3		Tremor to Volume
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Volume
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Blend
+
+Scope	Propellerhead Software	se.propellerheads.RadicalKeys
+Map	_Scope		"Radical Keys"
+
+// --- Page 1: Piano -----------------------------------------
+Map	Knob 1 P1		Instrument Blend
+Map	Knob 2 P1		Tune
+Map	Knob 3 P1		Tune Drift
+Map	Knob 4 P1		Vel Resp Curve
+Map	Knob 5 P1		Vel Resp Low
+Map	Knob 6 P1		Vel Resp High
+Map	Knob 7 P1		Sustain Pedal
+Map	Knob 8 P1		mic1
+
+// --- Page 2: Envelope --------------------------------------
+Map	Knob 1 P2		Env Attack
+Map	Knob 2 P2		Env Decay Curve
+Map	Knob 3 P2		Env Release
+Map	Knob 4 P2		Symp Res Level
+Map	Knob 5 P2		Symp Res Release
+Map	Knob 6 P2		Key Down Level
+Map	Knob 7 P2		Key Up Level
+Map	Knob 8 P2		Pedal Level
+
+Map	Button 1 P2		Comp OnOff
+Map	Button 2 P2		Comp Fast
+Map	Button 3 P2		Tremolo OnOff
+
+// --- Page 3: FX --------------------------------------------
+Map	Knob 1 P3		Chorus DryWet
+Map	Knob 2 P3		Chorus Intensity
+Map	Knob 3 P3		Phaser Rate
+Map	Knob 4 P3		Phaser Depth
+Map	Knob 5 P3		Tremolo Speed Free
+Map	Knob 6 P3		Tremolo Speed Synced
+Map	Knob 7 P3		Tremolo Depth
+Map	Knob 8 P3		Tremolo Stereo Width
+
+Map	Button 1 P3		Chorus OnOff
+Map	Button 2 P3		Chorus Stereo
+Map	Button 3 P3		Phaser OnOff
+Map	Button 4 P3		Phaser Color
+Map	Button 5 P3		Phaser Stereo
+Map	Button 6 P3		Tremolo Sync
+Map	Button 7 P3		Tremolo Type
+
+// --- Page 4: Overdrive/EQ ----------------------------------
+Map	Knob 1 P4		Overdrive Drive
+Map	Knob 2 P4		Overdrive Presence
+Map	Knob 3 P4		Overdrive Type
+Map	Knob 4 P4		Ambience Level
+Map	Knob 5 P4		Ambience Type
+Map	Knob 6 P4		EQ Lo Gain
+Map	Knob 7 P4		EQ Mid Gain
+Map	Knob 8 P4		EQ Hi Gain
+
+Map	Button 1 P4		Overdrive OnOff
+Map	Button 2 P4		EQ OnOff
+Map	Button 3 P4		EQ Pre Overdrive
+Map	Button 4 P4		Ambience OnOff
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Character
+Map	Speed Dial Button		Select Next Patch
+Map	Crossfader		Master Volume
+
+Scope	Propellerhead Software	se.propellerheads.radicalpiano
+Map	_Scope		"Radical Piano"
+
+// --- Page 1: Piano -----------------------------------------
+Map	Knob 1 P1		Sustain Pedal
+Map	Knob 2 P1		Tune
+Map	Knob 3 P1		Tune Drift
+Map	Knob 4 P1		Compression Amount
+Map	Knob 5 P1		Stereo Width
+Map	Knob 6 P1		Ambience Level
+Map	Knob 7 P1		Microphone and Instrument Blend
+
+// --- Page 2: Envelope --------------------------------------
+Map	Knob 1 P2		Env Attack
+Map	Knob 2 P2		Env Decay Curve
+Map	Knob 3 P2		Env Release
+Map	Knob 4 P2		Key Down Level
+Map	Knob 5 P2		Key Up Level
+Map	Knob 6 P2		Pedal Level
+Map	Knob 7 P2		Vel Response Low
+Map	Knob 8 P2		Vel Response High
+
+// --- Page 3: Tone ------------------------------------------
+Map	Knob 1 P3		EQ Lo Gain
+Map	Knob 2 P3		EQ Mid Gain
+Map	Knob 3 P3		EQ Hi Gain
+Map	Knob 4 P3		Symp Res Level
+Map	Knob 5 P3		Symp Res Release Time
+Map	Knob 6 P3		Vel Response Curve
+
+// --- Page 4: Ambience --------------------------------------
+Map	Knob 1 P4		Microphone 1 Type
+Map	Knob 2 P4		Microphone 2 Type
+Map	Knob 3 P4		Ambience Type
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Character
+Map	Speed Dial Button		EQ On/Off
+Map	Crossfader		Master Volume
+
+Scope	Propellerhead Software	se.propellerheads.ReasonAmp
+Map	_Scope		"Amp"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 2 P1		Bass
+Map	Knob 3 P1		Mid
+Map	Knob 4 P1		Treble
+Map	Knob 5 P1		Poweramp Gain
+Map	Knob 6 P1		Gate
+Map	Knob 7 P1		Amp Switch
+Map	Knob 8 P1		Cab Switch
+
+Map	Button 1 P1		Boost
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Volume
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Gain
+
+Scope	Propellerhead Software	se.propellerheads.ReasonBassAmp
+Map	_Scope		"Bass Amp"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 2 P1		Bass
+Map	Knob 3 P1		Middle
+Map	Knob 4 P1		Treble
+Map	Knob 6 P1		Amp Switch
+Map	Knob 7 P1		Cab Switch
+Map	Knob 8 P1		Mid Freq
+
+Map	Button 1 P1		Ultra Lo
+Map	Button 2 P1		Ultra Hi
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Drive
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Volume
+
+Scope	Propellerheads	Reason Main Mixer Channel
 Map	_Scope		"Reason Main Mixer Channel"
 
-// --- Page 1: Mixer ----------------------------------------------------
-Map	Knob 1 Mixer		Width
-Map	Knob 3 Mixer		Input Gain
-Map	Knob 5 Mixer		LPF Frequency
-Map	Knob 7 Mixer		HPF Frequency
+// --- Page 1: Mixer -----------------------------------------
+Map	Knob 1 P1		Width
+Map	Knob 3 P1		Input Gain
+Map	Knob 5 P1		LPF Frequency
+Map	Knob 7 P1		HPF Frequency
 
-Map	Button 1 Mixer		Mute
-Map	Button 2 Mixer		Invert Phase
-Map	Button 3 Mixer		Insert Pre
-Map	Button 4 Mixer		Dyn Post EQ
-Map	Button 5 Mixer		LPF On
-Map	Button 6 Mixer		HPF On
-Map	Button 7 Mixer		Filters Dyn S/C
+Map	Button 1 P1		Mute
+Map	Button 2 P1		Invert Phase
+Map	Button 3 P1		Insert Pre
+Map	Button 4 P1		Dyn Post EQ
+Map	Button 5 P1		LPF On
+Map	Button 6 P1		HPF On
+Map	Button 7 P1		Filters Dyn S/C
 
-// --- Page 2: Dynamics -------------------------------------------------
-// All 8 dials are used here, because the page has 8 continuous parameters:
-// the compressor's Threshold/Ratio/Release/Fast Attack on E1-E4 (the top
-// row) and the gate's Threshold/Range/Release/Hold on E5-E8 (the bottom
-// row). The odd/even gap of pages 1 and 3 is NOT kept on this page: there
-// simply is no spare dial, and leaving G Release/G Hold off the page was
-// the bug this layout fixes.
-//
-// The switches carry only ON/OFF states. The compressor's Release and Fast
-// Attack and the gate's Range / Release / Hold are values, so they are dials
-// here rather than switches; that is what freed Button 6 for Key On and made
-// room for the previously-unmapped C Release / G Release / G Hold.
-Map	Knob 1 Dynamics		C Threshold
-Map	Knob 2 Dynamics		C Ratio
-Map	Knob 3 Dynamics		C Release
-Map	Knob 4 Dynamics		C Fast Atk
-Map	Knob 5 Dynamics		G Threshold
-Map	Knob 6 Dynamics		G Range
-Map	Knob 7 Dynamics		G Release
-Map	Knob 8 Dynamics		G Hold
+// --- Page 2: Dynamics --------------------------------------
+Map	Knob 1 P2		C Threshold
+Map	Knob 2 P2		C Ratio
+Map	Knob 3 P2		C Release
+Map	Knob 4 P2		C Fast Atk
+Map	Knob 5 P2		G Threshold
+Map	Knob 6 P2		G Range
+Map	Knob 7 P2		G Release
+Map	Knob 8 P2		G Hold
 
-Map	Button 1 Dynamics		Comp On
-Map	Button 2 Dynamics		C Peak
-Map	Button 3 Dynamics		Gate On
-Map	Button 4 Dynamics		Expander
-Map	Button 5 Dynamics		G Fast Atk
-Map	Button 6 Dynamics		Key On
+Map	Button 1 P2		Comp On
+Map	Button 2 P2		C Peak
+Map	Button 3 P2		Gate On
+Map	Button 4 P2		Expander
+Map	Button 5 P2		G Fast Atk
+Map	Button 6 P2		Key On
 
-// --- Page 3: EQ -------------------------------------------------------
-Map	Knob 1 EQ		HF Gain
-Map	Knob 3 EQ		HF Frequency
-Map	Knob 5 EQ		HMF Gain
-Map	Knob 7 EQ		HMF Frequency
+// --- Page 3: EQ --------------------------------------------
+Map	Knob 1 P3		HF Gain
+Map	Knob 3 P3		HF Frequency
+Map	Knob 5 P3		HMF Gain
+Map	Knob 7 P3		HMF Frequency
 
-Map	Button 1 EQ		EQ On
-Map	Button 2 EQ		EQ E Mode
-Map	Button 3 EQ		HF Bell
-Map	Button 4 EQ		HF On
-Map	Button 5 EQ		HMF On
-Map	Button 6 EQ		LMF On
-Map	Button 7 EQ		LF Bell
-Map	Button 8 EQ		LF On
+Map	Button 1 P3		EQ On
+Map	Button 2 P3		EQ E Mode
+Map	Button 3 P3		HF Bell
+Map	Button 4 P3		HF On
+Map	Button 5 P3		HMF On
+Map	Button 6 P3		LMF On
+Map	Button 7 P3		LF Bell
+Map	Button 8 P3		LF On
 
-// --- Page 4: FX -------------------------------------------------------
-Map	Knob 1 FX		Rotary 1
-Map	Knob 2 FX		Rotary 2
-Map	Knob 3 FX		Rotary 3
-Map	Knob 4 FX		Rotary 4
-Map	Knob 5 FX		FX1 Send Level
-Map	Knob 6 FX		FX2 Send Level
-Map	Knob 7 FX		FX3 Send Level
-Map	Knob 8 FX		FX4 Send Level
+// --- Page 4: FX --------------------------------------------
+Map	Knob 1 P4		Rotary 1
+Map	Knob 2 P4		Rotary 2
+Map	Knob 3 P4		Rotary 3
+Map	Knob 4 P4		Rotary 4
+Map	Knob 5 P4		FX1 Send Level
+Map	Knob 6 P4		FX2 Send Level
+Map	Knob 7 P4		FX3 Send Level
+Map	Knob 8 P4		FX4 Send Level
 
-Map	Button 1 FX		Button 1
-Map	Button 2 FX		Button 2
-Map	Button 3 FX		Button 3
-Map	Button 4 FX		Button 4
-Map	Button 5 FX		FX1 Pre Fader
-Map	Button 6 FX		FX2 Pre Fader
-Map	Button 7 FX		FX3 Pre Fader
-Map	Button 8 FX		FX4 Pre Fader
+Map	Button 1 P4		Button 1
+Map	Button 2 P4		Button 2
+Map	Button 3 P4		Button 3
+Map	Button 4 P4		Button 4
+Map	Button 5 P4		FX1 Pre Fader
+Map	Button 6 P4		FX2 Pre Fader
+Map	Button 7 P4		FX3 Pre Fader
+Map	Button 8 P4		FX4 Pre Fader
 
-// --- Shared: same on every page ---------------------------------------
+// --- Shared: same on every page -------------------------
 Map	Speed Dial		Level
 Map	Speed Dial Button		Solo
 Map	Crossfader		Pan
+
+Scope	Propellerheads	Redrum Drum Computer
+Map	_Scope		"Redrum"
+
+// --- Page 1: Mixer -----------------------------------------
+Map	Knob 1 P1		Drum 1 Level
+Map	Knob 2 P1		Drum 2 Level
+Map	Knob 3 P1		Drum 3 Level
+Map	Knob 4 P1		Drum 4 Level
+Map	Knob 5 P1		Drum 5 Level
+Map	Knob 6 P1		Drum 6 Level
+Map	Knob 7 P1		Drum 7 Level
+Map	Knob 8 P1		Drum 8 Level
+
+Map	Button 1 P1		Drum 1 Mute
+Map	Button 2 P1		Drum 2 Mute
+Map	Button 3 P1		Drum 3 Mute
+Map	Button 4 P1		Drum 4 Mute
+Map	Button 5 P1		Drum 5 Mute
+Map	Button 6 P1		Drum 6 Mute
+Map	Button 7 P1		Drum 7 Mute
+Map	Button 8 P1		Drum 8 Mute
+
+// --- Page 2: Drum ------------------------------------------
+Map	Knob 1 P2		Selected Drum
+Map	Knob 3 P2		Drum 1 Pan
+Map	Knob 4 P2		Drum 1 Pitch
+Map	Knob 5 P2		Drum 1 Length
+Map	Knob 6 P2		Drum 1 Send 1 Amount
+Map	Knob 7 P2		Drum 1 Send 2 Amount
+Map	Knob 8 P2		Drum 1 Vel to Level
+
+Map	Button 2 P2		Drum 1 Solo
+Map	Button 3 P2		Drum 1 Decay/Gate Mode
+
+// --- Page 3: Pattern ---------------------------------------
+Map	Knob 1 P3		Selected Pattern
+Map	Knob 2 P3		Pattern Select in Bank
+Map	Knob 3 P3		Bank Select
+Map	Knob 4 P3		Resolution
+Map	Knob 5 P3		Steps
+Map	Knob 6 P3		Flam Amount
+Map	Knob 7 P3		Edit Steps
+Map	Knob 8 P3		Remote Start Step
+
+Map	Button 1 P3		Run
+Map	Button 2 P3		Pattern Enable
+Map	Button 3 P3		Enable Pattern Section Playback
+Map	Button 4 P3		Shuffle
+Map	Button 5 P3		Edit Flam
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Level
+
+Scope	Propellerheads	RV7000 Advanced Reverb
+Map	_Scope		"RV7000"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 3 P1		HF Damp
+Map	Knob 4 P1		Hi EQ
+Map	Knob 5 P1		Edit Mode
+Map	Knob 6 P1		Soft Knob 1
+Map	Knob 7 P1		Soft Knob 2
+Map	Knob 8 P1		Soft Knob 3
+
+Map	Button 1 P1		Gate On/Off
+Map	Button 2 P1		EQ On/Off
+
+// --- Page 2: SoftKnobsA ------------------------------------
+Map	Knob 4 P2		Soft Knob 4
+Map	Knob 5 P2		Soft Knob 5
+Map	Knob 6 P2		Soft Knob 6
+Map	Knob 7 P2		Soft Knob 7
+Map	Knob 8 P2		Soft Knob 8
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Dry/Wet
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Decay
+
+Scope	Propellerhead Software	se.propellerheads.ScalesAndChords
+Map	_Scope		"Scales and Chords"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 3 P1		Notes
+Map	Knob 4 P1		Inversion
+
+Map	Button 2 P1		Filter Notes
+Map	Button 3 P1		Chords
+Map	Button 4 P1		Open Chords
+Map	Button 5 P1		Add Octave Up
+Map	Button 6 P1		Add Octave Down
+
+// --- Page 2: ChordTools ------------------------------------
+Map	Button 4 P2		Add Color
+Map	Button 5 P2		Alter
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Key
+Map	Speed Dial Button		On/Off
+Map	Crossfader		Scale
+
+Scope	Propellerheads	Scream 4 Distortion
+Map	_Scope		"Scream 4"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Parameter 1
+Map	Knob 2 P1		Parameter 2
+Map	Knob 3 P1		Damage Type
+Map	Knob 4 P1		Cut Lo
+Map	Knob 5 P1		Cut Mid
+Map	Knob 6 P1		Cut Hi
+
+Map	Button 1 P1		Damage On/Off
+Map	Button 2 P1		Cut On/Off
+Map	Button 3 P1		Body On/Off
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Level
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Damage Control
+
+Scope	Propellerheads	SubTractor Analog Synthesizer
+Map	_Scope		"SubTractor"
+
+// --- Page 1: Oscillators -----------------------------------
+Map	Knob 1 P1		Osc1 Wave
+Map	Knob 2 P1		Osc1 Octave
+Map	Knob 3 P1		Osc1 Semitone
+Map	Knob 4 P1		Osc1 Fine Tune
+Map	Knob 5 P1		Osc2 Wave
+Map	Knob 6 P1		Osc2 Octave
+Map	Knob 7 P1		Osc2 Semitone
+Map	Knob 8 P1		Osc Mix
+
+Map	Button 2 P1		Ring Mod
+Map	Button 3 P1		Noise On/Off
+
+// --- Page 2: Filter ----------------------------------------
+Map	Knob 2 P2		Filter Res
+Map	Knob 3 P2		Filter Type
+Map	Knob 4 P2		Filter Kbd Track
+Map	Knob 5 P2		Filter2 Freq
+Map	Knob 6 P2		Filter2 Res
+Map	Knob 7 P2		Filter Env Amount
+Map	Knob 8 P2		Filter Env Vel Amount
+
+Map	Button 1 P2		Filter2 On/Off
+Map	Button 2 P2		Filter Link Freq On/Off
+Map	Button 3 P2		Filter Env Invert
+
+// --- Page 3: Envelopes -------------------------------------
+Map	Knob 1 P3		Filter Env Attack
+Map	Knob 2 P3		Filter Env Decay
+Map	Knob 3 P3		Filter Env Sustain
+Map	Knob 4 P3		Filter Env Release
+Map	Knob 5 P3		Amp Env Attack
+Map	Knob 6 P3		Amp Env Decay
+Map	Knob 7 P3		Amp Env Sustain
+Map	Knob 8 P3		Amp Env Release
+
+// --- Page 4: Modulation ------------------------------------
+Map	Knob 1 P4		LFO1 Rate
+Map	Knob 2 P4		LFO1 Amount
+Map	Knob 3 P4		LFO1 Wave
+Map	Knob 4 P4		LFO1 Dest
+Map	Knob 5 P4		LFO2 Rate
+Map	Knob 6 P4		LFO2 Amount
+Map	Knob 7 P4		LFO2 Delay
+Map	Knob 8 P4		FM Amount
+
+Map	Button 1 P4		Mod Env Invert
+Map	Button 2 P4		LFO Sync Enable
+Map	Button 3 P4		Key Mode
+Map	Button 4 P4		Low Bandwidth On/Off
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Filter Freq
+Map	Speed Dial Button		Osc2 On/Off
+Map	Crossfader		Master Level
+
+Scope	Propellerhead Software	se.propellerheads.Synchronous
+Map	_Scope		"Synchronous"
+
+// --- Page 1: Main ------------------------------------------
+Map	Knob 1 P1		Dist Amount
+Map	Knob 2 P1		Dist Character
+Map	Knob 3 P1		Filter Freq
+Map	Knob 4 P1		Filter Reso
+Map	Knob 5 P1		Delay  Amount
+Map	Knob 6 P1		Delay Feedback
+Map	Knob 7 P1		Reverb Amount
+Map	Knob 8 P1		Reverb Decay
+
+Map	Button 1 P1		Dist On
+Map	Button 2 P1		Filter On
+Map	Button 3 P1		Delay On
+Map	Button 4 P1		Reverb On
+Map	Button 5 P1		Delay Keep Pitch
+Map	Button 6 P1		Delay Tempo Sync
+Map	Button 7 P1		Delay Ping Pong
+Map	Button 8 P1		Level InOut
+
+// --- Page 2: Advanced --------------------------------------
+Map	Knob 1 P2		Dist Type
+Map	Knob 2 P2		Filter Type
+Map	Knob 3 P2		Filter Lag
+Map	Knob 4 P2		Delay Time
+Map	Knob 5 P2		Delay Synched Time
+Map	Knob 6 P2		Delay Pan
+Map	Knob 7 P2		Reverb Size
+Map	Knob 8 P2		Reverb Damp
+
+Map	Button 1 P2		Dist Post Filter
+Map	Button 2 P2		Delay Roll
+Map	Button 3 P2		Delay SendReturn
+Map	Button 4 P2		Reverb SendReturn
+
+// --- Page 3: Output ----------------------------------------
+Map	Knob 1 P3		Level
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		DryWet
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Master Level
+
+Scope	Propellerheads	Thor Polysonic Synthesizer
+Map	_Scope		"Thor"
+
+// --- Page 1: OSC -------------------------------------------
+Map	Knob 1 P1		Osc 1 Type
+Map	Knob 3 P1		Osc 1 Oct
+Map	Knob 5 P1		Osc 1 Semi
+Map	Knob 7 P1		Osc 1 Tune
+
+Map	Button 1 P1		Osc 2 Sync To Osc 1
+Map	Button 2 P1		Osc 3 Sync To Osc 1
+Map	Button 3 P1		Osc 1 To Filter 1 Enable
+Map	Button 4 P1		Osc 2 To Filter 1 Enable
+Map	Button 5 P1		Osc 3 To Filter 1 Enable
+Map	Button 6 P1		Osc 1 To Filter 2 Enable
+Map	Button 7 P1		Osc 2 To Filter 2 Enable
+Map	Button 8 P1		Osc 3 To Filter 2 Enable
+
+// --- Page 2: FILTER ----------------------------------------
+Map	Knob 1 P2		Filter 1 Freq
+Map	Knob 2 P2		Filter 1 Type
+Map	Knob 3 P2		Filter 1 Res
+Map	Knob 4 P2		Filter 2 Type
+Map	Knob 5 P2		Filter 2 Freq
+Map	Knob 7 P2		Filter 2 Res
+
+Map	Button 1 P2		Filter 1 Env Invert
+Map	Button 2 P2		Filter 2 Env Invert
+Map	Button 3 P2		Filter 1 Self Osc
+Map	Button 4 P2		Filter 2 Self Osc
+Map	Button 5 P2		Shaper On
+Map	Button 6 P2		Filter2ToAmplifier Enable
+
+// --- Page 3: MOD -------------------------------------------
+Map	Knob 1 P3		LFO 1 Rate
+Map	Knob 3 P3		LFO 1 Delay
+Map	Knob 5 P3		Amp Env Attack
+Map	Knob 7 P3		Amp Env Release
+
+Map	Button 1 P3		LFO 1 Key Sync
+Map	Button 2 P3		LFO 1 Tempo Sync
+Map	Button 3 P3		LFO 2 Key Sync
+Map	Button 4 P3		LFO 2 Tempo Sync
+Map	Button 5 P3		Amp Env Gate Trig On
+Map	Button 6 P3		Filter Env Gate Trig On
+Map	Button 7 P3		Mod Env Gate Trig On
+Map	Button 8 P3		Mod Env Loop
+
+// --- Page 4: FXPERF ----------------------------------------
+Map	Knob 1 P4		Chorus Rate
+Map	Knob 2 P4		Rotary 1
+Map	Knob 3 P4		Chorus Dry Wet
+Map	Knob 4 P4		Rotary 2
+Map	Knob 5 P4		Delay Time
+Map	Knob 7 P4		Delay Dry Wet
+
+Map	Button 1 P4		Chorus On
+Map	Button 2 P4		Delay On
+Map	Button 3 P4		Button 1
+Map	Button 4 P4		Button 2
+Map	Button 7 P4		Button 1 MIDI Key On
+Map	Button 8 P4		Button 2 MIDI Key On
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Level
+Map	Speed Dial Button		Note Trigger MIDI
+Map	Crossfader		Amplifier Pan
+
+Scope	Propellerheads	UN-16 Unison
+Map	_Scope		"UN16 Unison"
+
+// --- Page 1: Mix -------------------------------------------
+Map	Knob 1 P1		Voice Count
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Detune
+Map	Speed Dial Button		Enabled
+Map	Crossfader		Dry/Wet

@@ -1,23 +1,20 @@
 scope:
   manufacturer: Propellerhead Software
   model: se.propellerheads.Audiomatic
+  display: Audiomatic
+
+# The shared, NOT banked controls: one item each, mapped once
+# per scope. They must be the same on every page.
+controls:
+  SD: { name: speedDial, key: SpeedDialCc, target: Transform, min: 0, max: 4194304, input_type: Value }
+  SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: Enabled, min: 0, max: 2, input_type: Value }
+  F: { name: fader, key: XfaderCcs, target: Dry Wet, min: 0, max: 4194304, input_type: Value }
+
+# The pages, in the order of the driver's page slots. A scope's
+# page 1 is the driver's slot 1, and so on.
 pages:
   Main:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Transform, min: 0, max: 4194304, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Enabled, min: 0, max: 2, input_type: Value}
-      F: {name: fader, key: XfaderCcs, target: Dry Wet, min: 0, max: 4194304, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Preset, min: 0, max: 15, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Transform, min: 0, max: 4194304, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Input Gain, min: 0, max: 4194304, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Volume, min: 0, max: 4194304, input_type: Value}
-      E5: {name: encoder5, key: EncoderCcs, target: Dry Wet, min: 0, max: 4194304, input_type: Value}
-      E6: {name: encoder6, key: EncoderCcs, target: Enabled, min: 0, max: 2, input_type: Value}
-    buttons:
-      B1: {name: button1, key: ButtonCcs, target: Enabled, min: 0, max: 2, input_type: Value}
+      E1: { name: encoder1, key: EncoderCcs, target: Preset, min: 0, max: 15, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Input Gain, min: 0, max: 4194304, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Volume, min: 0, max: 4194304, input_type: Value }

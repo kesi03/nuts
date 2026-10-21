@@ -199,12 +199,21 @@ PermaBar mapping: **MIXER** → Mixer, **USER** → Dynamics, **INSTR** → EQ,
 spare. The unit has no display, so the only page indicator is the lit PermaBar
 jump-button LED.
 
-### The scope: `Reason Main Mixer Channel`
+### The scopes
 
-The map carries **one** scope. A channel strip needs `Reason Main Mixer
-Channel`, which exposes every channel target in a single flat namespace
-(`Width`, `C Threshold`, `FX1 Send Level`, …), so a page can pull from
-anywhere.
+The map carries **one scope per device**: `Reason Main Mixer Channel` plus
+43 others (Europa, Thor, Kong, Redrum, Grain, Humana, the Drum Sequencer,
+the Dual Arpeggio, …). Each scope is an independent set of `Map` lines, so a
+page of the surface can be a channel strip for one device and a synth
+front panel for another.
+
+Reason auto-applies the scope of the **focused device**, so the other scopes
+sit there unused — but they still have to be correct, because one bad target
+anywhere makes Reason refuse the whole surface.
+
+For the channel strip the scope has to be `Reason Main Mixer Channel`, which
+exposes every channel target in a single flat namespace (`Width`,
+`C Threshold`, `FX1 Send Level`, …), so a page can pull from anywhere.
 
 `Reason Master Section` was considered and **rejected**: its channel targets
 are partitioned by a `Define Group Target TheGroup` whose values are section
@@ -216,15 +225,61 @@ Reason owns. The factory AlphaTrack map shows the consequence: it drives each
 section from a separate physical button, one section at a time. The Master
 Section scope is for the master bus and FX returns anyway, not a channel strip.
 
+### The map is generated
+
+`remote/Maps/Nuts/Nocturn.remotemap` is **generated** from the page
+templates in `pages/*.yaml` — one YAML per device, one scope per YAML:
+
+```yaml
+scope:
+  manufacturer: Propellerheads
+  model: Thor Polysonic Synthesizer
+  display: Thor
+controls:                  # shared, mapped once per scope
+  SD:  { ..., target: Master Level }
+  SDB: { ..., target: Note Trigger MIDI }
+  F:   { ..., target: Amplifier Pan }
+pages:                     # the driver's page slots, in order
+  OSC:
+    encoders:
+      E1: { ..., target: Osc 1 Type }
+    buttons:
+      B1: { ..., target: Osc 2 Sync To Osc 1 }
+```
+
+`python remote/scripts/generate_map.py` validates every template against
+`remote/mapping/scope-index.json` and writes the map; `--check` validates
+without writing, and `--only <name>` narrows it to one device. The generator
+enforces the three rules Reason enforces:
+
+1. **One target per scope.** Reason refuses to load a surface when the same
+   remotable is mapped twice inside one scope, so every target in a scope is
+   unique — the shared Speed Dial / Speed Dial click / Crossfader are mapped
+   once per scope and own their targets outright.
+2. **Continuous parameters on dials, on/off states on the page-row
+   switches.** A page-row item can only ever carry 0 or 127.
+3. **Every target is a real remotable of that scope.** The authority is
+   `remote/remote-info/` (Reason's own scope definition); Reason's factory
+   `.remotemap` files are the fallback for scopes that have none (the mixer
+   channel is one of them) and the source of the scope's display name.
+
+See `docs/pages-templates.md` for the whole workflow.
+
 ### Item sets: one per page
 
 A `.remotemap` maps **one control-surface item to exactly one remotable per
 scope**, evaluated statically — there is no way to re-point `Knob 1` from
-outside Reason. So each page's controls are separate items: `Knob 1 Mixer` …
-`Knob 8 FX`, `Button 1 Mixer` … `Button 8 FX`. The map gives each its own
+outside Reason. So each page's controls are separate items: `Knob 1 P1` …
+`Knob 8 P4`, `Button 1 P1` … `Button 8 P4`. The map gives each its own
 target, and the driver's per-page CCs select the item without Reason ever
 being told a page changed. This is the same technique the Akai MPK Mini Play
 codec uses for its banks (`Knob 1 A` / `Knob 1 B`).
+
+The item names are deliberately **generic**: `P1`…`P4` are the driver's four
+page *slots*, not a device's page names. The scope decides what each slot
+means — the mixer channel fills them with Mixer / Dynamics / EQ / FX, Thor
+fills them with OSC / FILTER / MOD / FXPERF — so one codec serves every
+scope and only the map changes.
 
 The codec therefore defines **69 items** — `_Scope`, `Page`, 4 × (8 knobs +
 8 buttons), then `Speed Dial`, `Speed Dial Button`, `Crossfader` — and the
@@ -242,9 +297,10 @@ used before the first echo arrives.
 
 ### Target names are verified
 
-Every `Remotable Item` in the map was checked against the targets in Reason's
-own factory `.remotemap` files. The scope's names are **not** always the
-display names:
+Every `Remotable Item` in the map was checked against Reason's own scope
+definition in `remote/remote-info/` (and, for the scopes that have none,
+against the targets in Reason's factory `.remotemap` files). The scope's
+names are **not** always the display names:
 
 | Display name | Actual remotable |
 |---|---|
@@ -256,10 +312,8 @@ display names:
 | FX1 Send Pre Fader | `FX1 Pre Fader` |
 
 A misspelled target fails silently. `remote/scripts/verify-map.ps1` re-checks
-the whole three-way contract (map ↔ codec ↔ `appsettings.json`) against the
-factory maps and is the quickest way to catch a typo.
-the whole three-way contract (map ↔ codec ↔ `appsettings.json`) against the
-factory maps and is the quickest way to catch a typo.
+the whole contract (templates → map ↔ codec ↔ `appsettings.json`) and is the
+quickest way to catch a typo.
 
 ### Verifying
 
@@ -267,8 +321,10 @@ factory maps and is the quickest way to catch a typo.
 pwsh -NoProfile -File remote/scripts/verify-map.ps1
 ```
 
-It reports bad targets, items the codec doesn't define, and any CC mismatch
-between the codec's page tables and the driver's `Midi:Paging` config.
+It reports bad targets, duplicate targets inside a scope, items the codec
+doesn't define, any CC mismatch between the codec's page tables and the
+driver's `Midi:Paging` config, and whether the committed map is still what
+the generator produces.
 
 ## autocrap: what translates
 

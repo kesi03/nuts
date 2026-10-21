@@ -58,9 +58,13 @@ if (-not (Test-Path $FactoryMaps)) { throw "Reason factory maps not found: $Fact
 
 # Surface-side selector targets that are not device parameters.
 $selectorPrefixes = @(
-    'Display=', 'Flip=', 'Shift=', 'Active=',
+    'Display=', 'Flip=', 'Shift=', 'Active=', 'ControlSet=',
     'RedClickState=', 'GreenClickState=', 'BlueClickState=', 'WhiteClickState=',
-    'YellowClickState=', 'OrangeClickState='
+    'YellowClickState=', 'OrangeClickState=',
+    # Variation / mode selectors: these switch which parameter bank the knobs
+    # address, and are not remotable parameters themselves.
+    'Knobs=', 'Mixer_vars=', 'Send_vars=', 'Variation=', 'Varation=',
+    'Keyboard Shortcut Variations=', 'Parameters='
 )
 
 function Test-IsSelector([string]$t) {
@@ -68,19 +72,27 @@ function Test-IsSelector([string]$t) {
     return $false
 }
 
-# LCD-driving surface maps (Mackie Control, M-Audio ProjectMix) put a literal
-# screen caption in the target field, wrapped in double quotes, e.g.
+# LCD-driving surface maps (Mackie Control/Extender, M-Audio ProjectMix,
+# Frontier Tranzport) put literal screen captions and surface-state selectors
+# in the target field:
 #     Map<T>LCD Row 1 Channel 1<T><T>"Faders "<T><T><T>Multi-Channel<T>EQ<T>Flipped
-# The caption is not a remotable item; the real target is a later field. Those
-# real targets are also mapped plainly by the non-LCD maps, so the safest
-# filter is to discard any quoted caption outright.
-function Test-IsCaption([string]$t) {
-    return ($t.Length -ge 2 -and $t.StartsWith('"') -and $t.EndsWith('"'))
+#     Map<T>LCD Row 1<T><T>  <  <T><T>Display=ParaName
+#   -> target column = a screen caption, not a remotely-addressable parameter.
+# These maps only ever target devices that the remaining ~133 maps also cover,
+# so the cleanest filter is to skip any map that drives an LCD row entirely.
+# (Filtering individual strings is unreliable: captions are sometimes quoted
+# and sometimes bare, and they legitimately contain '<', '>', '(' and ')').
+function Test-IsLcdMap([System.IO.FileInfo]$file) {
+    foreach ($l in [System.IO.File]::ReadAllLines($file.FullName)) {
+        if ($l.StartsWith('Map' + [char]9 + 'LCD Row')) { return $true }
+    }
+    return $false
 }
 
 $scopeTargets = @{}
 
 Get-ChildItem $FactoryMaps -Recurse -Filter '*.remotemap' | ForEach-Object {
+    if (Test-IsLcdMap $_) { return }
     $scope = ''
     foreach ($l in [System.IO.File]::ReadAllLines($_.FullName)) {
         $sp = $l.Split($T)
@@ -96,7 +108,6 @@ Get-ChildItem $FactoryMaps -Recurse -Filter '*.remotemap' | ForEach-Object {
         $tgt = $sp[3].Trim()
         if ($tgt -eq '') { continue }
         if (Test-IsSelector $tgt) { continue }
-        if (Test-IsCaption $tgt) { continue }
 
         if (-not $scopeTargets.ContainsKey($scope)) {
             $scopeTargets[$scope] = New-Object System.Collections.Generic.HashSet[string]

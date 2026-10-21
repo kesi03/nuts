@@ -1,20 +1,23 @@
 scope:
-  manufacturer: Model
+  manufacturer: Propellerheads
   model: UN-16 Unison
+  display: UN16 Unison
+
+# The shared, NOT banked controls: one item each, mapped once
+# per scope. They must be the same on every page.
+#
+# The UN-16 Unison has only four parameters - Detune, Dry/Wet, Enabled
+# and Voice Count - so the three shared controls take three of them and
+# the page takes the fourth. "Peak Meter" is an output only (the device
+# sends it, it does not take a value), so it is not mappable.
+controls:
+  SD: { name: speedDial, key: SpeedDialCc, target: Detune, min: 0, max: 127, input_type: Value }
+  SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: Enabled, min: 0, max: 2, input_type: Value }
+  F: { name: fader, key: XfaderCcs, target: Dry/Wet, min: 0, max: 127, input_type: Value }
+
+# The pages, in the order of the driver's page slots. A scope's
+# page 1 is the driver's slot 1, and so on.
 pages:
   Mix:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Mix", page: "Mix", key: MixCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Input Gain, min: 0, max: 4194304, input_type: Value}
-      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Enabled 0, min: 0, max: 1, input_type: Toggle}
-      F: {name: fader, key: XfaderCcs, target: Pan, min: 0, max: 4194304, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Voice Count, min: 0, max: 2, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Detune 0, min: 0, max: 127, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Dry/Wet 0, min: 0, max: 127, input_type: Value}
-    buttons:
-      B1: {name: button1, key: ButtonCcs, target: Enabled 0, min: 0, max: 1, input_type: Toggle}
+      E1: { name: encoder1, key: EncoderCcs, target: Voice Count, min: 0, max: 2, input_type: Value }

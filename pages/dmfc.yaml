@@ -1,75 +1,35 @@
 scope:
   manufacturer: Propellerhead Software
   model: se.propellerheads.DMFC
+  display: DMFC
+
+# The shared, NOT banked controls: one item each, mapped once
+# per scope. They must be the same on every page.
+controls:
+  SD: { name: speedDial, key: SpeedDialCc, target: Master_Volume, min: 0, max: 4194304, input_type: Value }
+  F: { name: fader, key: XfaderCcs, target: Master_Reverb, min: 0, max: 4194304, input_type: Value }
+
+# The pages, in the order of the driver's page slots. A scope's
+# page 1 is the driver's slot 1, and so on.
 pages:
   Master:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Master", page: "Master", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Compressor", page: "Compressor", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Reverb", page: "Reverb", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Delay", page: "Delay", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Master_Volume, min: 0, max: 4194304, input_type: Value}
-      F: {name: fader, key: XfaderCcs, target: Master_Reverb, min: 0, max: 4194304, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Master_Filter, min: 0, max: 4194304, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Master_Pitch, min: 0, max: 4194304, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Master_Delay, min: 0, max: 4194304, input_type: Value}
-      E4: {name: encoder4, key: EncoderCcs, target: Master_Reverb, min: 0, max: 4194304, input_type: Value}
-      E5: {name: encoder5, key: EncoderCcs, target: Master_Decay, min: 0, max: 4194304, input_type: Value}
-      E6: {name: encoder6, key: EncoderCcs, target: Master_Distortion, min: 0, max: 4194304, input_type: Value}
-      E7: {name: encoder7, key: EncoderCcs, target: Master_Volume, min: 0, max: 4194304, input_type: Value}
-      E8: {name: encoder8, key: EncoderCcs, target: Pitch Bend, min: -8192, max: 8191, input_type: Value}
-    buttons: {}
+      E1: { name: encoder1, key: EncoderCcs, target: Master_Filter, min: 0, max: 4194304, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Master_Pitch, min: 0, max: 4194304, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Master_Delay, min: 0, max: 4194304, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Master_Decay, min: 0, max: 4194304, input_type: Value }
+      E6: { name: encoder6, key: EncoderCcs, target: Master_Distortion, min: 0, max: 4194304, input_type: Value }
+      E8: { name: encoder8, key: EncoderCcs, target: Pitch Bend, min: -8192, max: 8191, input_type: Value }
   Compressor:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Master", page: "Master", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Compressor", page: "Compressor", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Reverb", page: "Reverb", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Delay", page: "Delay", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Master_Volume, min: 0, max: 4194304, input_type: Value}
-      F: {name: fader, key: XfaderCcs, target: Master_Reverb, min: 0, max: 4194304, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Compressor_Ratio, min: 0, max: 4194304, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Compressor_Threshold, min: 0, max: 4194304, input_type: Value}
-    buttons: {}
+      E1: { name: encoder1, key: EncoderCcs, target: Compressor_Ratio, min: 0, max: 4194304, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Compressor_Threshold, min: 0, max: 4194304, input_type: Value }
   Reverb:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Master", page: "Master", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Compressor", page: "Compressor", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Reverb", page: "Reverb", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Delay", page: "Delay", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Master_Volume, min: 0, max: 4194304, input_type: Value}
-      F: {name: fader, key: XfaderCcs, target: Master_Reverb, min: 0, max: 4194304, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Reverb_Decay, min: 0, max: 4194304, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Reverb_HiCut, min: 0, max: 4194304, input_type: Value}
-      E3: {name: encoder3, key: EncoderCcs, target: Reverb_LoCut, min: 0, max: 4194304, input_type: Value}
-    buttons: {}
+      E1: { name: encoder1, key: EncoderCcs, target: Reverb_Decay, min: 0, max: 4194304, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Reverb_HiCut, min: 0, max: 4194304, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Reverb_LoCut, min: 0, max: 4194304, input_type: Value }
   Delay:
-    pager:
-      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
-      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
-    navigation:
-      - { name: "Master", page: "Master", key: MixCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Compressor", page: "Compressor", key: UserCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Reverb", page: "Reverb", key: InstrCc, min: 0, max: 1, input_type: Toggle }
-      - { name: "Delay", page: "Delay", key: LearnCc, min: 0, max: 1, input_type: Toggle }
-    controls:
-      SD: {name: speedDial, key: SpeedDialCc, target: Master_Volume, min: 0, max: 4194304, input_type: Value}
-      F: {name: fader, key: XfaderCcs, target: Master_Reverb, min: 0, max: 4194304, input_type: Value}
     encoders:
-      E1: {name: encoder1, key: EncoderCcs, target: Delay_Time, min: 0, max: 12, input_type: Value}
-      E2: {name: encoder2, key: EncoderCcs, target: Delay_Feedback, min: 0, max: 4194304, input_type: Value}
-    buttons: {}
+      E1: { name: encoder1, key: EncoderCcs, target: Delay_Time, min: 0, max: 12, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Delay_Feedback, min: 0, max: 4194304, input_type: Value }
