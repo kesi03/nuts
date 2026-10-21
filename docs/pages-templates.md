@@ -140,6 +140,13 @@ pwsh -NoProfile -File remote/scripts/deploy.ps1 -Backup
 `deploy.ps1` regenerates the map first, so a deploy can never ship a map
 that no longer matches the templates.
 
+After a deploy, **remove and re-add the surface in Reason**
+(*Preferences → Control Surfaces* → delete **Nuts > Nocturn** → add it again
+and pick the **Nocturn** port for both MIDI In and MIDI Out). Reason binds
+the map's items to the codec's items when the surface is added; after a
+codec change it keeps the old binding and the surface sits there doing
+nothing, with no error shown. A Reason restart does the same job.
+
 ---
 
 ## Adding a device

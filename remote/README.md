@@ -123,3 +123,17 @@ No keybed and no pads are mapped (the Nocturn has neither).
 Ring values/modes and the LED behaviour are still being tuned; the two spare
 PermaBar buttons (Learn, View) and the dial touch CCs are reserved for the
 later LED/context phase.
+
+### If the surface stops responding after a codec change
+
+Reason binds the map's items to the codec's items **when the surface is
+added**. Change the codec's item names (or its item count) and Reason keeps
+the old binding until the surface is re-read — the surface then sits there
+doing nothing, with no error.
+
+The fix is *Preferences → Control Surfaces*: remove **Nuts > Nocturn** and
+add it again, then select the **Nocturn** port for MIDI Input and MIDI
+Output. Restarting Reason does the same thing. Do this after any change to
+the codec's item list — and note that changing the item names also means the
+map and the codec must be deployed together, or the map's items bind to
+nothing at all.
