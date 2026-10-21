@@ -1,0 +1,99 @@
+scope:
+  manufacturer: Propellerhead Software
+  model: se.propellerheads.NoteEcho
+pages:
+  Main:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Steps1to8", page: "Steps1to8", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Steps9to16", page: "Steps9to16", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Step17", page: "Step17", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Velocity, min: 0, max: 4194304, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Pitch, min: 0, max: 24, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Repeats, min: 0, max: 16, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Pitch, min: 0, max: 24, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Step Length Free, min: 0, max: 4194304, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Step Length Synced, min: 0, max: 16, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: Velocity, min: 0, max: 4194304, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: Tempo Sync, min: 0, max: 1, input_type: Toggle}
+      B3: {name: button3, key: ButtonCcs, target: Original Note Enable, min: 0, max: 1, input_type: Toggle}
+  Steps1to8:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Steps1to8", page: "Steps1to8", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Steps9to16", page: "Steps9to16", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Step17", page: "Step17", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Velocity, min: 0, max: 4194304, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Pitch, min: 0, max: 24, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Repeats, min: 0, max: 16, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Pitch, min: 0, max: 24, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Step 1 Enable, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: Step 2 Enable, min: 0, max: 1, input_type: Toggle}
+      B3: {name: button3, key: ButtonCcs, target: Step 3 Enable, min: 0, max: 1, input_type: Toggle}
+      B4: {name: button4, key: ButtonCcs, target: Step 4 Enable, min: 0, max: 1, input_type: Toggle}
+      B5: {name: button5, key: ButtonCcs, target: Step 5 Enable, min: 0, max: 1, input_type: Toggle}
+      B6: {name: button6, key: ButtonCcs, target: Step 6 Enable, min: 0, max: 1, input_type: Toggle}
+      B7: {name: button7, key: ButtonCcs, target: Step 7 Enable, min: 0, max: 1, input_type: Toggle}
+      B8: {name: button8, key: ButtonCcs, target: Step 8 Enable, min: 0, max: 1, input_type: Toggle}
+  Steps9to16:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Steps1to8", page: "Steps1to8", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Steps9to16", page: "Steps9to16", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Step17", page: "Step17", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Velocity, min: 0, max: 4194304, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Pitch, min: 0, max: 24, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Repeats, min: 0, max: 16, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Pitch, min: 0, max: 24, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Step 9 Enable, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: Step 10 Enable, min: 0, max: 1, input_type: Toggle}
+      B3: {name: button3, key: ButtonCcs, target: Step 11 Enable, min: 0, max: 1, input_type: Toggle}
+      B4: {name: button4, key: ButtonCcs, target: Step 12 Enable, min: 0, max: 1, input_type: Toggle}
+      B5: {name: button5, key: ButtonCcs, target: Step 13 Enable, min: 0, max: 1, input_type: Toggle}
+      B6: {name: button6, key: ButtonCcs, target: Step 14 Enable, min: 0, max: 1, input_type: Toggle}
+      B7: {name: button7, key: ButtonCcs, target: Step 15 Enable, min: 0, max: 1, input_type: Toggle}
+      B8: {name: button8, key: ButtonCcs, target: Step 16 Enable, min: 0, max: 1, input_type: Toggle}
+  Step17:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Steps1to8", page: "Steps1to8", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Steps9to16", page: "Steps9to16", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Step17", page: "Step17", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Velocity, min: 0, max: 4194304, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Pitch, min: 0, max: 24, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Repeats, min: 0, max: 16, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Pitch, min: 0, max: 24, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Velocity, min: 0, max: 4194304, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Step 17 Enable, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: Original Note Enable, min: 0, max: 1, input_type: Toggle}
+      B3: {name: button3, key: ButtonCcs, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      B4: {name: button4, key: ButtonCcs, target: Tempo Sync, min: 0, max: 1, input_type: Toggle}

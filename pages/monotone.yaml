@@ -1,0 +1,97 @@
+scope:
+  manufacturer: Propellerhead Software
+  model: se.propellerheads.Monotone
+pages:
+  Oscillators:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Oscillators", page: "Oscillators", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Filter", page: "Filter", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelopes", page: "Envelopes", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "PerformanceFX", page: "PerformanceFX", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Volume, min: 0, max: 4194304, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: ReTrig, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Osc Mix, min: 0, max: 4194304, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Osc1 Oct, min: 0, max: 4, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Osc1 Wave, min: 0, max: 3, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Osc2 Oct, min: 0, max: 4, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Osc2 Pitch, min: 0, max: 24, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: Osc2 Wave, min: 0, max: 3, input_type: Value}
+      E6: {name: encoder6, key: EncoderCcs, target: Osc Detune, min: 0, max: 4194304, input_type: Value}
+      E7: {name: encoder7, key: EncoderCcs, target: Osc Mix, min: 0, max: 4194304, input_type: Value}
+      E8: {name: encoder8, key: EncoderCcs, target: Noise, min: 0, max: 4194304, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: ReTrig, min: 0, max: 1, input_type: Toggle}
+  Filter:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Oscillators", page: "Oscillators", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Filter", page: "Filter", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelopes", page: "Envelopes", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "PerformanceFX", page: "PerformanceFX", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Volume, min: 0, max: 4194304, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: ReTrig, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Osc Mix, min: 0, max: 4194304, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Filter Freq, min: 0, max: 4194304, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Filter Reso, min: 0, max: 4194304, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Filter Drive, min: 0, max: 4194304, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Filter Env Amount, min: 0, max: 4194304, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: Filter Key Amt, min: 0, max: 4194304, input_type: Value}
+      E6: {name: encoder6, key: EncoderCcs, target: Filter LFO Amt, min: 0, max: 4194304, input_type: Value}
+      E7: {name: encoder7, key: EncoderCcs, target: Filter Vel, min: 0, max: 4194304, input_type: Value}
+      E8: {name: encoder8, key: EncoderCcs, target: FM Env Amt, min: 0, max: 4194304, input_type: Value}
+    buttons: {}
+  Envelopes:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Oscillators", page: "Oscillators", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Filter", page: "Filter", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelopes", page: "Envelopes", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "PerformanceFX", page: "PerformanceFX", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Amp Attack, min: 0, max: 4194304, input_type: Value}
+      F: {name: fader, key: XfaderCcs, target: Amp Sustain, min: 0, max: 4194304, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Amp Attack, min: 0, max: 4194304, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Amp Decay, min: 0, max: 4194304, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Amp Sustain, min: 0, max: 4194304, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Amp Release, min: 0, max: 4194304, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: Filter Attack, min: 0, max: 4194304, input_type: Value}
+      E6: {name: encoder6, key: EncoderCcs, target: Filter Decay, min: 0, max: 4194304, input_type: Value}
+      E7: {name: encoder7, key: EncoderCcs, target: Filter Sustain, min: 0, max: 4194304, input_type: Value}
+      E8: {name: encoder8, key: EncoderCcs, target: Filter Release, min: 0, max: 4194304, input_type: Value}
+    buttons: {}
+  PerformanceFX:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Oscillators", page: "Oscillators", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Filter", page: "Filter", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelopes", page: "Envelopes", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "PerformanceFX", page: "PerformanceFX", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Volume, min: 0, max: 4194304, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: ReTrig, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Osc Mix, min: 0, max: 4194304, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Portamento, min: 0, max: 4194304, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Portamento Mode, min: 0, max: 2, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: LFO Rate, min: 0, max: 4194304, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: LFO Wave, min: 0, max: 2, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: Chorus Amount, min: 0, max: 4194304, input_type: Value}
+      E6: {name: encoder6, key: EncoderCcs, target: Chorus Rate, min: 0, max: 4194304, input_type: Value}
+      E7: {name: encoder7, key: EncoderCcs, target: Delay Amount, min: 0, max: 4194304, input_type: Value}
+      E8: {name: encoder8, key: EncoderCcs, target: Delay Feedback, min: 0, max: 4194304, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Delay Pingpong, min: 0, max: 1, input_type: Toggle}

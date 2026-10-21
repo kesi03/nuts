@@ -1,0 +1,20 @@
+scope:
+  manufacturer: Model
+  model: UN-16 Unison
+pages:
+  Mix:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Mix", page: "Mix", key: MixCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Input Gain, min: 0, max: 4194304, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Enabled 0, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Pan, min: 0, max: 4194304, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Voice Count, min: 0, max: 2, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Detune 0, min: 0, max: 127, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Dry/Wet 0, min: 0, max: 127, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Enabled 0, min: 0, max: 1, input_type: Toggle}

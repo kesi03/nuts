@@ -1,0 +1,55 @@
+scope:
+  manufacturer: Propellerhead Software
+  model: se.propellerheads.ScalesAndChords
+pages:
+  Main:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "ChordTools", page: "ChordTools", key: UserCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Key, min: 0, max: 11, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Scale, min: 0, max: 13, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Key, min: 0, max: 11, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Scale, min: 0, max: 13, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Notes, min: 0, max: 4, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Inversion, min: 0, max: 4, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: Filter Notes, min: 0, max: 1, input_type: Toggle}
+      E6: {name: encoder6, key: EncoderCcs, target: Chords, min: 0, max: 1, input_type: Toggle}
+      E7: {name: encoder7, key: EncoderCcs, target: Add Color, min: 0, max: 1, input_type: Toggle}
+      E8: {name: encoder8, key: EncoderCcs, target: Alter, min: 0, max: 1, input_type: Toggle}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: Filter Notes, min: 0, max: 1, input_type: Toggle}
+      B3: {name: button3, key: ButtonCcs, target: Chords, min: 0, max: 1, input_type: Toggle}
+      B4: {name: button4, key: ButtonCcs, target: Open Chords, min: 0, max: 1, input_type: Toggle}
+      B5: {name: button5, key: ButtonCcs, target: Add Octave Up, min: 0, max: 1, input_type: Toggle}
+      B6: {name: button6, key: ButtonCcs, target: Add Octave Down, min: 0, max: 1, input_type: Toggle}
+      B7: {name: button7, key: ButtonCcs, target: Add Color, min: 0, max: 1, input_type: Toggle}
+      B8: {name: button8, key: ButtonCcs, target: Alter, min: 0, max: 1, input_type: Toggle}
+  ChordTools:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "ChordTools", page: "ChordTools", key: UserCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Key, min: 0, max: 11, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: On/Off, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Scale, min: 0, max: 13, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Notes, min: 0, max: 4, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Inversion, min: 0, max: 4, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Key, min: 0, max: 11, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Scale, min: 0, max: 13, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Open Chords, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: Add Octave Up, min: 0, max: 1, input_type: Toggle}
+      B3: {name: button3, key: ButtonCcs, target: Add Octave Down, min: 0, max: 1, input_type: Toggle}
+      B4: {name: button4, key: ButtonCcs, target: Add Color, min: 0, max: 1, input_type: Toggle}
+      B5: {name: button5, key: ButtonCcs, target: Alter, min: 0, max: 1, input_type: Toggle}

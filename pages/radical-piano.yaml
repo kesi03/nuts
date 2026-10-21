@@ -1,0 +1,114 @@
+scope:
+  manufacturer: Propellerhead Software
+  model: se.propellerheads.radicalpiano
+
+pages:
+
+  Piano:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+
+    navigation:
+      - { name: "Piano", page: "Piano", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelope", page: "Envelope", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Tone", page: "Tone", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Ambience", page: "Ambience", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+
+    controls:
+      SD:  { name: speedDial, key: SpeedDialCc, target: Character, min: 0, max: 24, input_type: Value }
+      SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: EQ On/Off, min: 0, max: 1, input_type: Toggle }
+      F:   { name: fader, key: XfaderCcs, target: Master Volume, min: 0, max: 4194304, input_type: Value }
+
+    encoders:
+      E1: { name: encoder1, key: EncoderCcs, target: Character, min: 0, max: 24, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Tune, min: 0, max: 4194304, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Tune Drift, min: 0, max: 4194304, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Compression Amount, min: 0, max: 4194304, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Stereo Width, min: 0, max: 4194304, input_type: Value }
+      E6: { name: encoder6, key: EncoderCcs, target: Ambience Level, min: 0, max: 4194304, input_type: Value }
+      E7: { name: encoder7, key: EncoderCcs, target: Microphone and Instrument Blend, min: 0, max: 4194304, input_type: Value }
+      E8: { name: encoder8, key: EncoderCcs, target: Master Volume, min: 0, max: 4194304, input_type: Value }
+
+    buttons: {}
+
+  Envelope:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+
+    navigation:
+      - { name: "Piano", page: "Piano", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelope", page: "Envelope", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Tone", page: "Tone", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Ambience", page: "Ambience", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+
+    controls:
+      SD:  { name: speedDial, key: SpeedDialCc, target: Character, min: 0, max: 24, input_type: Value }
+      SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: EQ On/Off, min: 0, max: 1, input_type: Toggle }
+      F:   { name: fader, key: XfaderCcs, target: Master Volume, min: 0, max: 4194304, input_type: Value }
+
+    encoders:
+      E1: { name: encoder1, key: EncoderCcs, target: Env Attack, min: 0, max: 4194304, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Env Decay Curve, min: 0, max: 4194304, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Env Release, min: 0, max: 4194304, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Key Down Level, min: 0, max: 4194304, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Key Up Level, min: 0, max: 4194304, input_type: Value }
+      E6: { name: encoder6, key: EncoderCcs, target: Pedal Level, min: 0, max: 4194304, input_type: Value }
+      E7: { name: encoder7, key: EncoderCcs, target: Vel Response Low, min: 0, max: 4194304, input_type: Value }
+      E8: { name: encoder8, key: EncoderCcs, target: Vel Response High, min: 0, max: 4194304, input_type: Value }
+
+    buttons:
+      B1: { name: button1, key: ButtonCcs, target: Sustain Pedal, min: 0, max: 127, input_type: Value }
+
+  Tone:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+
+    navigation:
+      - { name: "Piano", page: "Piano", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelope", page: "Envelope", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Tone", page: "Tone", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Ambience", page: "Ambience", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+
+    controls:
+      SD:  { name: speedDial, key: SpeedDialCc, target: Character, min: 0, max: 24, input_type: Value }
+      SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: EQ On/Off, min: 0, max: 1, input_type: Toggle }
+      F:   { name: fader, key: XfaderCcs, target: Master Volume, min: 0, max: 4194304, input_type: Value }
+
+    encoders:
+      E1: { name: encoder1, key: EncoderCcs, target: EQ Lo Gain, min: 0, max: 4194304, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: EQ Mid Gain, min: 0, max: 4194304, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: EQ Hi Gain, min: 0, max: 4194304, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Symp Res Level, min: 0, max: 4194304, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Symp Res Release Time, min: 0, max: 4194304, input_type: Value }
+      E6: { name: encoder6, key: EncoderCcs, target: Vel Response Curve, min: 0, max: 4194304, input_type: Value }
+
+    buttons:
+      B1: { name: button1, key: ButtonCcs, target: EQ On/Off, min: 0, max: 1, input_type: Toggle }
+
+  Ambience:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+
+    navigation:
+      - { name: "Piano", page: "Piano", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelope", page: "Envelope", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Tone", page: "Tone", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Ambience", page: "Ambience", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+
+    controls:
+      SD:  { name: speedDial, key: SpeedDialCc, target: Character, min: 0, max: 24, input_type: Value }
+      SDB: { name: speedDialButton, key: SpeedDialButtonCc, target: EQ On/Off, min: 0, max: 1, input_type: Toggle }
+      F:   { name: fader, key: XfaderCcs, target: Master Volume, min: 0, max: 4194304, input_type: Value }
+
+    encoders:
+      E1: { name: encoder1, key: EncoderCcs, target: Microphone 1 Type, min: 0, max: 11, input_type: Value }
+      E2: { name: encoder2, key: EncoderCcs, target: Microphone 2 Type, min: 0, max: 11, input_type: Value }
+      E3: { name: encoder3, key: EncoderCcs, target: Ambience Type, min: 0, max: 3, input_type: Value }
+      E4: { name: encoder4, key: EncoderCcs, target: Ambience Level, min: 0, max: 4194304, input_type: Value }
+      E5: { name: encoder5, key: EncoderCcs, target: Microphone and Instrument Blend, min: 0, max: 4194304, input_type: Value }
+
+    buttons: {}

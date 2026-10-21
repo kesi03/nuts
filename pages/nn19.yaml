@@ -1,0 +1,106 @@
+scope:
+  manufacturer: Propellerheads
+  model: NN19 Digital Sampler
+pages:
+  Main:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Filter", page: "Filter", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelope", page: "Envelope", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Performance", page: "Performance", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Master Volume, min: 0, max: 127, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Solo Sample, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Stereo Spread, min: 0, max: 127, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Sample Start, min: 0, max: 127, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Filter Freq, min: 0, max: 127, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Filter Res, min: 0, max: 127, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Filter Env Amount, min: 0, max: 127, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: LFO Rate, min: 0, max: 127, input_type: Value}
+      E6: {name: encoder6, key: EncoderCcs, target: LFO Amount, min: 0, max: 127, input_type: Value}
+      E7: {name: encoder7, key: EncoderCcs, target: Stereo Spread, min: 0, max: 127, input_type: Value}
+      E8: {name: encoder8, key: EncoderCcs, target: Master Level, min: 0, max: 127, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Filter On/Off, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: LFO Sync Enable, min: 0, max: 1, input_type: Toggle}
+      B3: {name: button3, key: ButtonCcs, target: Key Mode, min: 0, max: 1, input_type: Toggle}
+      B4: {name: button4, key: ButtonCcs, target: Solo Sample, min: 0, max: 1, input_type: Toggle}
+  Filter:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Filter", page: "Filter", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelope", page: "Envelope", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Performance", page: "Performance", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Master Volume, min: 0, max: 127, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Solo Sample, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Stereo Spread, min: 0, max: 127, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Filter Freq, min: 0, max: 127, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Filter Res, min: 0, max: 127, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Filter Mode, min: 0, max: 4, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Filter Kbd Track, min: 0, max: 127, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: Filter Env Amount, min: 0, max: 127, input_type: Value}
+      E6: {name: encoder6, key: EncoderCcs, target: Filter Env Vel Amount, min: -64, max: 63, input_type: Value}
+      E7: {name: encoder7, key: EncoderCcs, target: Filter Decay Vel Amount, min: -64, max: 63, input_type: Value}
+      E8: {name: encoder8, key: EncoderCcs, target: Sample Start, min: 0, max: 127, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Filter On/Off, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: Filter Env Invert, min: 0, max: 1, input_type: Toggle}
+  Envelope:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Filter", page: "Filter", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelope", page: "Envelope", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Performance", page: "Performance", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Master Volume, min: 0, max: 127, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Solo Sample, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Stereo Spread, min: 0, max: 127, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Amp Env Attack, min: 0, max: 127, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Amp Env Decay, min: 0, max: 127, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Amp Env Sustain, min: 0, max: 127, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Amp Env Release, min: 0, max: 127, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: Filter Env Attack, min: 0, max: 127, input_type: Value}
+      E6: {name: encoder6, key: EncoderCcs, target: Filter Env Decay, min: 0, max: 127, input_type: Value}
+      E7: {name: encoder7, key: EncoderCcs, target: Filter Env Sustain, min: 0, max: 127, input_type: Value}
+      E8: {name: encoder8, key: EncoderCcs, target: Filter Env Release, min: 0, max: 127, input_type: Value}
+    buttons: {}
+  Performance:
+    pager:
+      - { name: pageMinus, key: PageMinusCc, direction: "-", min: 0, max: 1, input_type: Toggle }
+      - { name: pagePlus, key: PagePlusCc, direction: "+", min: 0, max: 1, input_type: Toggle }
+    navigation:
+      - { name: "Main", page: "Main", key: MixCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Filter", page: "Filter", key: UserCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Envelope", page: "Envelope", key: InstrCc, min: 0, max: 1, input_type: Toggle }
+      - { name: "Performance", page: "Performance", key: LearnCc, min: 0, max: 1, input_type: Toggle }
+    controls:
+      SD: {name: speedDial, key: SpeedDialCc, target: Master Volume, min: 0, max: 127, input_type: Value}
+      SDB: {name: speedDialButton, key: SpeedDialButtonCc, target: Solo Sample, min: 0, max: 1, input_type: Toggle}
+      F: {name: fader, key: XfaderCcs, target: Stereo Spread, min: 0, max: 127, input_type: Value}
+    encoders:
+      E1: {name: encoder1, key: EncoderCcs, target: Osc Octave, min: 0, max: 8, input_type: Value}
+      E2: {name: encoder2, key: EncoderCcs, target: Osc Semitone, min: 0, max: 12, input_type: Value}
+      E3: {name: encoder3, key: EncoderCcs, target: Osc Fine Tune, min: -50, max: 50, input_type: Value}
+      E4: {name: encoder4, key: EncoderCcs, target: Osc Env Amount, min: -64, max: 63, input_type: Value}
+      E5: {name: encoder5, key: EncoderCcs, target: LFO Rate, min: 0, max: 127, input_type: Value}
+      E6: {name: encoder6, key: EncoderCcs, target: LFO Amount, min: 0, max: 127, input_type: Value}
+      E7: {name: encoder7, key: EncoderCcs, target: LFO Wave, min: 0, max: 5, input_type: Value}
+      E8: {name: encoder8, key: EncoderCcs, target: LFO Dest, min: 0, max: 2, input_type: Value}
+    buttons:
+      B1: {name: button1, key: ButtonCcs, target: Osc Kbd Track, min: 0, max: 1, input_type: Toggle}
+      B2: {name: button2, key: ButtonCcs, target: Low Bandwidth On/Off, min: 0, max: 1, input_type: Toggle}
+      B3: {name: button3, key: ButtonCcs, target: High Quality Interpolation, min: 0, max: 1, input_type: Toggle}
+      B4: {name: button4, key: ButtonCcs, target: LFO Sync Enable, min: 0, max: 1, input_type: Toggle}
