@@ -1,0 +1,15 @@
+Control:
+  manufacturer: "Model"
+  model: "UN-16 Unison"
+  Pages:
+    Mix:
+      middle:
+        SD: {name:"speedDial",remotable:"Input Gain", key: SpeadDialCC,min=0, max=4194304,input_type=value}
+	SDB: {name:"speedDialButton",remotable:"Enabled	0", key: SpeadDialButtonCC,min=0, max=1,input_type=toggle}
+        FD: {name:"fader",remotable:"Pan", key: XFaderCC,min=0, max=4194304,input_type=value}
+      buttons:
+    	B1: {name:"button1",remotable:"Enabled 0", key:ButtonCCs, min=0,max=1,input_type=toggle}
+      encoders:
+	E1: {name:"encoder1",remotable:"Voice Count", key: EncoderCCs,min=0, max=2,input_type=value}
+        E2: {name:"encoder2",remotable:"Detune	0", key: EncoderCCs,min=0, max=127,input_type=value}
+        E3: {name:"encoder3",remotable:"Dry/Wet	0", key: EncoderCCs,min=0, max=127,input_type=value}

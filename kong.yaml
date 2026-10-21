@@ -1,0 +1,122 @@
+manufacturer: "Propellerheads"
+model: "Kong Drum Designer"
+
+Pages:
+
+  Mixer:
+    middle:
+      SD:
+        name: speedDial
+        remotable: Master Level
+        key: SpeedDialCC
+        min: 0
+        max: 127
+        input_type: value
+
+      FD:
+        name: fader
+        remotable: Master Level
+        key: XFaderCC
+        min: 0
+        max: 127
+        input_type: value
+
+    buttons:
+      B1: { name: button1, remotable: Pad 1 Mute, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: button2, remotable: Pad 2 Mute, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B3: { name: button3, remotable: Pad 3 Mute, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B4: { name: button4, remotable: Pad 4 Mute, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B5: { name: button5, remotable: Pad 5 Mute, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B6: { name: button6, remotable: Pad 6 Mute, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B7: { name: button7, remotable: Pad 7 Mute, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B8: { name: button8, remotable: Pad 8 Mute, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: encoder1, remotable: Drum 1 Level, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E2: { name: encoder2, remotable: Drum 2 Level, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E3: { name: encoder3, remotable: Drum 3 Level, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E4: { name: encoder4, remotable: Drum 4 Level, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E5: { name: encoder5, remotable: Drum 5 Level, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E6: { name: encoder6, remotable: Drum 6 Level, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E7: { name: encoder7, remotable: Drum 7 Level, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E8: { name: encoder8, remotable: Drum 8 Level, key: EncoderCCs, min: 0, max: 127, input_type: value }
+
+  Drum:
+    middle:
+      SD:
+        name: speedDial
+        remotable: Selected Drum
+        key: SpeedDialCC
+        min: 1
+        max: 16
+        input_type: value
+
+      FD:
+        name: fader
+        remotable: Drum Level
+        key: XFaderCC
+        dynamic: true
+
+    buttons:
+      B1: { name: button1, remotable: DM On, key: ButtonCCs, dynamic: true, input_type: toggle }
+      B2: { name: button2, remotable: FX1 On, key: ButtonCCs, dynamic: true, input_type: toggle }
+      B3: { name: button3, remotable: FX2 On, key: ButtonCCs, dynamic: true, input_type: toggle }
+
+    encoders:
+      E1: { name: encoder1, remotable: Level, key: EncoderCCs, dynamic: true, input_type: value }
+      E2: { name: encoder2, remotable: Pan, key: EncoderCCs, dynamic: true, input_type: value }
+      E3: { name: encoder3, remotable: Tone, key: EncoderCCs, dynamic: true, input_type: value }
+      E4: { name: encoder4, remotable: Pitch Offset, key: EncoderCCs, dynamic: true, input_type: value }
+      E5: { name: encoder5, remotable: Decay Offset, key: EncoderCCs, dynamic: true, input_type: value }
+      E6: { name: encoder6, remotable: Bus FX Send, key: EncoderCCs, dynamic: true, input_type: value }
+      E7: { name: encoder7, remotable: Aux 1 Send, key: EncoderCCs, dynamic: true, input_type: value }
+      E8: { name: encoder8, remotable: Aux 2 Send, key: EncoderCCs, dynamic: true, input_type: value }
+
+  DrumEngine:
+    middle:
+      SD:
+        name: speedDial
+        remotable: Selected Drum
+        key: SpeedDialCC
+        min: 1
+        max: 16
+        input_type: value
+
+    encoders:
+      E1: { name: encoder1, remotable: DM Level, key: EncoderCCs, dynamic: true, input_type: value }
+      E2: { name: encoder2, remotable: DM Pitch, key: EncoderCCs, dynamic: true, input_type: value }
+      E3: { name: encoder3, remotable: DM Decay, key: EncoderCCs, dynamic: true, input_type: value }
+      E4: { name: encoder4, remotable: DM Variable, key: EncoderCCs, dynamic: true, input_type: value }
+      E5: { name: encoder5, remotable: FX1 P1, key: EncoderCCs, dynamic: true, input_type: value }
+      E6: { name: encoder6, remotable: FX1 P2, key: EncoderCCs, dynamic: true, input_type: value }
+      E7: { name: encoder7, remotable: FX2 P1, key: EncoderCCs, dynamic: true, input_type: value }
+      E8: { name: encoder8, remotable: FX2 P2, key: EncoderCCs, dynamic: true, input_type: value }
+
+  FX:
+    middle:
+      SD:
+        name: speedDial
+        remotable: Master FX P1
+        key: SpeedDialCC
+        min: 0
+        max: 127
+        input_type: value
+
+      FD:
+        name: fader
+        remotable: Level Bus FX to Master FX
+        key: XFaderCC
+        min: 0
+        max: 127
+        input_type: value
+
+    buttons:
+      B1: { name: button1, remotable: Master FX On, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: button2, remotable: Bus FX On, key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+
+    encoders:
+      E1: { name: encoder1, remotable: Master FX P1, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E2: { name: encoder2, remotable: Master FX P2, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E3: { name: encoder3, remotable: Bus FX P1, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E4: { name: encoder4, remotable: Bus FX P2, key: EncoderCCs, min: 0, max: 127, input_type: value }
+      E5: { name: encoder5, remotable: Level Bus FX to Master FX, key: EncoderCCs, min: 0, max: 127, input_type: value }

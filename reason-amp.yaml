@@ -1,0 +1,42 @@
+manufacturer: "Propellerhead Software"
+model: "se.propellerheads.ReasonAmp"
+
+Pages:
+  Main:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Gain", key: SpeedDialCC, min: 0, max: 4194304, input_type: value }
+      SDB:
+        { name: "speedDialButton", remotable: "Boost", key: SpeedDialButtonCC, min: 0, max: 1, input_type: toggle }
+      FD:
+        { name: "fader", remotable: "Volume", key: XFaderCC, min: 0, max: 4194304, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Boost", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Enabled", key: ButtonCCs, min: 0, max: 2, input_type: value }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Gain", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E2: { name: "encoder2", remotable: "Bass", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E3: { name: "encoder3", remotable: "Mid", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E4: { name: "encoder4", remotable: "Treble", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E5: { name: "encoder5", remotable: "Poweramp Gain", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E6: { name: "encoder6", remotable: "Gate", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E7: { name: "encoder7", remotable: "Amp Switch", key: EncoderCCs, min: 0, max: 4, input_type: value }
+      E8: { name: "encoder8", remotable: "Cab Switch", key: EncoderCCs, min: 0, max: 4, input_type: value }
+
+  Output:
+    middle:
+      SD:
+        { name: "speedDial", remotable: "Volume", key: SpeedDialCC, min: 0, max: 4194304, input_type: value }
+      FD:
+        { name: "fader", remotable: "Volume", key: XFaderCC, min: 0, max: 4194304, input_type: value }
+
+    buttons:
+      B1: { name: "button1", remotable: "Boost", key: ButtonCCs, min: 0, max: 1, input_type: toggle }
+      B2: { name: "button2", remotable: "Enabled", key: ButtonCCs, min: 0, max: 2, input_type: value }
+
+    encoders:
+      E1: { name: "encoder1", remotable: "Gain", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E2: { name: "encoder2", remotable: "Poweramp Gain", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
+      E3: { name: "encoder3", remotable: "Volume", key: EncoderCCs, min: 0, max: 4194304, input_type: value }
