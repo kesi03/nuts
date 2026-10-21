@@ -30,9 +30,12 @@ src/Nuts.Driver/
   Midi/MidiBridgeService.cs      Windows MIDI Services bridge (loopback endpoint)
   Probe/ProbeTool.cs             Milestone-1 hardware probe
 lib/wms/                         vendored Windows MIDI Services projection (see csproj)
+pages/                           Reason Remote page templates, one YAML per device scope
+remote/                          Reason Remote codec + generated .remotemap + scripts
 docs/protocol.md                 protocol reference + open questions
 docs/midi-mapping.md             MIDI mapping tables, setup, Reason 10 notes
 docs/reason-remote.md            Reason 10 Remote research + codec plan (Milestone 3)
+docs/pages-templates.md          the page-template format and the map generator
 ```
 
 ## Prerequisites
