@@ -39,7 +39,6 @@ Usage:
 
 import argparse
 import glob
-import json
 import os
 import re
 import sys
@@ -52,10 +51,10 @@ except ImportError:
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pageio
 import scopedef
+from reason_workbook import load_scope_index
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PAGES_DIR = os.path.join(REPO, 'pages')
-SCOPE_INDEX = os.path.join(REPO, 'remote', 'mapping', 'scope-index.json')
 
 SHARED_ITEMS = {'SD': 'Speed Dial', 'SDB': 'Speed Dial Button', 'F': 'Crossfader'}
 
@@ -63,11 +62,6 @@ SHARED_ITEMS = {'SD': 'Speed Dial', 'SDB': 'Speed Dial Button', 'F': 'Crossfader
 NOT_A_PARAMETER = re.compile(
     r'^(device name|note on indicator|pitch bend|mod wheel|channel name|'
     r'vu meter|insert fx patch name)$', re.IGNORECASE)
-
-
-def load_scope_index():
-    with open(SCOPE_INDEX, encoding='utf-8') as f:
-        return json.load(f)
 
 
 def is_toggle(entry):

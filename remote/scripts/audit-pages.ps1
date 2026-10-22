@@ -16,10 +16,9 @@
       * duplicate remotable targets within one scope (Reason rejects these)
       * the page count and page names
 
-    Targets are read from the factory .remotemap files under
-    <ProgramData>\Propellerhead Software\Remote\Maps, which is the same
-    authority verify-map.ps1 uses: a scope's remotable names are not always
-    its display names, and a misspelled target fails silently.
+    Targets are read from remote/mapping/reason-remote_full.xlsx. The Index
+    sheet supplies each scope's manufacturer/model identity; its device
+    sheet supplies the remotable list.
 
 .PARAMETER Only
     Restrict the audit to templates whose file name matches this wildcard.
@@ -46,21 +45,20 @@ if (-not (Test-Path $FactoryMaps)) { throw "Reason factory maps not found: $Fact
 if (-not (Test-Path $PagesDir))    { throw "pages folder not found: $PagesDir" }
 
 # ---- 1. authoritative scope -> set of remotable targets -------------------
-# These come from reason-targets.json, produced by extract-targets.ps1, which
-# knows to skip LCD-driving surface maps (Mackie Control, M-Audio ProjectMix)
-# whose target column holds screen captions rather than remotable items.
-# Do not re-derive the list here: the filtering rules are subtle enough that
-# having one implementation is the whole point.
-$TargetsJson = Join-Path $PSScriptRoot '..\mapping\reason-targets.json'
-if (-not (Test-Path $TargetsJson)) {
-    throw "Missing $TargetsJson. Run remote/scripts/extract-targets.ps1 first."
+$WorkbookReader = Join-Path $PSScriptRoot 'reason_workbook.py'
+if (-not (Test-Path -LiteralPath $WorkbookReader)) {
+    throw "Missing Reason workbook reader: $WorkbookReader"
 }
-$targetDoc = Get-Content -LiteralPath $TargetsJson -Raw | ConvertFrom-Json
-$scopeTargets = @{}
-foreach ($prop in $targetDoc.PSObject.Properties) {
+$targetJson = & python $WorkbookReader --targets-json
+if ($LASTEXITCODE -ne 0) {
+    throw "reason_workbook.py could not read reason-remote_full.xlsx."
+}
+$targetDoc = ($targetJson -join "`n") | ConvertFrom-Json
+$scopeTargets = [System.Collections.Hashtable]::new([System.StringComparer]::Ordinal)
+foreach ($entry in $targetDoc.scopes) {
     $h = New-Object System.Collections.Generic.HashSet[string]
-    foreach ($t in $prop.Value) { [void]$h.Add([string]$t) }
-    $scopeTargets[$prop.Name] = $h
+    foreach ($t in $entry.targets) { [void]$h.Add([string]$t) }
+    $scopeTargets[$entry.key] = $h
 }
 
 # ---- 2. the driver's PermaBar CC key names -------------------------------
@@ -98,8 +96,10 @@ Write-Host ''
 foreach ($f in $files) {
     $lines = [System.IO.File]::ReadAllLines($f.FullName)
 
+    $manufacturer = ''
     $model = ''
-    foreach ($l in ($lines | Select-Object -First 6)) {
+    foreach ($l in ($lines | Select-Object -First 8)) {
+        if ($l -match '^\s*manufacturer:\s*(.+?)\s*$') { $manufacturer = $Matches[1].Trim() }
         if ($l -match '^\s*model:\s*(.+?)\s*$') { $model = $Matches[1].Trim() }
     }
 
@@ -125,20 +125,23 @@ foreach ($f in $files) {
     $keys    = New-Object System.Collections.Generic.HashSet[string]
     $ioTypes = New-Object System.Collections.Generic.HashSet[string]
     foreach ($l in $lines) {
-        if ($l -match '\btarget:\s*([^,}]+)') { $targets.Add($Matches[1].Trim()) }
+        if ($l -match '\btarget:\s*([^,}]+)') {
+            $targets.Add($Matches[1].Trim().Trim('"').Trim("'"))
+        }
         if ($l -match '\bkey:\s*([A-Za-z0-9_]+)') { [void]$keys.Add($Matches[1].Trim()) }
         if ($l -match '\binput_type:\s*([A-Za-z0-9_]+)') { [void]$ioTypes.Add($Matches[1].Trim()) }
     }
 
-    $scopeOk = $scopeTargets.ContainsKey($model)
-    if (-not $scopeOk) { $scopeMissing += "$($f.Name) -> '$model'" }
+    $scopeKey = "$manufacturer`t$model"
+    $scopeOk = $scopeTargets.ContainsKey($scopeKey)
+    if (-not $scopeOk) { $scopeMissing += "$($f.Name) -> '$scopeKey'" }
 
     # bad targets
     $badTargets = @()
     if ($scopeOk) {
         $seen = @{}
         foreach ($t in $targets) {
-            if (-not $scopeTargets[$model].Contains($t)) { $badTargets += $t }
+            if (-not $scopeTargets[$scopeKey].Contains($t)) { $badTargets += $t }
             if ($seen.ContainsKey($t)) { $totalDupTargets++ }
             else { $seen[$t] = $true }
         }

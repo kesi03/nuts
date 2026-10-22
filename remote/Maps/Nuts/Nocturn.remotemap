@@ -1234,6 +1234,80 @@ Map	Speed Dial		Drive
 Map	Speed Dial Button		Enabled
 Map	Crossfader		Volume
 
+Scope	Propellerheads	Reason Document
+Map	_Scope		"Reason Document"
+
+// --- Page 1: Transport -------------------------------------
+Map	Knob 2 P1		Tempo Decimal
+Map	Knob 3 P1		Bar Position
+Map	Knob 4 P1		Beat Position
+Map	Knob 5 P1		Tick Position
+Map	Knob 7 P1		Left Loop
+Map	Knob 8 P1		Right Loop
+
+Map	Button 1 P1		Play
+Map	Button 2 P1		Stop
+Map	Button 4 P1		Return To Zero
+Map	Button 5 P1		Rewind
+Map	Button 6 P1		Fast Forward
+Map	Button 7 P1		Loop On/Off
+Map	Button 8 P1		Tap Tempo
+
+// --- Page 2: Navigation ------------------------------------
+Map	Knob 1 P2		Target Track (Delta)
+Map	Knob 2 P2		Select Patch for Target Device (Delta)
+Map	Knob 3 P2		Select Keyboard Shortcut Variation (Delta)
+Map	Knob 8 P2		Time Position
+
+Map	Button 1 P2		Target Previous Track
+Map	Button 2 P2		Target Next Track
+Map	Button 3 P2		Select Prev Patch for Target Device
+Map	Button 4 P2		Select Next Patch for Target Device
+Map	Button 5 P2		Select Previous Keyboard Shortcut Variation
+Map	Button 6 P2		Select Next Keyboard Shortcut Variation
+Map	Button 7 P2		Goto Left Locator
+Map	Button 8 P2		Goto Right Locator
+
+// --- Page 3: Loop ------------------------------------------
+Map	Knob 1 P3		Left Loop Bar
+Map	Knob 2 P3		Left Loop Beat
+Map	Knob 3 P3		Left Loop 16th
+Map	Knob 4 P3		Left Loop Tick
+Map	Knob 5 P3		Right Loop Bar
+Map	Knob 6 P3		Right Loop Beat
+Map	Knob 7 P3		Right Loop 16th
+Map	Knob 8 P3		Right Loop Tick
+
+Map	Button 1 P3		Move Loop Left
+Map	Button 2 P3		Move Loop Right
+Map	Button 3 P3		Move Loop One bar Left
+Map	Button 4 P3		Move Loop One bar Right
+Map	Button 5 P3		Clear Left Loop Subticks
+Map	Button 6 P3		Clear Right Loop Subticks
+
+// --- Page 4: Track -----------------------------------------
+Map	Knob 1 P4		Target Track Meter Left
+Map	Knob 2 P4		Target Track Meter Right
+Map	Knob 3 P4		Target Track Tuner Note
+Map	Knob 4 P4		Target Track Tuner Cents
+Map	Knob 5 P4		Big Meter Left
+Map	Knob 6 P4		Big Meter Right
+Map	Knob 7 P4		Meter Mode
+
+Map	Button 1 P4		Target Track Solo
+Map	Button 2 P4		Target Track Mute
+Map	Button 3 P4		Any Track Solo
+Map	Button 4 P4		Any Track Mute
+Map	Button 5 P4		Target Track Enable Monitoring
+Map	Button 6 P4		Target Track Enable Tuner
+Map	Button 7 P4		Target Track Enable Automation Recording
+Map	Button 8 P4		Target Track Reset Meter Clipping
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Tempo BPM
+Map	Speed Dial Button		Record
+Map	Crossfader		Song Position
+
 Scope	Propellerheads	Reason Main Mixer Channel
 Map	_Scope		"Reason Main Mixer Channel"
 
@@ -1306,6 +1380,61 @@ Map	Button 8 P4		FX4 Pre Fader
 Map	Speed Dial		Level
 Map	Speed Dial Button		Solo
 Map	Crossfader		Pan
+
+Scope	Propellerheads	Reason Master Section
+Map	_Scope		"Reason Master Section"
+
+// --- Page 1: Compressor ------------------------------------
+Map	Knob 1 P1		Threshold
+Map	Knob 2 P1		Ratio
+Map	Knob 3 P1		Attack
+Map	Knob 4 P1		Release
+Map	Knob 5 P1		Make-Up Gain
+
+Map	Button 1 P1		Compressor On
+Map	Button 2 P1		Key On
+
+// --- Page 2: ControlRoom -----------------------------------
+Map	Knob 1 P2		Ctrl Room Source
+Map	Knob 2 P2		Ctrl Room FX Select
+Map	Knob 3 P2		Remote Base Channel
+
+Map	Button 1 P2		Dim -20dB
+Map	Button 2 P2		All Mutes Off
+
+// --- Page 3: FX --------------------------------------------
+Map	Knob 1 P3		FX1 Send Level
+Map	Knob 2 P3		FX1 Return Level
+Map	Knob 3 P3		FX2 Send Level
+Map	Knob 4 P3		FX2 Return Level
+Map	Knob 5 P3		FX3 Send Level
+Map	Knob 6 P3		FX3 Return Level
+Map	Knob 7 P3		FX4 Send Level
+Map	Knob 8 P3		FX4 Return Level
+
+Map	Button 1 P3		FX1 Mute
+Map	Button 2 P3		FX2 Mute
+Map	Button 3 P3		FX3 Mute
+Map	Button 4 P3		FX4 Mute
+
+// --- Page 4: InsertFX --------------------------------------
+Map	Knob 1 P4		Rotary 1
+Map	Knob 2 P4		Rotary 2
+Map	Knob 3 P4		Rotary 3
+Map	Knob 4 P4		Rotary 4
+
+Map	Button 1 P4		Button 1
+Map	Button 2 P4		Button 2
+Map	Button 3 P4		Button 3
+Map	Button 4 P4		Button 4
+Map	Button 5 P4		Bypass Insert FX
+Map	Button 6 P4		Select Prev Insert FX Patch
+Map	Button 7 P4		Select Next Insert FX Patch
+
+// --- Shared: same on every page -------------------------
+Map	Speed Dial		Master Level
+Map	Speed Dial Button		All Solo Off
+Map	Crossfader		Ctrl Room Level
 
 Scope	Propellerheads	Redrum Drum Computer
 Map	_Scope		"Redrum"

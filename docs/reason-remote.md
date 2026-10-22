@@ -248,7 +248,7 @@ pages:                     # the driver's page slots, in order
 ```
 
 `python remote/scripts/generate_map.py` validates every template against
-`remote/mapping/scope-index.json` and writes the map; `--check` validates
+`remote/mapping/reason-remote_full.xlsx` and writes the map; `--check` validates
 without writing, and `--only <name>` narrows it to one device. The generator
 enforces the three rules Reason enforces:
 

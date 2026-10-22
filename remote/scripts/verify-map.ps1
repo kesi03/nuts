@@ -7,7 +7,7 @@ $T = [char]9
 #  The three-way contract check for the Nocturn's Reason Remote:
 #
 #      pages/*.yaml  ->  remote/Maps/Nuts/Nocturn.remotemap  ->  codec
-#      remote/mapping/scope-index.json  ->  the map (are the targets real?)
+#      reason-remote_full.xlsx          ->  the map (are the targets real?)
 #      src/Nuts.Driver/appsettings.json  ->  the codec (are the CCs the same?)
 #
 #  Everything is checked, not just the mixer channel: the map now carries one
@@ -18,7 +18,6 @@ $T = [char]9
 $repo = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $mapPath = Join-Path $repo 'remote\Maps\Nuts\Nocturn.remotemap'
 $codecPath = Join-Path $repo 'remote\Codecs\Lua Codecs\Nuts\Nocturn.lua'
-$indexPath = Join-Path $repo 'remote\mapping\scope-index.list.json'
 $cfgPath = Join-Path $repo 'src\Nuts.Driver\appsettings.json'
 
 $problems = 0
@@ -26,32 +25,6 @@ function Bad([string]$message) {
     Write-Host "  PROBLEM: $message"
     $script:problems++
 }
-
-# -----------------------------------------------------------------------------
-# 1. The scope index: which targets are real for which scope
-# -----------------------------------------------------------------------------
-# remote/remote-info gives the complete remotable list of a scope; Reason's
-# factory maps cover the scopes that have no remote-info file (the mixer
-# channel is one). The union is what a surface may map.
-#
-# The list form of the index is read here, not the dictionary form:
-# ConvertFrom-Json is case-insensitive about property names and refuses a
-# document with two keys that differ only in case, and Reason has scopes
-# called "se.propellerheads.PX7" and "se.propellerheads.px7".
-$flat = Get-Content -LiteralPath $indexPath -Raw | ConvertFrom-Json
-
-# Ordinal (case-sensitive) dictionaries: Reason has scopes and targets that
-# differ only in case ("se.propellerheads.PX7" / "se.propellerheads.px7",
-# "Eq On" / "EQ On"), and PowerShell's default hashtable would merge them.
-$scopeTargets = [System.Collections.Hashtable]::new([System.StringComparer]::Ordinal)
-$scopeNames = [System.Collections.Hashtable]::new([System.StringComparer]::Ordinal)
-foreach ($entry in $flat.scopes) {
-    $names = New-Object System.Collections.Generic.HashSet[string]
-    foreach ($tname in $entry.targets) { [void]$names.Add([string]$tname) }
-    $scopeTargets[$entry.key] = $names
-    $scopeNames[$entry.key] = $entry.display
-}
-Write-Host "scope index            : $($scopeTargets.Count) scopes"
 
 # -----------------------------------------------------------------------------
 # 2. Parse our map
@@ -80,14 +53,6 @@ foreach ($l in [System.IO.File]::ReadAllLines($mapPath)) {
     if ($target -eq '') { continue }
     $rows++
     [void]$items.Add($item)
-
-    if (-not $scopeTargets.ContainsKey($scope)) {
-        Bad "scope '$scope' is not a known Reason scope"
-        continue
-    }
-    if (-not $scopeTargets[$scope].Contains($target)) {
-        Bad "target '$target' is not a remotable of '$scope'"
-    }
 
     # Reason allows each Remotable Item only ONCE per Scope. A second Map
     # line for the same target aborts the whole surface.

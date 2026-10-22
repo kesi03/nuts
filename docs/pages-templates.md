@@ -84,35 +84,24 @@ twice, which Reason rejects.
 
 ## Where the target names come from
 
-Two independent sources, both built into
-`remote/mapping/scope-index.json`:
+The source of truth is `remote/mapping/reason-remote_full.xlsx`. Its `Index`
+sheet links each device to its exact manufacturer/model scope; the matching
+device sheet contains the remotable names, ranges, and input/output types.
+`remote/scripts/reason_workbook.py` reads this workbook directly, so the
+generator and page audits do not depend on a stale generated JSON index.
 
-| source | what it gives | authority |
-|---|---|---|
-| `remote/remote-info/**.txt` | the **complete** remotable list of a scope, with min/max and input type | the primary authority |
-| Reason's factory `.remotemap` files | what real surfaces actually map — a subset, plus the scope's display name | the fallback for scopes with no remote-info file (the mixer channel is one) |
-
-Two kinds of factory target are **not** parameters and are rejected:
-
-- **LCD strings** — quoted fragments (`"Bypas"`), used to drive a display.
-- **Variation selectors** — `TheGroup=Pan`, `Layer=EQ`, `Dyn_vars=Comp`,
-  `ShiftState=ShiftON`. They pick a variation; they do not carry a value.
-
-Never normalise a target name by convention. `humana` genuinely uses
-`Filter_Cutoff` and `Delay_Time`, while `dmfc` does not. Always look the
-scope up.
-
-### Rebuilding the index
+Install the workbook reader dependency if needed:
 
 ```
-python remote/scripts/parse_remote_info.py     # -> remote/mapping/remote-info-index.json
-python remote/scripts/build_scope_index.py     # -> remote/mapping/scope-index.json
-                                            #  + scope-index.list.json (for PowerShell)
+python -m pip install openpyxl
 ```
 
-`build_scope_index.py` skips the maps **we** deployed for our own surfaces
-(`Nuts/Nocturn`, `Akai/MPK Mini Play`) — they are our work, not Reason's, and
-they would otherwise pollute the index.
+Device sheet tabs can be shortened or punctuation-adjusted by Excel; the
+reader matches them to the device names in `Index` while preserving the
+manufacturer/model values from that index.
+
+Never normalise a target name by convention. Always look the exact target up
+in the device's workbook sheet.
 
 ---
 
@@ -122,8 +111,7 @@ they would otherwise pollute the index.
 |---|---|
 | `remote/scripts/generate_map.py` | validate every template and write the map. `--check` validates only, `--only <name>` narrows to one device, `--out <path>` writes elsewhere. |
 | `remote/scripts/fix_pages.py` | repair a template: rename a target to the closest real remotable, drop a duplicate, move a continuous parameter off a switch. `--dry-run` shows the plan, `--only <name>` narrows it. |
-| `remote/scripts/build_scope_index.py` | rebuild the scope index from remote-info + the factory maps. |
-| `remote/scripts/parse_remote_info.py` | parse `remote/remote-info/` into `remote-info-index.json`. |
+| `remote/scripts/reason_workbook.py` | load the workbook and provide scopes/targets to Python and PowerShell validators. |
 | `remote/scripts/pageio.py` | shared YAML read/write for the templates. |
 | `remote/scripts/scopedef.py` | LCD-string / variation-selector detection, the usable-target set of a scope. |
 | `remote/scripts/verify-map.ps1` | the end-to-end check: templates → map ↔ codec ↔ `appsettings.json`. |
@@ -153,8 +141,7 @@ nothing, with no error shown. A Reason restart does the same job.
 
 1. Copy the nearest existing template, e.g. `pages/thor-polyphic-synthesizer.yaml`.
 2. Set `scope.manufacturer` / `scope.model` to the **exact** pair from
-   `remote/remote-info/` (or from a factory map, for the scopes that have no
-   remote-info file).
+   the `Index` sheet of `remote/mapping/reason-remote_full.xlsx`.
 3. Set `scope.display` to the name Reason shows.
 4. Fill in the pages. **One target per scope** — if two pages want the same
    parameter, it belongs on one page only.
@@ -181,4 +168,3 @@ the least verified pages in the map:
 The Player devices are not part of a Reason installation, so they can only be
 tested if the user has them. Set `scope.enabled: false` to keep them out of
 the map.
-

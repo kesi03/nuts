@@ -84,15 +84,6 @@ pages:
         }
 
     encoders:
-      E1:
-        {
-          name: encoder1,
-          key: EncoderCcs,
-          target: Tempo BPM,
-          min: 1,
-          max: 999,
-          input_type: Value,
-        }
       E2:
         {
           name: encoder2,
@@ -128,15 +119,6 @@ pages:
           min: 0,
           max: 0,
           input_type: Delta,
-        }
-      E6:
-        {
-          name: encoder6,
-          key: EncoderCcs,
-          target: Song Position,
-          min: 0,
-          max: 2147483646,
-          input_type: Value,
         }
       E7:
         {
@@ -174,15 +156,6 @@ pages:
           min: 0,
           max: 1,
           input_type: Trig,
-        }
-      B3:
-        {
-          name: button3,
-          key: ButtonCcs,
-          target: Record,
-          min: 0,
-          max: 1,
-          input_type: Toggle,
         }
       B4:
         {
@@ -334,42 +307,6 @@ pages:
           name: encoder3,
           key: EncoderCcs,
           target: Select Keyboard Shortcut Variation (Delta),
-          min: 0,
-          max: 0,
-          input_type: Delta,
-        }
-      E4:
-        {
-          name: encoder4,
-          key: EncoderCcs,
-          target: Left Loop Bar,
-          min: 0,
-          max: 0,
-          input_type: Delta,
-        }
-      E5:
-        {
-          name: encoder5,
-          key: EncoderCcs,
-          target: Left Loop Beat,
-          min: 0,
-          max: 0,
-          input_type: Delta,
-        }
-      E6:
-        {
-          name: encoder6,
-          key: EncoderCcs,
-          target: Right Loop Bar,
-          min: 0,
-          max: 0,
-          input_type: Delta,
-        }
-      E7:
-        {
-          name: encoder7,
-          key: EncoderCcs,
-          target: Right Loop Beat,
           min: 0,
           max: 0,
           input_type: Delta,
@@ -667,24 +604,6 @@ pages:
           max: 1,
           input_type: Trig,
         }
-      B7:
-        {
-          name: button7,
-          key: ButtonCcs,
-          target: Loop On/Off,
-          min: 0,
-          max: 1,
-          input_type: Toggle,
-        }
-      B8:
-        {
-          name: button8,
-          key: ButtonCcs,
-          target: Return To Zero,
-          min: 0,
-          max: 1,
-          input_type: Trig,
-        }
 
   Track:
     pager:
@@ -830,15 +749,15 @@ pages:
           max: 4,
           input_type: Value,
         }
-      E8:
-        {
-          name: encoder8,
-          key: EncoderCcs,
-          target: Peak Hold,
-          min: 0,
-          max: 1,
-          input_type: Value,
-        }
+      # E8:
+      #   {
+      #     name: encoder8,
+      #     key: EncoderCcs,
+      #     target: Peak Hold,
+      #     min: 0,
+      #     max: 1,
+      #     input_type: Value,
+      #   }
 
     buttons:
       B1:

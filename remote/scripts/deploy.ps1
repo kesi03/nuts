@@ -69,14 +69,18 @@ if ($foundMaps.Count -eq 0) {
 # WHOLE surface.
 $repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
 $generator = Join-Path $PSScriptRoot 'generate_map.py'
-if (Test-Path -LiteralPath $generator) {
-    Write-Host "Generating the map from pages\*.yaml ..." -ForegroundColor Cyan
-    & python $generator
-    if ($LASTEXITCODE -ne 0) {
-        throw "generate_map.py reported errors - the map was NOT regenerated and nothing was deployed. Fix pages\*.yaml and run it again."
-    }
-} else {
-    Write-Host "generate_map.py not found - deploying the map as it is on disk." -ForegroundColor Yellow
+$workbook = Join-Path $RemoteSource 'mapping\reason-remote_full.xlsx'
+if (-not (Test-Path -LiteralPath $workbook)) {
+    throw "Reason target workbook not found: $workbook. Nothing was deployed."
+}
+if (-not (Test-Path -LiteralPath $generator)) {
+    throw "generate_map.py not found: $generator. Nothing was deployed."
+}
+
+Write-Host "Validating pages\*.yaml against reason-remote_full.xlsx and generating the map ..." -ForegroundColor Cyan
+& python $generator
+if ($LASTEXITCODE -ne 0) {
+    throw "generate_map.py reported errors - the map was NOT regenerated and nothing was deployed. Fix pages\*.yaml or the Reason workbook and run it again."
 }
 
 # --- optional backup of the files that will be overwritten ----------------

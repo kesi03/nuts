@@ -18,16 +18,18 @@ Layout mirrors the `akaii-mdk-play-remote` project:
 | `Codecs/Lua Codecs/Nuts/Nocturn.png` | Surface picture |
 | `Maps/Nuts/Nocturn.remotemap` | Remote mapping — **generated** from `../pages/*.yaml` |
 | `mapping/nocturn-controls.json` | Source-of-truth CC table (driver ⇄ codec) |
-| `mapping/scope-index.json` | Which targets are real for which Reason scope |
+| `mapping/reason-remote_full.xlsx` | Source of truth for Reason scopes, remotables, ranges, and input types |
+| `scripts/reason_workbook.py` | Reads the workbook for page generation and audits |
 | `scripts/generate_map.py` | `pages/*.yaml` → `Maps/Nuts/Nocturn.remotemap` |
 | `scripts/verify-map.ps1` | Checks the whole contract (templates → map ↔ codec ↔ driver) |
 | `scripts/deploy.ps1` | Copies everything into `%ProgramData%\Propellerhead Software\Remote` |
 | `remote-info/` | Reason Remote Info reference notes (factory API reference) |
 
 The page templates live in `../pages/` — one YAML per device, one scope per
-file. `scripts/generate_map.py` validates them against Reason's own scope
-definitions and writes the map; `deploy.ps1` runs it first, so a deploy can
-never ship a map that no longer matches the templates. See
+file. `scripts/generate_map.py` validates them against
+`mapping/reason-remote_full.xlsx` and writes the map; `deploy.ps1` runs it
+first, so a deploy can never ship a map that no longer matches the templates.
+The workbook reader requires `openpyxl` (`python -m pip install openpyxl`). See
 `../docs/pages-templates.md`.
 
 ## The control contract

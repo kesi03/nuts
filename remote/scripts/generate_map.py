@@ -29,9 +29,7 @@ THE THREE RULES THE GENERATOR ENFORCES
 2. Continuous parameters live on dials, on/off states live on the page-row
    switches. A page-row item can only ever carry 0 or 127.
 3. Every target must be a real remotable of that scope. The authority is
-   remote/remote-info (Reason's own scope definition); Reason's factory
-   .remotemap files are the fallback for scopes without one - the mixer
-   channel is such a scope.
+   remote/mapping/reason-remote_full.xlsx.
 
 USAGE
 -----
@@ -42,7 +40,6 @@ USAGE
 
 import argparse
 import glob
-import json
 import os
 import sys
 
@@ -54,10 +51,10 @@ except ImportError:
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import pageio
 import scopedef
+from reason_workbook import load_scope_index
 
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 PAGES_DIR = os.path.join(REPO, 'pages')
-SCOPE_INDEX = os.path.join(REPO, 'remote', 'mapping', 'scope-index.json')
 OUT_MAP = os.path.join(REPO, 'remote', 'Maps', 'Nuts', 'Nocturn.remotemap')
 
 # The surface has 4 page slots (Midi:Paging:PageCount in the driver's
@@ -190,11 +187,6 @@ def load_templates(only=None):
             continue
         templates.append(Template(path, doc))
     return templates
-
-
-def load_scope_index():
-    with open(SCOPE_INDEX, encoding='utf-8') as f:
-        return json.load(f)
 
 
 def entry_for(scope_index, key):

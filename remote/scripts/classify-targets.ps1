@@ -5,7 +5,7 @@
 
 .DESCRIPTION
     For each template control whose target is not a remotable item of the
-    device's reason-targets.json entry, this tries to find a candidate real
+    device's entry in reason-remote_full.xlsx, this tries to find a candidate real
     name using the conventions that actually appear in Reason's maps:
 
       * an exact match after case/space normalisation
@@ -27,14 +27,20 @@ $ErrorActionPreference = 'Stop'
 
 $ScriptRoot = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
 $PagesDir   = Join-Path $ScriptRoot '..\..\pages'
-$TargetsJson = Join-Path $ScriptRoot '..\mapping\reason-targets.json'
+$WorkbookReader = Join-Path $ScriptRoot 'reason_workbook.py'
 
-if (-not (Test-Path $TargetsJson)) { throw "Missing $TargetsJson. Run extract-targets.ps1 first." }
+if (-not (Test-Path -LiteralPath $WorkbookReader)) {
+    throw "Missing Reason workbook reader: $WorkbookReader"
+}
 
-$targetDoc = Get-Content -LiteralPath $TargetsJson -Raw | ConvertFrom-Json
-$scopeTargets = @{}
-foreach ($prop in $targetDoc.PSObject.Properties) {
-    $scopeTargets[$prop.Name] = @($prop.Value)
+$targetJson = & python $WorkbookReader --targets-json
+if ($LASTEXITCODE -ne 0) {
+    throw "reason_workbook.py could not read reason-remote_full.xlsx."
+}
+$targetDoc = ($targetJson -join "`n") | ConvertFrom-Json
+$scopeTargets = [System.Collections.Hashtable]::new([System.StringComparer]::Ordinal)
+foreach ($entry in $targetDoc.scopes) {
+    $scopeTargets[$entry.key] = @($entry.targets)
 }
 
 function Normalize([string]$s) {
@@ -45,16 +51,19 @@ $files = @(Get-ChildItem (Join-Path $PagesDir '*.yaml') | Where-Object { $_.Name
 
 foreach ($f in $files) {
     $lines = [System.IO.File]::ReadAllLines($f.FullName)
+    $manufacturer = ''
     $model = ''
-    foreach ($l in ($lines | Select-Object -First 6)) {
+    foreach ($l in ($lines | Select-Object -First 8)) {
+        if ($l -match '^\s*manufacturer:\s*(.+?)\s*$') { $manufacturer = $Matches[1].Trim() }
         if ($l -match '^\s*model:\s*(.+?)\s*$') { $model = $Matches[1].Trim() }
     }
-    if (-not $scopeTargets.ContainsKey($model)) {
+    $scopeKey = "$manufacturer`t$model"
+    if (-not $scopeTargets.ContainsKey($scopeKey)) {
         Write-Host ""
-        Write-Host "### $($f.Name)  scope='$model'  -- SCOPE HAS NO TARGET LIST" -ForegroundColor Yellow
+        Write-Host "### $($f.Name)  scope='$scopeKey'  -- SCOPE HAS NO TARGET LIST" -ForegroundColor Yellow
         continue
     }
-    $real = $scopeTargets[$model]
+    $real = $scopeTargets[$scopeKey]
     $normMap = @{}
     foreach ($t in $real) {
         $n = Normalize $t
@@ -65,7 +74,7 @@ foreach ($f in $files) {
     $bad = New-Object System.Collections.Generic.List[string]
     foreach ($l in $lines) {
         if ($l -match '\btarget:\s*([^,}]+)') {
-            $t = $Matches[1].Trim()
+            $t = $Matches[1].Trim().Trim('"').Trim("'")
             if ($real -notcontains $t) { $bad.Add($t) }
         }
     }
