@@ -1,0 +1,937 @@
+scope:
+  manufacturer: Propellerheads
+  model: Reason Document
+
+pages:
+  Transport:
+    pager:
+      - {
+          name: pageMinus,
+          key: PageMinusCc,
+          direction: "-",
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: pagePlus,
+          key: PagePlusCc,
+          direction: "+",
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+    navigation:
+      - {
+          name: Transport,
+          page: Transport,
+          key: MixCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Navigation,
+          page: Navigation,
+          key: UserCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Loop,
+          page: Loop,
+          key: InstrCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Track,
+          page: Track,
+          key: FXCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+    controls:
+      SD:
+        {
+          name: speedDial,
+          key: SpeedDialCc,
+          target: Tempo BPM,
+          min: 0,
+          max: 1000,
+          input_type: Value,
+        }
+      SDB:
+        {
+          name: speedDialButton,
+          key: SpeedDialButtonCc,
+          target: Record,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      F:
+        {
+          name: fader,
+          key: XfaderCcs,
+          target: Song Position,
+          min: -100,
+          max: 100,
+          input_type: Value,
+        }
+
+    encoders:
+      E1:
+        {
+          name: encoder1,
+          key: EncoderCcs,
+          target: Tempo BPM,
+          min: 1,
+          max: 999,
+          input_type: Value,
+        }
+      E2:
+        {
+          name: encoder2,
+          key: EncoderCcs,
+          target: Tempo Decimal,
+          min: 0,
+          max: 999,
+          input_type: Value,
+        }
+      E3:
+        {
+          name: encoder3,
+          key: EncoderCcs,
+          target: Bar Position,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E4:
+        {
+          name: encoder4,
+          key: EncoderCcs,
+          target: Beat Position,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E5:
+        {
+          name: encoder5,
+          key: EncoderCcs,
+          target: Tick Position,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E6:
+        {
+          name: encoder6,
+          key: EncoderCcs,
+          target: Song Position,
+          min: 0,
+          max: 2147483646,
+          input_type: Value,
+        }
+      E7:
+        {
+          name: encoder7,
+          key: EncoderCcs,
+          target: Left Loop,
+          min: 0,
+          max: 2147483646,
+          input_type: Value,
+        }
+      E8:
+        {
+          name: encoder8,
+          key: EncoderCcs,
+          target: Right Loop,
+          min: 0,
+          max: 2147483646,
+          input_type: Value,
+        }
+    buttons:
+      B1:
+        {
+          name: button1,
+          key: ButtonCcs,
+          target: Play,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B2:
+        {
+          name: button2,
+          key: ButtonCcs,
+          target: Stop,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B3:
+        {
+          name: button3,
+          key: ButtonCcs,
+          target: Record,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      B4:
+        {
+          name: button4,
+          key: ButtonCcs,
+          target: Return To Zero,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B5:
+        {
+          name: button5,
+          key: ButtonCcs,
+          target: Rewind,
+          min: 0,
+          max: 1,
+          input_type: Hold,
+        }
+      B6:
+        {
+          name: button6,
+          key: ButtonCcs,
+          target: Fast Forward,
+          min: 0,
+          max: 1,
+          input_type: Hold,
+        }
+      B7:
+        {
+          name: button7,
+          key: ButtonCcs,
+          target: Loop On/Off,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      B8:
+        {
+          name: button8,
+          key: ButtonCcs,
+          target: Tap Tempo,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+
+  Navigation:
+    pager:
+      - {
+          name: pageMinus,
+          key: PageMinusCc,
+          direction: "-",
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: pagePlus,
+          key: PagePlusCc,
+          direction: "+",
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+    navigation:
+      - {
+          name: Transport,
+          page: Transport,
+          key: MixCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Navigation,
+          page: Navigation,
+          key: UserCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Loop,
+          page: Loop,
+          key: InstrCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Track,
+          page: Track,
+          key: FXCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+    controls:
+      SD:
+        {
+          name: speedDial,
+          key: SpeedDialCc,
+          target: Tempo BPM,
+          min: 0,
+          max: 1000,
+          input_type: Value,
+        }
+      SDB:
+        {
+          name: speedDialButton,
+          key: SpeedDialButtonCc,
+          target: Record,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      F:
+        {
+          name: fader,
+          key: XfaderCcs,
+          target: Song Position,
+          min: -100,
+          max: 100,
+          input_type: Value,
+        }
+
+    encoders:
+      E1:
+        {
+          name: encoder1,
+          key: EncoderCcs,
+          target: Target Track (Delta),
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E2:
+        {
+          name: encoder2,
+          key: EncoderCcs,
+          target: Select Patch for Target Device (Delta),
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E3:
+        {
+          name: encoder3,
+          key: EncoderCcs,
+          target: Select Keyboard Shortcut Variation (Delta),
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E4:
+        {
+          name: encoder4,
+          key: EncoderCcs,
+          target: Left Loop Bar,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E5:
+        {
+          name: encoder5,
+          key: EncoderCcs,
+          target: Left Loop Beat,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E6:
+        {
+          name: encoder6,
+          key: EncoderCcs,
+          target: Right Loop Bar,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E7:
+        {
+          name: encoder7,
+          key: EncoderCcs,
+          target: Right Loop Beat,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E8:
+        {
+          name: encoder8,
+          key: EncoderCcs,
+          target: Time Position,
+          min: 0,
+          max: 2147483646,
+          input_type: Value,
+        }
+
+    buttons:
+      B1:
+        {
+          name: button1,
+          key: ButtonCcs,
+          target: Target Previous Track,
+          min: 0,
+          max: 0,
+          input_type: Trig,
+        }
+      B2:
+        {
+          name: button2,
+          key: ButtonCcs,
+          target: Target Next Track,
+          min: 0,
+          max: 0,
+          input_type: Trig,
+        }
+      B3:
+        {
+          name: button3,
+          key: ButtonCcs,
+          target: Select Prev Patch for Target Device,
+          min: 0,
+          max: 0,
+          input_type: Trig,
+        }
+      B4:
+        {
+          name: button4,
+          key: ButtonCcs,
+          target: Select Next Patch for Target Device,
+          min: 0,
+          max: 0,
+          input_type: Trig,
+        }
+      B5:
+        {
+          name: button5,
+          key: ButtonCcs,
+          target: Select Previous Keyboard Shortcut Variation,
+          min: 0,
+          max: 0,
+          input_type: Trig,
+        }
+      B6:
+        {
+          name: button6,
+          key: ButtonCcs,
+          target: Select Next Keyboard Shortcut Variation,
+          min: 0,
+          max: 0,
+          input_type: Trig,
+        }
+      B7:
+        {
+          name: button7,
+          key: ButtonCcs,
+          target: Goto Left Locator,
+          min: 0,
+          max: 0,
+          input_type: Trig,
+        }
+      B8:
+        {
+          name: button8,
+          key: ButtonCcs,
+          target: Goto Right Locator,
+          min: 0,
+          max: 0,
+          input_type: Trig,
+        }
+
+  Loop:
+    pager:
+      - {
+          name: pageMinus,
+          key: PageMinusCc,
+          direction: "-",
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: pagePlus,
+          key: PagePlusCc,
+          direction: "+",
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+    navigation:
+      - {
+          name: Transport,
+          page: Transport,
+          key: MixCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Navigation,
+          page: Navigation,
+          key: UserCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Loop,
+          page: Loop,
+          key: InstrCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Track,
+          page: Track,
+          key: FXCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+    controls:
+      SD:
+        {
+          name: speedDial,
+          key: SpeedDialCc,
+          target: Tempo BPM,
+          min: 0,
+          max: 1000,
+          input_type: Value,
+        }
+      SDB:
+        {
+          name: speedDialButton,
+          key: SpeedDialButtonCc,
+          target: Record,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      F:
+        {
+          name: fader,
+          key: XfaderCcs,
+          target: Song Position,
+          min: -100,
+          max: 100,
+          input_type: Value,
+        }
+
+    encoders:
+      E1:
+        {
+          name: encoder1,
+          key: EncoderCcs,
+          target: Left Loop Bar,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E2:
+        {
+          name: encoder2,
+          key: EncoderCcs,
+          target: Left Loop Beat,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E3:
+        {
+          name: encoder3,
+          key: EncoderCcs,
+          target: Left Loop 16th,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E4:
+        {
+          name: encoder4,
+          key: EncoderCcs,
+          target: Left Loop Tick,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E5:
+        {
+          name: encoder5,
+          key: EncoderCcs,
+          target: Right Loop Bar,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E6:
+        {
+          name: encoder6,
+          key: EncoderCcs,
+          target: Right Loop Beat,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E7:
+        {
+          name: encoder7,
+          key: EncoderCcs,
+          target: Right Loop 16th,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+      E8:
+        {
+          name: encoder8,
+          key: EncoderCcs,
+          target: Right Loop Tick,
+          min: 0,
+          max: 0,
+          input_type: Delta,
+        }
+
+    buttons:
+      B1:
+        {
+          name: button1,
+          key: ButtonCcs,
+          target: Move Loop Left,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B2:
+        {
+          name: button2,
+          key: ButtonCcs,
+          target: Move Loop Right,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B3:
+        {
+          name: button3,
+          key: ButtonCcs,
+          target: Move Loop One bar Left,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B4:
+        {
+          name: button4,
+          key: ButtonCcs,
+          target: Move Loop One bar Right,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B5:
+        {
+          name: button5,
+          key: ButtonCcs,
+          target: Clear Left Loop Subticks,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B6:
+        {
+          name: button6,
+          key: ButtonCcs,
+          target: Clear Right Loop Subticks,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B7:
+        {
+          name: button7,
+          key: ButtonCcs,
+          target: Loop On/Off,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      B8:
+        {
+          name: button8,
+          key: ButtonCcs,
+          target: Return To Zero,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+
+  Track:
+    pager:
+      - {
+          name: pageMinus,
+          key: PageMinusCc,
+          direction: "-",
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: pagePlus,
+          key: PagePlusCc,
+          direction: "+",
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+    navigation:
+      - {
+          name: Transport,
+          page: Transport,
+          key: MixCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Navigation,
+          page: Navigation,
+          key: UserCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Loop,
+          page: Loop,
+          key: InstrCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      - {
+          name: Track,
+          page: Track,
+          key: FXCc,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+    controls:
+      SD:
+        {
+          name: speedDial,
+          key: SpeedDialCc,
+          target: Tempo BPM,
+          min: 0,
+          max: 1000,
+          input_type: Value,
+        }
+      SDB:
+        {
+          name: speedDialButton,
+          key: SpeedDialButtonCc,
+          target: Record,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      F:
+        {
+          name: fader,
+          key: XfaderCcs,
+          target: Song Position,
+          min: -100,
+          max: 100,
+          input_type: Value,
+        }
+
+    encoders:
+      E1:
+        {
+          name: encoder1,
+          key: EncoderCcs,
+          target: Target Track Meter Left,
+          min: 0,
+          max: 32,
+          input_type: Value,
+        }
+      E2:
+        {
+          name: encoder2,
+          key: EncoderCcs,
+          target: Target Track Meter Right,
+          min: 0,
+          max: 32,
+          input_type: Value,
+        }
+      E3:
+        {
+          name: encoder3,
+          key: EncoderCcs,
+          target: Target Track Tuner Note,
+          min: 0,
+          max: 11,
+          input_type: Value,
+        }
+      E4:
+        {
+          name: encoder4,
+          key: EncoderCcs,
+          target: Target Track Tuner Cents,
+          min: -50,
+          max: 50,
+          input_type: Value,
+        }
+      E5:
+        {
+          name: encoder5,
+          key: EncoderCcs,
+          target: Big Meter Left,
+          min: 0,
+          max: 64,
+          input_type: Value,
+        }
+      E6:
+        {
+          name: encoder6,
+          key: EncoderCcs,
+          target: Big Meter Right,
+          min: 0,
+          max: 64,
+          input_type: Value,
+        }
+      E7:
+        {
+          name: encoder7,
+          key: EncoderCcs,
+          target: Meter Mode,
+          min: 0,
+          max: 4,
+          input_type: Value,
+        }
+      E8:
+        {
+          name: encoder8,
+          key: EncoderCcs,
+          target: Peak Hold,
+          min: 0,
+          max: 1,
+          input_type: Value,
+        }
+
+    buttons:
+      B1:
+        {
+          name: button1,
+          key: ButtonCcs,
+          target: Target Track Solo,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      B2:
+        {
+          name: button2,
+          key: ButtonCcs,
+          target: Target Track Mute,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      B3:
+        {
+          name: button3,
+          key: ButtonCcs,
+          target: Any Track Solo,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B4:
+        {
+          name: button4,
+          key: ButtonCcs,
+          target: Any Track Mute,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+      B5:
+        {
+          name: button5,
+          key: ButtonCcs,
+          target: Target Track Enable Monitoring,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      B6:
+        {
+          name: button6,
+          key: ButtonCcs,
+          target: Target Track Enable Tuner,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      B7:
+        {
+          name: button7,
+          key: ButtonCcs,
+          target: Target Track Enable Automation Recording,
+          min: 0,
+          max: 1,
+          input_type: Toggle,
+        }
+      B8:
+        {
+          name: button8,
+          key: ButtonCcs,
+          target: Target Track Reset Meter Clipping,
+          min: 0,
+          max: 1,
+          input_type: Trig,
+        }
+
+  # Utility:
+
+  #   encoders:
+  #     E1: { name: encoder1, key: EncoderCcs, target: Pre Count Bars, min: 1, max: 4, input_type: Value }
+  #     E2: { name: encoder2, key: EncoderCcs, target: Audio Left Peak Meter, min: 0, max: 20, input_type: Value }
+  #     E3: { name: encoder3, key: EncoderCcs, target: Audio Right Peak Meter, min: 0, max: 20, input_type: Value }
+  #     E4: { name: encoder4, key: EncoderCcs, target: Audio Input Peak Meter, min: 0, max: 20, input_type: Value }
+  #     E5: { name: encoder5, key: EncoderCcs, target: Audio Output Peak Meter, min: 0, max: 20, input_type: Value }
+  #     E6: { name: encoder6, key: EncoderCcs, target: Big Meter Left Peak, min: 0, max: 64, input_type: Value }
+  #     E7: { name: encoder7, key: EncoderCcs, target: Big Meter Right Peak, min: 0, max: 64, input_type: Value }
+  #     E8: { name: encoder8, key: EncoderCcs, target: Select Big Meter Channels, min: 0, max: 64, input_type: Value }
+
+  #   buttons:
+  #     B1: { name: button1, key: ButtonCcs, target: Undo, min: 0, max: 1, input_type: Trig }
+  #     B2: { name: button2, key: ButtonCcs, target: Redo, min: 0, max: 1, input_type: Trig }
+  #     B3: { name: button3, key: ButtonCcs, target: Auto-quantize, min: 0, max: 1, input_type: Toggle }
+  #     B4: { name: button4, key: ButtonCcs, target: Precount On/Off, min: 0, max: 1, input_type: Toggle }
+  #     B5: { name: button5, key: ButtonCcs, target: New Overdub, min: 0, max: 1, input_type: Trig }
+  #     B6: { name: button6, key: ButtonCcs, target: New Alternative Take, min: 0, max: 1, input_type: Trig }
+  #     B7: { name: button7, key: ButtonCcs, target: Reset Meter Clipping, min: 0, max: 1, input_type: Trig }
+  #     B8: { name: button8, key: ButtonCcs, target: Reset Automation Override, min: 0, max: 1, input_type: Trig }
